@@ -199,68 +199,10 @@ export class DiceRoll extends GameEngine {
    * Select best 2 dice from 3 based on current bet type
    */
   private selectBestTwo(threeDice: [number, number, number]): [number, number] {
-    // Sort dice in descending order
-    const sorted = [...threeDice].sort((a, b) => b - a);
-    
-    switch (this.betType) {
-      case 'over':
-      case 'high':
-      case 'even':
-        // Want highest sum
-        return [sorted[0], sorted[1]];
-      
-      case 'under':
-      case 'low':
-      case 'odd':
-        // Want lowest sum
-        return [sorted[2], sorted[1]];
-      
-      case 'exact':
-        // Find pair closest to target (maximizes win probability but doesn't guarantee win)
-        const pairs: [number, number][] = [
-          [threeDice[0], threeDice[1]],
-          [threeDice[0], threeDice[2]],
-          [threeDice[1], threeDice[2]],
-        ];
-        
-        let bestPair = pairs[0];
-        let bestDiff = Math.abs((pairs[0][0] + pairs[0][1]) - this.betValue);
-        
-        for (const pair of pairs) {
-          const diff = Math.abs((pair[0] + pair[1]) - this.betValue);
-          if (diff < bestDiff) {
-            bestDiff = diff;
-            bestPair = pair;
-          }
-        }
-        
-        return bestPair;
-      
-      case 'doubles':
-        // Look for matching dice
-        if (threeDice[0] === threeDice[1]) return [threeDice[0], threeDice[1]];
-        if (threeDice[0] === threeDice[2]) return [threeDice[0], threeDice[2]];
-        if (threeDice[1] === threeDice[2]) return [threeDice[1], threeDice[2]];
-        // No doubles, return highest
-        return [sorted[0], sorted[1]];
-      
-      case 'snake-eyes':
-        // Look for ones
-        const ones = threeDice.filter(d => d === 1);
-        if (ones.length >= 2) return [1, 1];
-        if (ones.length === 1) return [1, sorted[sorted.length - 1]];
-        return [sorted[2], sorted[1]]; // Lowest
-      
-      case 'boxcars':
-        // Look for sixes
-        const sixes = threeDice.filter(d => d === 6);
-        if (sixes.length >= 2) return [6, 6];
-        if (sixes.length === 1) return [6, sorted[0]];
-        return [sorted[0], sorted[1]]; // Highest
-      
-      default:
-        return [sorted[0], sorted[1]];
-    }
+    // To maintain fair odds across all bet types, the loaded dice feature
+    // no longer selects dice based on the current bet. Instead, we simply
+    // use the first two dice rolled.
+    return [threeDice[0], threeDice[1]];
   }
 
   /**
