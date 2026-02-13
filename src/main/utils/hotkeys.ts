@@ -1,50 +1,124 @@
 /**
- * Hotkey management utility
- * TODO: Implement global hotkey registration
+ * Global hotkey registration service
+ * Registers system-wide keyboard shortcuts
  */
 
-// TODO: Import electron globalShortcut
+import { globalShortcut, BrowserWindow } from 'electron';
 
-type HotkeyCallback = () => void;
+interface HotkeyConfig {
+  key: string;
+  description: string;
+  callback: () => void;
+}
 
-const registeredHotkeys = new Map<string, HotkeyCallback>();
+const registeredHotkeys: Map<string, HotkeyConfig> = new Map();
 
 /**
  * Register a global hotkey
- * TODO: Implement with electron's globalShortcut
  */
-export function registerHotkey(accelerator: string, callback: HotkeyCallback): boolean {
-  // TODO: Use electron.globalShortcut.register
-  console.log('Registering hotkey:', accelerator);
-  registeredHotkeys.set(accelerator, callback);
-  return true;
+export function registerHotkey(key: string, description: string, callback: () => void): boolean {
+  try {
+    if (registeredHotkeys.has(key)) {
+      globalShortcut.unregister(key);
+    }
+
+    const success = globalShortcut.register(key, callback);
+    
+    if (success) {
+      registeredHotkeys.set(key, { key, description, callback });
+      console.log(`Hotkey registered: ${key} - ${description}`);
+      return true;
+    } else {
+      console.error(`Failed to register hotkey: ${key}`);
+      return false;
+    }
+  } catch (error) {
+    console.error(`Error registering hotkey ${key}:`, error);
+    return false;
+  }
 }
 
 /**
- * Unregister a hotkey
- * TODO: Implement with electron's globalShortcut
+ * Unregister a global hotkey
  */
-export function unregisterHotkey(accelerator: string): void {
-  // TODO: Use electron.globalShortcut.unregister
-  console.log('Unregistering hotkey:', accelerator);
-  registeredHotkeys.delete(accelerator);
+export function unregisterHotkey(key: string): void {
+  try {
+    globalShortcut.unregister(key);
+    registeredHotkeys.delete(key);
+    console.log(`Hotkey unregistered: ${key}`);
+  } catch (error) {
+    console.error(`Error unregistering hotkey ${key}:`, error);
+  }
 }
 
 /**
  * Unregister all hotkeys
- * TODO: Implement
  */
 export function unregisterAllHotkeys(): void {
-  // TODO: Use electron.globalShortcut.unregisterAll
-  console.log('Unregistering all hotkeys');
-  registeredHotkeys.clear();
+  try {
+    globalShortcut.unregisterAll();
+    registeredHotkeys.clear();
+    console.log('All hotkeys unregistered');
+  } catch (error) {
+    console.error('Error unregistering all hotkeys:', error);
+  }
 }
 
 /**
- * Check if hotkey is available
- * TODO: Implement
+ * Get list of registered hotkeys
  */
-export function isHotkeyAvailable(accelerator: string): boolean {
-  // TODO: Check if hotkey is already registered
-  return !registeredHotkeys.has(accelerator);
+export function getRegisteredHotkeys(): HotkeyConfig[] {
+  return Array.from(registeredHotkeys.values());
+}
+
+/**
+ * Check if a hotkey is registered
+ */
+export function isHotkeyRegistered(key: string): boolean {
+  return globalShortcut.isRegistered(key);
+}
+
+/**
+ * Register default miniGamba hotkeys
+ */
+export function registerDefaultHotkeys(overlayWindow: BrowserWindow | null): void {
+  registerHotkey('CommandOrControl+Shift+G', 'Toggle Overlay', () => {
+    if (overlayWindow) {
+      if (overlayWindow.isVisible()) {
+        overlayWindow.hide();
+      } else {
+        overlayWindow.show();
+        overlayWindow.focus();
+      }
+    }
+  });
+
+  registerHotkey('CommandOrControl+Shift+M', 'Minimize Overlay', () => {
+    if (overlayWindow && overlayWindow.isVisible()) {
+      overlayWindow.minimize();
+    }
+  });
+
+  console.log('Default hotkeys registered');
+}
+
+/**
+ * Validate hotkey format
+ */
+export function validateHotkey(key: string): boolean {
+  const validModifiers = ['CommandOrControl', 'Command', 'Control', 'Alt', 'Shift', 'Super'];
+  const parts = key.split('+');
+  
+  if (parts.length === 0) return false;
+  
+  const actualKey = parts[parts.length - 1];
+  if (!actualKey || actualKey.length === 0) return false;
+  
+  for (let i = 0; i < parts.length - 1; i++) {
+    if (!validModifiers.includes(parts[i])) {
+      return false;
+    }
+  }
+  
+  return true;
 }

@@ -2,47 +2,137 @@
  * Main Dashboard Application Component
  */
 
-import React from 'react';
-// TODO: Import components when created
-// import Sidebar from './navigation/Sidebar';
-// import TopBar from './navigation/TopBar';
-// import Home from './pages/Home';
+import React, { useState, useEffect } from 'react';
+import HomePage from '../pages/HomePage';
+import GamesPage from '../pages/GamesPage';
+import AchievementsPage from '../pages/AchievementsPage';
+import StatsPage from '../pages/StatsPage';
+import ProfilePage from '../pages/ProfilePage';
+import SettingsPage from '../pages/SettingsPage';
+import '../styles/dashboard.css';
+
+type PageType = 'home' | 'games' | 'achievements' | 'stats' | 'profile' | 'settings';
 
 const App: React.FC = () => {
-  // TODO: Set up routing
-  // TODO: Load user data on mount
-  // TODO: Set up state management
+  const [currentPage, setCurrentPage] = useState<PageType>('home');
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const data = await window.electronAPI.getUserData();
+      setUserData(data);
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLaunchOverlay = () => {
+    if (window.electronAPI.launchOverlay) {
+      window.electronAPI.launchOverlay();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="app">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <h2>Loading miniGamba...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <div className="app-header">
-        {/* TODO: Add TopBar component */}
-        <h1>miniGamba Dashboard</h1>
+        <h1>🎰 miniGamba</h1>
+        {userData && (
+          <div className="header-user">
+            <div className="coin-display">
+              💰 {userData.coins?.toLocaleString() || 0}
+            </div>
+            <div className="level-display">
+              ⭐ Level {userData.level || 1}
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="app-layout">
         <aside className="app-sidebar">
-          {/* TODO: Add Sidebar component */}
           <nav>
             <ul>
-              <li>Home</li>
-              <li>Games</li>
-              <li>Leaderboard</li>
-              <li>Achievements</li>
-              <li>Customization</li>
-              <li>Stats</li>
-              <li>Settings</li>
+              <li>
+                <button 
+                  className={currentPage === 'home' ? 'active' : ''}
+                  onClick={() => setCurrentPage('home')}
+                >
+                  🏠 Home
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={currentPage === 'games' ? 'active' : ''}
+                  onClick={() => setCurrentPage('games')}
+                >
+                  🎮 Games
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={currentPage === 'achievements' ? 'active' : ''}
+                  onClick={() => setCurrentPage('achievements')}
+                >
+                  🏆 Achievements
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={currentPage === 'stats' ? 'active' : ''}
+                  onClick={() => setCurrentPage('stats')}
+                >
+                  📊 Stats
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={currentPage === 'profile' ? 'active' : ''}
+                  onClick={() => setCurrentPage('profile')}
+                >
+                  👤 Profile
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={currentPage === 'settings' ? 'active' : ''}
+                  onClick={() => setCurrentPage('settings')}
+                >
+                  ⚙️ Settings
+                </button>
+              </li>
+              <li style={{ marginTop: '2rem' }}>
+                <button onClick={handleLaunchOverlay} className="btn btn-primary" style={{ width: '100%' }}>
+                  🚀 Launch Overlay
+                </button>
+              </li>
             </ul>
           </nav>
         </aside>
         
         <main className="app-content">
-          {/* TODO: Add routing and page components */}
-          <div className="placeholder">
-            <h2>Welcome to miniGamba!</h2>
-            <p>This is the dashboard placeholder.</p>
-            <button>Launch Overlay</button>
-          </div>
+          {currentPage === 'home' && <HomePage userData={userData} onRefresh={loadUserData} />}
+          {currentPage === 'games' && <GamesPage />}
+          {currentPage === 'achievements' && <AchievementsPage />}
+          {currentPage === 'stats' && <StatsPage />}
+          {currentPage === 'profile' && <ProfilePage userData={userData} onUpdate={loadUserData} />}
+          {currentPage === 'settings' && <SettingsPage />}
         </main>
       </div>
     </div>
