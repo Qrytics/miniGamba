@@ -333,9 +333,9 @@ export class MiniDerby extends GameEngine {
     const totalTicks = this.RACE_DURATION / this.RACE_TICK_INTERVAL;
     const baseSpeed = 100 / totalTicks;
     
-    // Adjust speed based on odds (inverse)
-    // 2x odds = ~40% win rate, 10x odds = ~10% win rate
-    const speedMultiplier = 5 / odds;
+    // Adjust speed based on odds (inverse proportional to odds)
+    // 2x odds ≈ 1/2 speed factor, 10x odds ≈ 1/10 speed factor
+    const speedMultiplier = 1 / odds;
     return baseSpeed * speedMultiplier;
   }
 
