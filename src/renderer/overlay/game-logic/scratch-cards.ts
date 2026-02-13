@@ -192,7 +192,6 @@ export class ScratchCards extends GameEngine {
    * Note: Win/loss is predetermined when card is generated (matches physical scratch cards)
    */
   private generateCard(): void {
-    const symbols = this.TIER_SYMBOLS[this.tier];
     this.panels = [];
     this.scratchedPanels = new Array(9).fill(false);
     this.prize = 0;
