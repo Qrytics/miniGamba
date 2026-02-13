@@ -9,8 +9,6 @@ let overlayWindow: BrowserWindow | null = null;
  * while doing other activities
  */
 export function createOverlayWindow(): BrowserWindow {
-  // TODO: Load saved overlay position, size, and opacity from settings
-  
   // Get primary display to position overlay
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
@@ -28,29 +26,30 @@ export function createOverlayWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../../preload/overlay-preload.js'),
+      preload: path.join(__dirname, '../preload/overlay-preload.js'),
     },
-    // TODO: Add click-through mode support
+    backgroundColor: '#00000000', // Fully transparent
+    show: false,
   });
 
-  // TODO: Load the overlay HTML
-  overlayWindow.loadFile('src/renderer/overlay/index.html');
+  // Load the overlay HTML
+  const isDev = process.env.NODE_ENV === 'development';
+  if (isDev) {
+    overlayWindow.loadURL('http://localhost:3001');
+  } else {
+    overlayWindow.loadFile(path.join(__dirname, '../renderer/overlay/index.html'));
+  }
 
-  // TODO: Set up opacity control
-  // overlayWindow.setOpacity(0.95);
-
-  // TODO: Save window position on move
-  overlayWindow.on('move', () => {
-    // Save overlay position to settings
+  // Show window when ready
+  overlayWindow.once('ready-to-show', () => {
+    overlayWindow?.show();
+    overlayWindow?.setOpacity(0.9);
   });
 
   overlayWindow.on('closed', () => {
     overlayWindow = null;
   });
 
-  // TODO: Make window draggable
-  // TODO: Set up hotkey to toggle visibility
-  
   return overlayWindow;
 }
 
@@ -108,7 +107,6 @@ export function setOverlaySize(width: number, height: number): void {
  */
 export function setClickThrough(enabled: boolean): void {
   if (overlayWindow) {
-    overlayWindow.setIgnoreMouseEvents(enabled);
-    // TODO: Add visual indicator when click-through is enabled
+    overlayWindow.setIgnoreMouseEvents(enabled, { forward: true });
   }
 }

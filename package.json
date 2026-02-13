@@ -17,6 +17,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "better-sqlite3": "^9.0.0",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@electron-forge/maker-squirrel": "^7.0.0",
     "@electron-forge/maker-zip": "^7.0.0",
     "@electron-forge/plugin-webpack": "^7.0.0",
+    "@types/better-sqlite3": "^7.6.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",

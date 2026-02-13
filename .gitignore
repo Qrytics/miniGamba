@@ -8,8 +8,8 @@ dist/
 out/
 build/
 
-# Runtime data
-data/
+# Runtime data (not source code in src/*/data/)
+/data/
 *.db
 *.db-journal
 

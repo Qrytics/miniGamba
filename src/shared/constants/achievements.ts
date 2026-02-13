@@ -1,5 +1,11 @@
 /**
  * Achievement constants and definitions
+ * Based on productReqDoc.md achievement specifications
+ * 
+ * Note: Achievement keys use kebab-case (e.g., 'first-spin', 'coin-flip-savant')
+ * for consistency with IDs. Access using bracket notation: achievements['first-spin']
+ * This approach provides a clear, readable structure and matches common game
+ * achievement naming conventions.
  */
 
 export const ACHIEVEMENT_CATEGORIES = {
@@ -12,10 +18,20 @@ export const ACHIEVEMENT_CATEGORIES = {
   SECRET: 'secret',
 } as const;
 
-// TODO: Define all achievements with their requirements
-export const ACHIEVEMENTS = {
-  // Gambling achievements
-  FIRST_SPIN: {
+export type AchievementCategory = typeof ACHIEVEMENT_CATEGORIES[keyof typeof ACHIEVEMENT_CATEGORIES];
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  category: AchievementCategory;
+  points: number;
+  hidden: boolean;
+}
+
+export const achievements: Record<string, Achievement> = {
+  // 🎰 GAMBLING ACHIEVEMENTS
+  'first-spin': {
     id: 'first-spin',
     name: 'First Spin',
     description: 'Play the slot machine for the first time',
@@ -23,7 +39,7 @@ export const ACHIEVEMENTS = {
     points: 5,
     hidden: false,
   },
-  FIRST_JACKPOT: {
+  'first-jackpot': {
     id: 'first-jackpot',
     name: "Baby's First Jackpot",
     description: 'Hit a jackpot on the slot machine',
@@ -31,10 +47,521 @@ export const ACHIEVEMENTS = {
     points: 15,
     hidden: false,
   },
-  // TODO: Add all other achievements from productReqDoc.md
-  
-  // Secret achievements
-  MIDNIGHT_SPIN: {
+  'jackpot-hunter': {
+    id: 'jackpot-hunter',
+    name: 'Jackpot Hunter',
+    description: 'Hit 10 jackpots total',
+    category: 'gambling',
+    points: 50,
+    hidden: false,
+  },
+  'jackpot-addict': {
+    id: 'jackpot-addict',
+    name: 'Jackpot Addict',
+    description: 'Hit 100 jackpots total',
+    category: 'gambling',
+    points: 200,
+    hidden: false,
+  },
+  'twentyone': {
+    id: 'twentyone',
+    name: '21!',
+    description: 'Win a blackjack hand with exactly 21',
+    category: 'gambling',
+    points: 10,
+    hidden: false,
+  },
+  'card-counter': {
+    id: 'card-counter',
+    name: 'Card Counter',
+    description: 'Win 10 blackjack hands in a row',
+    category: 'gambling',
+    points: 75,
+    hidden: false,
+  },
+  'card-shark': {
+    id: 'card-shark',
+    name: 'Card Shark',
+    description: 'Win 100 blackjack hands total',
+    category: 'gambling',
+    points: 100,
+    hidden: false,
+  },
+  'coin-flip-savant': {
+    id: 'coin-flip-savant',
+    name: 'Coin Flip Savant',
+    description: 'Win 5 coin flips in a row',
+    category: 'gambling',
+    points: 25,
+    hidden: false,
+  },
+  'two-face': {
+    id: 'two-face',
+    name: 'Two-Face',
+    description: 'Win 20 coin flips in a row',
+    category: 'gambling',
+    points: 150,
+    hidden: false,
+  },
+  'streak-demon': {
+    id: 'streak-demon',
+    name: 'Streak Demon',
+    description: 'Hit a 10-streak in Higher or Lower',
+    category: 'gambling',
+    points: 100,
+    hidden: false,
+  },
+  'the-oracle': {
+    id: 'the-oracle',
+    name: 'The Oracle',
+    description: 'Hit a 15-streak in Higher or Lower',
+    category: 'gambling',
+    points: 300,
+    hidden: false,
+  },
+  'bomb-technician': {
+    id: 'bomb-technician',
+    name: 'Bomb Technician',
+    description: 'Clear a full Minesweeper board with 10 mines',
+    category: 'gambling',
+    points: 150,
+    hidden: false,
+  },
+  'nerves-of-steel': {
+    id: 'nerves-of-steel',
+    name: 'Nerves of Steel',
+    description: 'Cash out at 20x+ in Minesweeper',
+    category: 'gambling',
+    points: 100,
+    hidden: false,
+  },
+  'scratch-itch': {
+    id: 'scratch-itch',
+    name: 'Scratch That Itch',
+    description: 'Scratch 50 scratch cards',
+    category: 'gambling',
+    points: 30,
+    hidden: false,
+  },
+  'golden-ticket': {
+    id: 'golden-ticket',
+    name: 'Golden Ticket',
+    description: 'Win the top prize from a Diamond scratch card',
+    category: 'gambling',
+    points: 200,
+    hidden: false,
+  },
+  'wheel-warrior': {
+    id: 'wheel-warrior',
+    name: 'Wheel Warrior',
+    description: 'Spin the Wheel of Fortune 100 times',
+    category: 'gambling',
+    points: 50,
+    hidden: false,
+  },
+  'full-house': {
+    id: 'full-house',
+    name: 'Full House',
+    description: 'Win at Mini Poker 25 times',
+    category: 'gambling',
+    points: 50,
+    hidden: false,
+  },
+  'dark-horse': {
+    id: 'dark-horse',
+    name: 'Dark Horse',
+    description: 'Win a Mini Derby bet on the 10x odds racer',
+    category: 'gambling',
+    points: 75,
+    hidden: false,
+  },
+  'snake-eyes': {
+    id: 'snake-eyes',
+    name: 'Snake Eyes',
+    description: 'Roll double 1s in Dice Roll',
+    category: 'gambling',
+    points: 20,
+    hidden: false,
+  },
+  'boxcars': {
+    id: 'boxcars',
+    name: 'Boxcars',
+    description: 'Roll double 6s in Dice Roll',
+    category: 'gambling',
+    points: 20,
+    hidden: false,
+  },
+  'perfectionist': {
+    id: 'perfectionist',
+    name: 'Perfectionist',
+    description: 'Win at least once in every mini-game',
+    category: 'gambling',
+    points: 50,
+    hidden: false,
+  },
+  'the-gambler': {
+    id: 'the-gambler',
+    name: 'The Gambler',
+    description: 'Play 1,000 total games across all mini-games',
+    category: 'gambling',
+    points: 100,
+    hidden: false,
+  },
+  'no-life': {
+    id: 'no-life',
+    name: 'No Life',
+    description: 'Play 10,000 total games across all mini-games',
+    category: 'gambling',
+    points: 500,
+    hidden: false,
+  },
+
+  // 💰 ECONOMY ACHIEVEMENTS
+  'pocket-change': {
+    id: 'pocket-change',
+    name: 'Pocket Change',
+    description: 'Earn your first 100 coins',
+    category: 'economy',
+    points: 5,
+    hidden: false,
+  },
+  'stacking-up': {
+    id: 'stacking-up',
+    name: 'Stacking Up',
+    description: 'Earn 1,000 coins total',
+    category: 'economy',
+    points: 10,
+    hidden: false,
+  },
+  'fat-stacks': {
+    id: 'fat-stacks',
+    name: 'Fat Stacks',
+    description: 'Earn 10,000 coins total',
+    category: 'economy',
+    points: 25,
+    hidden: false,
+  },
+  'trust-fund-baby': {
+    id: 'trust-fund-baby',
+    name: 'Trust Fund Baby',
+    description: 'Earn 100,000 coins total',
+    category: 'economy',
+    points: 75,
+    hidden: false,
+  },
+  'mini-mogul': {
+    id: 'mini-mogul',
+    name: 'Mini Mogul',
+    description: 'Earn 1,000,000 coins total',
+    category: 'economy',
+    points: 300,
+    hidden: false,
+  },
+  'investor': {
+    id: 'investor',
+    name: 'Investor',
+    description: 'Make your first coin investment',
+    category: 'economy',
+    points: 10,
+    hidden: false,
+  },
+  'wolf-of-minigamba': {
+    id: 'wolf-of-minigamba',
+    name: 'Wolf of miniGamba',
+    description: 'Earn 10,000 coins from investments alone',
+    category: 'economy',
+    points: 100,
+    hidden: false,
+  },
+  'diamond-hands': {
+    id: 'diamond-hands',
+    name: 'Diamond Hands',
+    description: 'Leave an investment untouched for 7 days',
+    category: 'economy',
+    points: 50,
+    hidden: false,
+  },
+  'paper-hands': {
+    id: 'paper-hands',
+    name: 'Paper Hands',
+    description: 'Pull out an investment within 1 minute',
+    category: 'economy',
+    points: 10,
+    hidden: false,
+  },
+  'bankrupt': {
+    id: 'bankrupt',
+    name: 'Bankrupt',
+    description: 'Reach 0 coins',
+    category: 'economy',
+    points: 5,
+    hidden: false,
+  },
+  'rock-bottom': {
+    id: 'rock-bottom',
+    name: 'Rock Bottom',
+    description: 'Go bankrupt 10 times',
+    category: 'economy',
+    points: 25,
+    hidden: false,
+  },
+  'the-comeback': {
+    id: 'the-comeback',
+    name: 'The Comeback',
+    description: 'Go from 0 coins to 10,000 coins in one session',
+    category: 'economy',
+    points: 100,
+    hidden: false,
+  },
+  'hoarder': {
+    id: 'hoarder',
+    name: 'Hoarder',
+    description: 'Have 50,000 coins in your balance at one time',
+    category: 'economy',
+    points: 75,
+    hidden: false,
+  },
+  'scrooge': {
+    id: 'scrooge',
+    name: 'Scrooge',
+    description: 'Have 100,000 coins without spending any for 3 days',
+    category: 'economy',
+    points: 100,
+    hidden: false,
+  },
+
+  // 📺 ACTIVITY & PASSIVE ACHIEVEMENTS
+  'couch-potato': {
+    id: 'couch-potato',
+    name: 'Couch Potato',
+    description: 'Earn 1,000 coins from passive video watching',
+    category: 'activity',
+    points: 15,
+    hidden: false,
+  },
+  'binge-watcher': {
+    id: 'binge-watcher',
+    name: 'Binge Watcher',
+    description: 'Watch 10 hours of video content with miniGamba open',
+    category: 'activity',
+    points: 30,
+    hidden: false,
+  },
+  'marathon-viewer': {
+    id: 'marathon-viewer',
+    name: 'Marathon Viewer',
+    description: 'Watch 100 hours of video content with miniGamba open',
+    category: 'activity',
+    points: 100,
+    hidden: false,
+  },
+  'desk-jockey': {
+    id: 'desk-jockey',
+    name: 'Desk Jockey',
+    description: 'Earn coins from 50 hours of active PC time',
+    category: 'activity',
+    points: 25,
+    hidden: false,
+  },
+  'speed-demon': {
+    id: 'speed-demon',
+    name: 'Speed Demon',
+    description: 'Complete a typing challenge in under 3 seconds',
+    category: 'activity',
+    points: 50,
+    hidden: false,
+  },
+  'daily-grinder': {
+    id: 'daily-grinder',
+    name: 'Daily Grinder',
+    description: 'Complete all daily tasks in one day',
+    category: 'activity',
+    points: 20,
+    hidden: false,
+  },
+  'weekly-warrior': {
+    id: 'weekly-warrior',
+    name: 'Weekly Warrior',
+    description: 'Complete all daily tasks 7 days in a row',
+    category: 'activity',
+    points: 75,
+    hidden: false,
+  },
+  'monthly-maniac': {
+    id: 'monthly-maniac',
+    name: 'Monthly Maniac',
+    description: 'Complete all daily tasks 30 days in a row',
+    category: 'activity',
+    points: 200,
+    hidden: false,
+  },
+  'claim-king': {
+    id: 'claim-king',
+    name: 'Claim King',
+    description: 'Claim the hourly bonus 100 times',
+    category: 'activity',
+    points: 25,
+    hidden: false,
+  },
+  'early-bird': {
+    id: 'early-bird',
+    name: 'Early Bird',
+    description: 'Claim the hourly bonus before 7 AM',
+    category: 'activity',
+    points: 10,
+    hidden: false,
+  },
+  'night-owl': {
+    id: 'night-owl',
+    name: 'Night Owl',
+    description: 'Claim the hourly bonus after 2 AM',
+    category: 'activity',
+    points: 10,
+    hidden: false,
+  },
+  'patient-gamer': {
+    id: 'patient-gamer',
+    name: 'Patient Gamer',
+    description: 'Survive 10 death timers without gambling',
+    category: 'activity',
+    points: 30,
+    hidden: false,
+  },
+  'zen-master': {
+    id: 'zen-master',
+    name: 'Zen Master',
+    description: 'Survive 100 death timers without gambling',
+    category: 'activity',
+    points: 100,
+    hidden: false,
+  },
+
+  // 🏆 SOCIAL & LEADERBOARD ACHIEVEMENTS
+  'friendly': {
+    id: 'friendly',
+    name: 'Friendly',
+    description: 'Add your first friend',
+    category: 'social',
+    points: 5,
+    hidden: false,
+  },
+  'squad-up': {
+    id: 'squad-up',
+    name: 'Squad Up',
+    description: 'Have 5 friends added',
+    category: 'social',
+    points: 15,
+    hidden: false,
+  },
+  'number-one': {
+    id: 'number-one',
+    name: '#1',
+    description: 'Reach the top of any leaderboard category',
+    category: 'social',
+    points: 50,
+    hidden: false,
+  },
+  'untouchable': {
+    id: 'untouchable',
+    name: 'Untouchable',
+    description: 'Hold #1 on any leaderboard for 7 consecutive days',
+    category: 'social',
+    points: 150,
+    hidden: false,
+  },
+  'challenger': {
+    id: 'challenger',
+    name: 'Challenger',
+    description: 'Send 10 challenges to friends',
+    category: 'social',
+    points: 20,
+    hidden: false,
+  },
+  'rival': {
+    id: 'rival',
+    name: 'Rival',
+    description: "Beat a friend's challenge",
+    category: 'social',
+    points: 25,
+    hidden: false,
+  },
+  'nemesis': {
+    id: 'nemesis',
+    name: 'Nemesis',
+    description: "Beat the same friend's challenge 10 times",
+    category: 'social',
+    points: 75,
+    hidden: false,
+  },
+  'shamed': {
+    id: 'shamed',
+    name: 'Shamed',
+    description: 'Appear on the Shame Board for going bankrupt',
+    category: 'social',
+    points: 10,
+    hidden: false,
+  },
+  'shameless': {
+    id: 'shameless',
+    name: 'Shameless',
+    description: 'Appear on the Shame Board 10 times',
+    category: 'social',
+    points: 50,
+    hidden: false,
+  },
+
+  // 🎨 CUSTOMIZATION & META ACHIEVEMENTS
+  'fashion-show': {
+    id: 'fashion-show',
+    name: 'Fashion Show',
+    description: 'Unlock 5 different overlay themes',
+    category: 'customization',
+    points: 20,
+    hidden: false,
+  },
+  'drip-lord': {
+    id: 'drip-lord',
+    name: 'Drip Lord',
+    description: 'Unlock 20 cosmetic items total',
+    category: 'customization',
+    points: 50,
+    hidden: false,
+  },
+  'interior-designer': {
+    id: 'interior-designer',
+    name: 'Interior Designer',
+    description: 'Change your dashboard wallpaper',
+    category: 'customization',
+    points: 5,
+    hidden: false,
+  },
+  'identity-crisis': {
+    id: 'identity-crisis',
+    name: 'Identity Crisis',
+    description: 'Change your profile title 10 times',
+    category: 'customization',
+    points: 10,
+    hidden: false,
+  },
+  'collector': {
+    id: 'collector',
+    name: 'Collector',
+    description: 'Own at least one item from every cosmetic category',
+    category: 'customization',
+    points: 100,
+    hidden: false,
+  },
+  'completionist': {
+    id: 'completionist',
+    name: 'Completionist',
+    description: 'Unlock every achievement (except secret ones)',
+    category: 'meta',
+    points: 500,
+    hidden: false,
+  },
+
+  // 🔒 SECRET / HIDDEN ACHIEVEMENTS
+  'midnight-spin': {
     id: 'midnight-spin',
     name: '???',
     description: 'Spin the slot machine at exactly midnight',
@@ -42,7 +569,54 @@ export const ACHIEVEMENTS = {
     points: 25,
     hidden: true,
   },
-} as const;
+  'loss-to-jackpot': {
+    id: 'loss-to-jackpot',
+    name: '???',
+    description: 'Lose 10 games in a row then win a jackpot',
+    category: 'secret',
+    points: 50,
+    hidden: true,
+  },
+  'logo-clicker': {
+    id: 'logo-clicker',
+    name: '???',
+    description: 'Click the miniGamba logo 50 times in the dashboard',
+    category: 'secret',
+    points: 15,
+    hidden: true,
+  },
+  'twenty-four-hours': {
+    id: 'twenty-four-hours',
+    name: '???',
+    description: 'Play miniGamba for 24 hours total',
+    category: 'secret',
+    points: 50,
+    hidden: true,
+  },
+  'one-coin': {
+    id: 'one-coin',
+    name: '???',
+    description: 'Have exactly 1 coin in your balance',
+    category: 'secret',
+    points: 25,
+    hidden: true,
+  },
+  'perfect-run': {
+    id: 'perfect-run',
+    name: '???',
+    description: 'Win coin flip, blackjack, higher-lower, poker, derby, and dice all in a row without losing',
+    category: 'secret',
+    points: 300,
+    hidden: true,
+  },
+  'comeback-kid': {
+    id: 'comeback-kid',
+    name: '???',
+    description: 'Go bankrupt and immediately hit a jackpot from the free daily spin',
+    category: 'secret',
+    points: 100,
+    hidden: true,
+  },
+};
 
-// TODO: Add achievement checking functions
-// TODO: Add achievement progress tracking
+export type AchievementId = keyof typeof achievements;
