@@ -145,8 +145,12 @@ export class DailyTasksService {
       ).filter(Boolean);
     }
 
-    // Select 5 random tasks for today
-    const shuffled = [...this.allTasks].sort(() => Math.random() - 0.5);
+    // Select 5 random tasks for today using unbiased Fisher–Yates shuffle
+    const shuffled = [...this.allTasks];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
     const selectedTasks = shuffled.slice(0, 5);
 
     // Initialize in database
