@@ -8,7 +8,6 @@ import * as path from 'path';
 import { app } from 'electron';
 import { User, UserProfile } from '../../../shared/types/user.types';
 import { GameType, GameResult } from '../../../shared/types/game.types';
-import { Achievement } from '../../../shared/types/achievement.types';
 
 export class DatabaseService {
   private db: Database.Database | null = null;
