@@ -48,6 +48,15 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
       await engine.flip(choice);
       const state = engine.getState();
       const endResult = engine.end();
+      
+      // Guard against undefined result from engine.end()
+      if (!endResult) {
+        console.error('engine.end() returned undefined');
+        setResult({ bet, payout: 0, win: false, result: 'loss' });
+        await window.electronAPI.endGame('coin-flip', { bet, payout: 0, win: false, result: 'loss' });
+        onCoinsUpdate();
+        return;
+      }
 
       const gameResult = {
         ...state,

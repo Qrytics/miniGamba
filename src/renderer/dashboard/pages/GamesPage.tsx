@@ -44,7 +44,7 @@ const GamesPage: React.FC = () => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <h2 style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} data-testid="games-page-header">
         <PixelIcon name="game" size={28} aria-hidden={true} /> Games
       </h2>
       <p className="text-muted" style={{ marginBottom: '2rem' }}>

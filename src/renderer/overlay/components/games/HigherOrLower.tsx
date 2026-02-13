@@ -31,7 +31,7 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       setStreak(streak + 1);
       setCurrentCard(['A♥', 'K♦', 'Q♣', '10♠'][Math.floor(Math.random() * 4)]);
     } else {
-      const payout = bet * (1 + streak * 0.2);
+      const payout = 0; // Set payout to 0 for losses
       const gameResult = { 
         bet: bet,
         payout: payout,

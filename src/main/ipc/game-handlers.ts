@@ -8,6 +8,14 @@ import { userDataService } from '../services/data/user-data';
 import { gameHistoryService } from '../services/data/game-history';
 import { achievementService } from '../services/data/achievement-service';
 import { GameType, GameResult } from '../../shared/types/game.types';
+import { generateUUID } from '../utils/crypto';
+
+// Module-scope Map to track active bets by sessionId
+interface ActiveBet {
+  gameType: GameType;
+  bet: number;
+}
+const activeBets = new Map<string, ActiveBet>();
 
 // Register all game-related IPC handlers
 ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
@@ -40,7 +48,11 @@ ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
       return { success: false, error: 'Failed to deduct coins' };
     }
     
-    return { success: true, currentCoins: user.coins - bet };
+    // Generate sessionId and store bet
+    const sessionId = generateUUID();
+    activeBets.set(sessionId, { gameType, bet });
+    
+    return { success: true, currentCoins: user.coins - bet, sessionId };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -50,22 +62,20 @@ ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) =>
   try {
     const user = userDataService.getUser();
     
-    // Extract bet and payout from result data
-    // The bet should be stored when startGame is called, but we need to get it from resultData
-    // Check multiple possible locations for bet
+    // Extract bet from sessionId if available, otherwise fallback to resultData.bet
     let bet = resultData.bet;
-    if (!bet && resultData.state && resultData.state.bet) {
-      bet = resultData.state.bet;
+    const sessionId = resultData.sessionId;
+    
+    if (sessionId && activeBets.has(sessionId)) {
+      const activeBet = activeBets.get(sessionId)!;
+      bet = activeBet.bet;
+      // Clean up the session
+      activeBets.delete(sessionId);
     }
-    if (!bet && typeof resultData.payout === 'number' && resultData.payout > 0) {
-      // If payout exists, bet was likely the original bet amount
-      // For coin flip: payout is bet * 2 if win, 0 if loss
-      // So if payout > 0, bet is likely payout / 2
-      bet = Math.floor(resultData.payout / 2);
-    }
+    
+    // Fallback: if bet is still not found, try resultData.bet
     if (!bet || bet <= 0) {
-      // Fallback: use a default bet amount based on game type
-      bet = 10; // Default minimum bet
+      bet = resultData.bet || 10; // Use provided bet or default
     }
     
     const payout = resultData.payout || 0;

@@ -32,7 +32,7 @@ const StatsPage: React.FC = () => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '2rem' }}>📊 Statistics</h2>
+      <h2 style={{ marginBottom: '2rem' }} data-testid="stats-page-header">📊 Statistics</h2>
 
       <div className="grid grid-4" style={{ marginBottom: '2rem' }}>
         <div className="stat-card">

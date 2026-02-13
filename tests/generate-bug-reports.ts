@@ -69,7 +69,7 @@ function extractTestInfo(filePath: string): { testName: string; testFile: string
 async function generateReports(): Promise<void> {
   console.log('🔍 Scanning test results...\n');
 
-  const testResultsDir = path.join(__dirname, '../test-results');
+  const testResultsDir = path.join(__dirname, '../tests/test-results');
   const bugReportsDir = path.join(__dirname, 'bug-reports');
   const lastRunFile = path.join(testResultsDir, '.last-run.json');
   
