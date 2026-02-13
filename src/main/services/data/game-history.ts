@@ -64,22 +64,24 @@ export class GameHistoryService {
     `).get(userId, gameType) as any;
 
     if (!currentStats) {
-      // Create initial stats
+      // Create initial stats for first game of this type
       const isWin = result === 'win';
+      const profit = payout - betAmount;
+      
       db.prepare(`
         INSERT INTO game_stats 
         (user_id, game_type, total_games, wins, losses, total_wagered, total_won, biggest_win, biggest_loss, current_streak, best_streak)
         VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         userId, gameType,
-        isWin ? 1 : 0,
-        isWin ? 0 : 1,
-        betAmount,
-        payout,
-        isWin ? payout - betAmount : 0,
-        isWin ? 0 : betAmount,
-        isWin ? 1 : 0,
-        isWin ? 1 : 0
+        isWin ? 1 : 0,          // wins: 1 if win, 0 if loss
+        isWin ? 0 : 1,          // losses: 0 if win, 1 if loss
+        betAmount,              // total wagered
+        payout,                 // total won (includes returned bet on win)
+        isWin ? profit : 0,     // biggest win (profit, not payout)
+        isWin ? 0 : betAmount,  // biggest loss (bet amount on loss)
+        isWin ? 1 : 0,          // current streak
+        isWin ? 1 : 0           // best streak
       );
     } else {
       // Update existing stats

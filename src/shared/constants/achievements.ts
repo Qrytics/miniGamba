@@ -1,6 +1,11 @@
 /**
  * Achievement constants and definitions
  * Based on productReqDoc.md achievement specifications
+ * 
+ * Note: Achievement keys use kebab-case (e.g., 'first-spin', 'coin-flip-savant')
+ * for consistency with IDs. Access using bracket notation: achievements['first-spin']
+ * This approach provides a clear, readable structure and matches common game
+ * achievement naming conventions.
  */
 
 export const ACHIEVEMENT_CATEGORIES = {

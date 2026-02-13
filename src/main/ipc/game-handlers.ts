@@ -12,6 +12,16 @@ import { GameType, GameResult } from '../../shared/types/game.types';
 // Register all game-related IPC handlers
 ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
   try {
+    // Validate gameType
+    const validGameTypes: GameType[] = [
+      'slot-machine', 'blackjack', 'coin-flip', 'higher-or-lower', 'mine-sweeper',
+      'scratch-cards', 'wheel-of-fortune', 'mini-derby', 'dice-roll', 'mini-poker'
+    ];
+    
+    if (!validGameTypes.includes(gameType)) {
+      return { success: false, error: 'Invalid game type' };
+    }
+    
     const user = userDataService.getUser();
     
     // Validate bet amount
