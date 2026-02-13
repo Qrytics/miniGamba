@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - heading "🎰 miniGamba" [level=1] [ref=e5]
+    - generic [ref=e6]:
+      - generic [ref=e7]: 💰 0
+      - generic [ref=e8]: ⭐ Level 1
+  - generic [ref=e9]:
+    - complementary [ref=e10]:
+      - navigation [ref=e11]:
+        - list [ref=e12]:
+          - listitem [ref=e13] [cursor=pointer]:
+            - button "🏠 Home" [ref=e14]
+          - listitem [ref=e15] [cursor=pointer]:
+            - button "🎮 Games" [ref=e16]
+          - listitem [ref=e17] [cursor=pointer]:
+            - button "🏆 Achievements" [ref=e18]
+          - listitem [ref=e19] [cursor=pointer]:
+            - button "📊 Stats" [ref=e20]
+          - listitem [ref=e21] [cursor=pointer]:
+            - button "👤 Profile" [ref=e22]
+          - listitem [ref=e23] [cursor=pointer]:
+            - button "⚙️ Settings" [ref=e24]
+          - listitem [ref=e25] [cursor=pointer]:
+            - button "🚀 Launch Overlay" [active] [ref=e26]
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - heading "Welcome back, Player!" [level=2] [ref=e29]
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - generic [ref=e32]: Total Coins
+            - generic [ref=e33]: 💰 0
+          - generic [ref=e34]:
+            - generic [ref=e35]: Current Level
+            - generic [ref=e36]: ⭐ 1
+          - generic [ref=e37]:
+            - generic [ref=e38]: Total Games
+            - generic [ref=e39]: 🎮 0
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - heading "⏰ Hourly Bonus" [level=3] [ref=e43]
+            - paragraph [ref=e45]: "Next bonus in: Loading..."
+          - generic [ref=e47]:
+            - heading "📋 Daily Tasks" [level=3] [ref=e49]
+            - paragraph [ref=e50]: No tasks available
+        - generic [ref=e51]:
+          - heading "📈 Quick Stats" [level=3] [ref=e53]
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: Win Rate
+              - generic [ref=e57]: N/A
+            - generic [ref=e58]:
+              - generic [ref=e59]: Total Wagered
+              - generic [ref=e60]: "0"
+            - generic [ref=e61]:
+              - generic [ref=e62]: Biggest Win
+              - generic [ref=e63]: "0"
+            - generic [ref=e64]:
+              - generic [ref=e65]: Current Streak
+              - generic [ref=e66]: "0"
+```

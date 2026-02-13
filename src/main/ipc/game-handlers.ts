@@ -8,6 +8,14 @@ import { userDataService } from '../services/data/user-data';
 import { gameHistoryService } from '../services/data/game-history';
 import { achievementService } from '../services/data/achievement-service';
 import { GameType, GameResult } from '../../shared/types/game.types';
+import { generateUUID } from '../utils/crypto';
+
+// Module-scope Map to track active bets by sessionId
+interface ActiveBet {
+  gameType: GameType;
+  bet: number;
+}
+const activeBets = new Map<string, ActiveBet>();
 
 // Register all game-related IPC handlers
 ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
@@ -40,15 +48,55 @@ ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
       return { success: false, error: 'Failed to deduct coins' };
     }
     
-    return { success: true, currentCoins: user.coins - bet };
+    // Generate sessionId and store bet
+    const sessionId = generateUUID();
+    activeBets.set(sessionId, { gameType, bet });
+    
+    return { success: true, currentCoins: user.coins - bet, sessionId };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 });
 
-ipcMain.handle('game:end', async (event, gameType: GameType, bet: number, result: GameResult, payout: number, details?: any) => {
+ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) => {
   try {
     const user = userDataService.getUser();
+    
+    // Extract bet from sessionId if available, otherwise fallback to resultData.bet
+    let bet = resultData.bet;
+    const sessionId = resultData.sessionId;
+    
+    if (sessionId && activeBets.has(sessionId)) {
+      const activeBet = activeBets.get(sessionId)!;
+      bet = activeBet.bet;
+      // Clean up the session
+      activeBets.delete(sessionId);
+    }
+    
+    // Fallback: if bet is still not found, try resultData.bet
+    if (!bet || bet <= 0) {
+      bet = resultData.bet || 10; // Use provided bet or default
+    }
+    
+    const payout = resultData.payout || 0;
+    
+    // Determine result: check resultData first, then infer from payout
+    let result: GameResult = 'loss';
+    if (resultData.result) {
+      result = resultData.result;
+    } else if (resultData.win === true || (typeof resultData.win === 'boolean' && resultData.win)) {
+      result = 'win';
+    } else if (resultData.win === false) {
+      result = 'loss';
+    } else if (payout > bet) {
+      result = 'win';
+    } else if (payout === bet) {
+      result = 'push';
+    } else {
+      result = 'loss';
+    }
+    
+    const details = resultData;
     
     // Award payout
     if (payout > 0) {

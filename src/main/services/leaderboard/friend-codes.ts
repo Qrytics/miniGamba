@@ -27,7 +27,8 @@ export function getLocalFriendCode(userId: number): string {
     }
   }
   
-  return localFriendCode;
+  // We always set a friend code before returning, so non-null here.
+  return localFriendCode!;
 }
 
 /**

@@ -11,9 +11,9 @@ miniGamba is built using the **Electron** framework, which allows building cross
 - **Frontend Framework:** React 18
 - **Language:** TypeScript
 - **Desktop Framework:** Electron
-- **Styling:** CSS (with future plans for theme support)
-- **State Management:** TBD (Redux or Zustand)
-- **Database:** TBD (SQLite or JSON-based)
+- **Styling:** CSS with Balatro-inspired design tokens (`src/renderer/styles/balatro-design.css`); angular/edged panels (no border-radius); pixel-style icons via shared `PixelIcon` component
+- **State Management:** Local React state (useState/useEffect)
+- **Database:** SQLite (better-sqlite3)
 - **Build Tool:** Webpack (via Electron Forge)
 - **Package Manager:** npm
 
@@ -72,16 +72,16 @@ Renderer processes run in Chromium and display the UI.
 
 ```
 renderer/
+├── components/          # Shared (e.g. PixelIcon)
+├── styles/             # Shared design tokens (balatro-design.css)
 ├── dashboard/
-│   ├── components/      # React components
-│   ├── styles/          # CSS styles
-│   ├── hooks/           # Custom hooks
-│   └── state/           # State management
+│   ├── components/     # React components
+│   ├── pages/          # Page components
+│   └── styles/         # Dashboard CSS
 └── overlay/
-    ├── components/      # React components
-    ├── game-logic/      # Game engines
-    ├── styles/          # CSS styles
-    └── state/           # State management
+    ├── components/     # OverlayApp, game components
+    ├── game-logic/     # Game engines (slot, blackjack, etc.)
+    └── styles/         # Overlay CSS
 ```
 
 ### 3. Shared Layer

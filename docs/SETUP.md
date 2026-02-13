@@ -65,13 +65,22 @@ This will:
 
 ### Running Tests
 
+**Unit tests (Jest):**
 ```bash
 npm test
+npm run test:watch
 ```
 
-Run tests in watch mode:
+**E2E tests (Playwright):**
 ```bash
-npm run test:watch
+npm run test:e2e          # Full run
+npm run test:e2e:single   # One worker (easier to stop with Ctrl+C)
+npm run test:e2e:report   # Run then open HTML report
+```
+
+**Analyze test data and E2E results for bugs:**
+```bash
+npm run test:analyze      # Reads tests/reports/results.json + test-data folders
 ```
 
 ### Linting and Formatting
@@ -193,42 +202,15 @@ git push origin feature/your-feature-name
 - Check if file watchers are working
 - Increase file watcher limit (on Linux)
 
-## Next Steps
+## Implemented Features (Current)
 
-### TODO: Implementation Checklist
+- **Core:** SQLite database, user data, settings, game history, achievements, daily tasks, hourly bonus, investments.
+- **Games:** All 10 mini-games (Slots, Blackjack, Coin Flip, Hi/Lo, Mines, Scratch, Wheel, Derby, Dice, Poker) with UI and logic.
+- **UI:** Dashboard and overlay with Balatro-inspired design; angular/edged panels; pixel-style icons (no emojis in UI).
+- **E2E:** Playwright tests; `npm run test:analyze` for E2E failures + test-data issues; single-worker run for easy stop.
+- **Build:** Electron Forge, Webpack, preload scripts, type-safe IPC.
 
-The following features need to be implemented:
-
-#### Phase 1: Core Foundation
-- [ ] Implement database connection (SQLite)
-- [ ] Set up user data management
-- [ ] Implement settings persistence
-- [ ] Create basic UI layouts
-
-#### Phase 2: Game Implementation
-- [ ] Implement Slot Machine game UI and logic
-- [ ] Implement Blackjack game UI and logic
-- [ ] Implement Coin Flip game UI and logic
-- [ ] Implement remaining games
-
-#### Phase 3: Features
-- [ ] Game detection service
-- [ ] Activity tracking (video watching, idle time)
-- [ ] Achievement system
-- [ ] Leaderboard P2P sync
-- [ ] Cosmetics system
-
-#### Phase 4: Polish
-- [ ] Animations and transitions
-- [ ] Sound effects
-- [ ] Themes and customization
-- [ ] Performance optimization
-
-#### Phase 5: Testing & Deployment
-- [ ] Write comprehensive tests
-- [ ] Set up CI/CD pipeline
-- [ ] Create installers for Windows/Mac/Linux
-- [ ] Create user documentation
+See [IMPLEMENTATION_STATUS.md](../IMPLEMENTATION_STATUS.md) and [docs/DOCUMENTATION.md](DOCUMENTATION.md) for full documentation index and PDF generation.
 
 ## Resources
 
@@ -250,4 +232,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines (TODO).
 
 ---
 
-**Note:** This project is currently in the boilerplate setup phase. Many features have TODO comments indicating where implementation is needed. Start with Phase 1 of the implementation checklist above.
+**Note:** Documentation is in Markdown. To generate PDFs, see [docs/DOCUMENTATION.md](DOCUMENTATION.md).

@@ -13,19 +13,20 @@ import WheelOfFortune from './games/WheelOfFortune';
 import MiniDerby from './games/MiniDerby';
 import DiceRoll from './games/DiceRoll';
 import MiniPoker from './games/MiniPoker';
+import { PixelIcon, type PixelIconName } from '../../components/PixelIcon';
 import '../styles/overlay.css';
 
-const GAMES = [
-  { id: 'slot-machine', name: 'Slots', icon: '🎰', component: SlotMachine },
-  { id: 'blackjack', name: 'Blackjack', icon: '🃏', component: Blackjack },
-  { id: 'coin-flip', name: 'Coin Flip', icon: '🪙', component: CoinFlip },
-  { id: 'higher-or-lower', name: 'Hi/Lo', icon: '🎯', component: HigherOrLower },
-  { id: 'mine-sweeper', name: 'Mines', icon: '💣', component: MineSweeper },
-  { id: 'scratch-cards', name: 'Scratch', icon: '🎫', component: ScratchCards },
-  { id: 'wheel-of-fortune', name: 'Wheel', icon: '🎡', component: WheelOfFortune },
-  { id: 'mini-derby', name: 'Derby', icon: '🏇', component: MiniDerby },
-  { id: 'dice-roll', name: 'Dice', icon: '🎲', component: DiceRoll },
-  { id: 'mini-poker', name: 'Poker', icon: '♠️', component: MiniPoker },
+const GAMES: { id: string; name: string; icon: PixelIconName; component: React.ComponentType<{ onCoinsUpdate?: () => void }> }[] = [
+  { id: 'slot-machine', name: 'Slots', icon: 'slots', component: SlotMachine },
+  { id: 'blackjack', name: 'Blackjack', icon: 'card', component: Blackjack },
+  { id: 'coin-flip', name: 'Coin Flip', icon: 'coin', component: CoinFlip },
+  { id: 'higher-or-lower', name: 'Hi/Lo', icon: 'target', component: HigherOrLower },
+  { id: 'mine-sweeper', name: 'Mines', icon: 'mine', component: MineSweeper },
+  { id: 'scratch-cards', name: 'Scratch', icon: 'ticket', component: ScratchCards },
+  { id: 'wheel-of-fortune', name: 'Wheel', icon: 'wheel', component: WheelOfFortune },
+  { id: 'mini-derby', name: 'Derby', icon: 'horse', component: MiniDerby },
+  { id: 'dice-roll', name: 'Dice', icon: 'dice', component: DiceRoll },
+  { id: 'mini-poker', name: 'Poker', icon: 'spade', component: MiniPoker },
 ];
 
 const OverlayApp: React.FC = () => {
@@ -71,23 +72,24 @@ const OverlayApp: React.FC = () => {
     <div className="overlay-app">
       <div className="overlay-header">
         <div className="header-left">
-          <div className="coin-display">
-            💰 {userData?.coins?.toLocaleString() || 0}
+          <div className="coin-display" data-testid="overlay-coin-display">
+            <PixelIcon name="money" size={20} aria-hidden={true} />
+            <span>{userData?.coins?.toLocaleString() || 0}</span>
           </div>
           {currentGame && (
-            <button className="control-btn" onClick={() => setCurrentGame(null)}>
+            <button className="control-btn" onClick={() => setCurrentGame(null)} data-testid="overlay-back-btn">
               ← Back
             </button>
           )}
         </div>
         <div className="header-controls">
-          <button className="control-btn" onClick={handleOpenDashboard}>
-            📊
+          <button className="control-btn" onClick={handleOpenDashboard} title="Dashboard" data-testid="overlay-nav-dashboard">
+            <PixelIcon name="chart" size={18} aria-hidden={true} />
           </button>
-          <button className="control-btn" onClick={handleMinimize}>
+          <button className="control-btn" onClick={handleMinimize} data-testid="overlay-minimize-btn">
             −
           </button>
-          <button className="close-btn" onClick={handleClose}>
+          <button className="close-btn" onClick={handleClose} data-testid="overlay-close-btn">
             ×
           </button>
         </div>
@@ -103,8 +105,11 @@ const OverlayApp: React.FC = () => {
                   key={game.id}
                   className="game-btn"
                   onClick={() => setCurrentGame(game.id)}
+                  data-testid={`game-btn-${game.id}`}
                 >
-                  <span className="game-btn-icon">{game.icon}</span>
+                  <span className="game-btn-icon">
+                    <PixelIcon name={game.icon} size={32} aria-hidden={true} />
+                  </span>
                   <span>{game.name}</span>
                 </button>
               ))}

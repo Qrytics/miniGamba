@@ -157,3 +157,20 @@ ipcMain.handle('data:import', async (event, jsonData: string) => {
     return { success: false, error: error.message };
   }
 });
+
+// Test-only handler: Add coins (only works in test mode)
+ipcMain.handle('data:addCoins', async (event, amount: number) => {
+  // Only allow in test mode
+  if (process.env.PLAYWRIGHT_TEST !== 'true' && process.env.NODE_ENV !== 'test') {
+    return { success: false, error: 'This handler is only available in test mode' };
+  }
+  
+  try {
+    const user = userDataService.getUser();
+    userDataService.addCoins(user.id, amount, false); // Don't count as earned
+    const updatedUser = userDataService.getUser();
+    return { success: true, coins: updatedUser.coins };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});

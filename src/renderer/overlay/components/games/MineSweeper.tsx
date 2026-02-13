@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PixelIcon } from '../../../components/PixelIcon';
 
 interface MineSweeperProps {
   onCoinsUpdate: () => void;
@@ -23,7 +24,7 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
     }
   };
 
-  const handleReveal = (index: number) => {
+  const handleReveal = async (index: number) => {
     if (!playing || grid[index] !== '⬜') return;
     const isMine = Math.random() < 0.15; // Simplified
     const newGrid = [...grid];
@@ -32,8 +33,15 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
     
     if (isMine) {
       setPlaying(false);
-      setResult({ payout: 0, hit: 'mine' });
-      window.electronAPI.endGame('mine-sweeper', { payout: 0 });
+      const gameResult = { 
+        bet: bet,
+        payout: 0, 
+        result: 'loss',
+        win: false,
+        hit: 'mine' 
+      };
+      setResult(gameResult);
+      await window.electronAPI.endGame('mine-sweeper', gameResult);
       onCoinsUpdate();
     } else {
       setRevealed(revealed + 1);
@@ -42,7 +50,14 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
 
   const handleCashOut = async () => {
     const multiplier = 1 + revealed * 0.3;
-    const gameResult = { payout: bet * multiplier, revealed };
+    const payout = bet * multiplier;
+    const gameResult = { 
+      bet: bet,
+      payout: payout,
+      result: 'win',
+      win: true,
+      revealed 
+    };
     setResult(gameResult);
     setPlaying(false);
     await window.electronAPI.endGame('mine-sweeper', gameResult);
@@ -52,12 +67,12 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">💣 Mine Sweeper</h2>
+        <h2 className="game-title"><PixelIcon name="mine" size={28} aria-hidden={true} /> Mine Sweeper</h2>
       </div>
       <div className="game-interface">
         {result && (
           <div className={`result-display ${result.payout > 0 ? 'win' : 'loss'}`}>
-            {result.payout > 0 ? `🎉 Cashed out ${result.payout} coins!` : '💣 Hit a mine!'}
+            {result.payout > 0 ? <>Cashed out {result.payout} coins!</> : <><PixelIcon name="mine" size={20} aria-hidden={true} /> Hit a mine!</>}
           </div>
         )}
         <div className="game-display">
@@ -74,10 +89,12 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
                   border: '1px solid var(--border)',
                   background: cell === '⬜' ? 'var(--surface-hover)' : 'transparent',
                   cursor: playing && cell === '⬜' ? 'pointer' : 'default',
-                  borderRadius: '0.25rem',
+                  borderRadius: 0,
                 }}
               >
-                {cell}
+                {cell === '⬜' && '?'}
+                {cell === '💣' && <PixelIcon name="mine" size={28} aria-hidden={true} />}
+                {cell === '💎' && <PixelIcon name="star" size={28} aria-hidden={true} />}
               </button>
             ))}
           </div>
@@ -95,7 +112,7 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
             </>
           ) : (
             <button className="play-btn" onClick={handleCashOut} disabled={revealed === 0}>
-              💰 CASH OUT
+              <PixelIcon name="cashout" size={20} aria-hidden={true} /> CASH OUT
             </button>
           )}
         </div>

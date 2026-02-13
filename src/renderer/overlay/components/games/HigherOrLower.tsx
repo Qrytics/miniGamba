@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PixelIcon } from '../../../components/PixelIcon';
 
 interface HigherOrLowerProps {
   onCoinsUpdate: () => void;
@@ -6,14 +7,16 @@ interface HigherOrLowerProps {
 
 const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   const [bet, setBet] = useState(10);
-  const [currentCard, setCurrentCard] = useState('🎴');
+  const [currentCard, setCurrentCard] = useState('K♠');
   const [streak, setStreak] = useState(0);
   const [result, setResult] = useState<any>(null);
   const [playing, setPlaying] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const handleStart = async () => {
     try {
-      await window.electronAPI.startGame('higher-or-lower', bet);
+      const startResult = await window.electronAPI.startGame('higher-or-lower', bet);
+      setSessionId(startResult?.sessionId || null);
       setCurrentCard('K♠');
       setStreak(0);
       setResult(null);
@@ -30,7 +33,15 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       setStreak(streak + 1);
       setCurrentCard(['A♥', 'K♦', 'Q♣', '10♠'][Math.floor(Math.random() * 4)]);
     } else {
-      const gameResult = { payout: bet * (1 + streak * 0.2), streak };
+      const payout = 0; // Set payout to 0 for losses
+      const gameResult = { 
+        bet: bet,
+        payout: payout,
+        result: 'loss',
+        win: false,
+        streak,
+        sessionId
+      };
       setResult(gameResult);
       setPlaying(false);
       await window.electronAPI.endGame('higher-or-lower', gameResult);
@@ -39,7 +50,15 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   };
 
   const handleCashOut = async () => {
-    const gameResult = { payout: bet * (1 + streak * 0.2), streak };
+    const payout = bet * (1 + streak * 0.2);
+    const gameResult = { 
+      bet: bet,
+      payout: payout,
+      result: 'win',
+      win: true,
+      streak,
+      sessionId
+    };
     setResult(gameResult);
     setPlaying(false);
     await window.electronAPI.endGame('higher-or-lower', gameResult);
@@ -49,12 +68,12 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🎯 Higher or Lower</h2>
+        <h2 className="game-title"><PixelIcon name="target" size={28} aria-hidden={true} /> Higher or Lower</h2>
       </div>
       <div className="game-interface">
         {result && (
           <div className="result-display win">
-            🎉 Cashed out {result.payout} coins! Streak: {result.streak}
+            Cashed out {result.payout} coins! Streak: {result.streak}
           </div>
         )}
         <div className="game-display">
@@ -76,10 +95,10 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
           ) : (
             <>
               <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                <button className="action-btn" onClick={() => handleGuess(true)} style={{ flex: 1 }}>📈 HIGHER</button>
-                <button className="action-btn" onClick={() => handleGuess(false)} style={{ flex: 1 }}>📉 LOWER</button>
+                <button className="action-btn" onClick={() => handleGuess(true)} style={{ flex: 1 }}><PixelIcon name="higher" size={18} aria-hidden={true} /> HIGHER</button>
+                <button className="action-btn" onClick={() => handleGuess(false)} style={{ flex: 1 }}><PixelIcon name="lower" size={18} aria-hidden={true} /> LOWER</button>
               </div>
-              <button className="play-btn" onClick={handleCashOut}>💰 CASH OUT</button>
+              <button className="play-btn" onClick={handleCashOut}><PixelIcon name="cashout" size={20} aria-hidden={true} /> CASH OUT</button>
             </>
           )}
         </div>

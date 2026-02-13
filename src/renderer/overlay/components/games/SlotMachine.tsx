@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import SlotMachineEngine from '../../game-logic/slot-machine';
+import React, { useState, useRef, useEffect } from 'react';
+import { SlotMachine as SlotMachineEngine } from '../../game-logic/slot-machine';
+import { PixelIcon } from '../../../components/PixelIcon';
 
 interface SlotMachineProps {
   onCoinsUpdate: () => void;
@@ -12,9 +13,22 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
   const [spinning, setSpinning] = useState(false);
   const [theme] = useState('classic');
 
-  const engine = new SlotMachineEngine();
+  const engineRef = useRef<SlotMachineEngine | null>(null);
+
+  useEffect(() => {
+    const engine = new SlotMachineEngine();
+    engine.init();
+    engine.setTheme('classic');
+    engineRef.current = engine;
+    return () => {
+      engineRef.current = null;
+    };
+  }, []);
 
   const handleSpin = async () => {
+    const engine = engineRef.current;
+    if (!engine) return;
+
     if (spinning) return;
     
     setSpinning(true);
@@ -23,6 +37,7 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
     try {
       // Start game
       await window.electronAPI.startGame('slot-machine', bet);
+      engine.start(bet);
       
       // Spin animation
       const animationFrames = 15;
@@ -38,11 +53,24 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
       }
       
       // Get actual result
-      const gameResult = engine.spin(bet, theme);
-      setReels(gameResult.reels);
+      await engine.spin();
+      const state = engine.getState();
+      const endResult = engine.end();
+
+      // Middle row of each reel for display
+      const middleRow = state.reels.map((col: string[]) => col[1] ?? col[0] ?? '🍒');
+
+      const gameResult = {
+        bet: bet, // Include bet in result
+        payout: endResult.payout,
+        matchType: state.result?.type,
+        reels: middleRow,
+        result: endResult.result,
+        win: endResult.result === 'win',
+      };
+
+      setReels(middleRow);
       setResult(gameResult);
-      
-      // End game and update coins
       await window.electronAPI.endGame('slot-machine', gameResult);
       onCoinsUpdate();
     } catch (error) {
@@ -55,13 +83,13 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🎰 Slot Machine</h2>
+        <h2 className="game-title"><PixelIcon name="slots" size={28} aria-hidden={true} /> Slot Machine</h2>
       </div>
 
       <div className="game-interface">
         {result && (
           <div className={`result-display ${result.payout > 0 ? 'win' : 'loss'}`}>
-            {result.payout > 0 ? `🎉 You won ${result.payout} coins!` : `💔 No win this time`}
+            {result.payout > 0 ? `You won ${result.payout} coins!` : `No win this time`}
             {result.matchType && <div className="mt-1">{result.matchType}</div>}
           </div>
         )}

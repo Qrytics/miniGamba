@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import CoinFlipEngine from '../../game-logic/coin-flip';
+import React, { useState, useRef, useEffect } from 'react';
+import { CoinFlip as CoinFlipEngine } from '../../game-logic/coin-flip';
+import { PixelIcon } from '../../../components/PixelIcon';
 
 interface CoinFlipProps {
   onCoinsUpdate: () => void;
@@ -12,16 +13,30 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
   const [flipping, setFlipping] = useState(false);
   const [coinFace, setCoinFace] = useState('heads');
 
-  const engine = new CoinFlipEngine();
+  const engineRef = useRef<CoinFlipEngine | null>(null);
+
+  useEffect(() => {
+    const engine = new CoinFlipEngine();
+    engine.init();
+    engineRef.current = engine;
+    return () => {
+      engineRef.current = null;
+    };
+  }, []);
 
   const handleFlip = async () => {
+    const engine = engineRef.current;
+    if (!engine) return;
+
     if (flipping) return;
     
     setFlipping(true);
     setResult(null);
 
     try {
-      await window.electronAPI.startGame('coin-flip', bet);
+      const startResult = await window.electronAPI.startGame('coin-flip', bet);
+      const sessionId = startResult?.sessionId;
+      engine.start(bet);
       
       // Flip animation
       const animationFrames = 10;
@@ -31,8 +46,30 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
       }
       
       // Get actual result
-      const gameResult = engine.flip(bet, choice);
-      setCoinFace(gameResult.result);
+      await engine.flip(choice);
+      const state = engine.getState();
+      const endResult = engine.end();
+      
+      // Guard against undefined result from engine.end()
+      if (!endResult) {
+        console.error('engine.end() returned undefined');
+        setResult({ bet, payout: 0, win: false, result: 'loss' });
+        await window.electronAPI.endGame('coin-flip', { bet, payout: 0, win: false, result: 'loss', sessionId });
+        onCoinsUpdate();
+        return;
+      }
+
+      const gameResult = {
+        ...state,
+        ...endResult,
+        bet: bet, // Include bet in result
+        payout: endResult.payout,
+        win: endResult.result === 'win',
+        result: endResult.result,
+        sessionId,
+      };
+
+      setCoinFace(state.coinResult || 'heads');
       setResult(gameResult);
       
       await window.electronAPI.endGame('coin-flip', gameResult);
@@ -47,19 +84,19 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🪙 Coin Flip</h2>
+        <h2 className="game-title"><PixelIcon name="coin" size={28} aria-hidden={true} /> Coin Flip</h2>
       </div>
 
       <div className="game-interface">
         {result && (
           <div className={`result-display ${result.win ? 'win' : 'loss'}`}>
-            {result.win ? `🎉 You won ${result.payout} coins!` : `💔 You lost ${bet} coins`}
+            {result.win ? `You won ${result.payout} coins!` : `You lost ${bet} coins`}
           </div>
         )}
 
         <div className="game-display">
           <div className={`coin ${flipping ? 'flipping' : ''}`}>
-            {coinFace === 'heads' ? '👑' : '🪙'}
+            {coinFace === 'heads' ? <PixelIcon name="crown" size={64} aria-hidden={true} /> : <PixelIcon name="coin" size={64} aria-hidden={true} />}
           </div>
           <p className="text-muted text-center">
             {flipping ? 'Flipping...' : `Landed on ${coinFace}`}
@@ -74,7 +111,7 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
               disabled={flipping}
               style={{ width: '120px' }}
             >
-              👑 Heads
+              <PixelIcon name="crown" size={20} aria-hidden={true} /> Heads
             </button>
             <button 
               className={`action-btn ${choice === 'tails' ? '' : 'btn-secondary'}`}
@@ -82,7 +119,7 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
               disabled={flipping}
               style={{ width: '120px' }}
             >
-              🪙 Tails
+              <PixelIcon name="coin" size={20} aria-hidden={true} /> Tails
             </button>
           </div>
 
