@@ -8,11 +8,26 @@
 
 ## 📋 Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Technical Architecture](#technical-architecture)
-3. [Core Features Breakdown](#core-features-breakdown)
-4. [Implementation Roadmap](#implementation-roadmap)
-5. [File Architecture](#file-architecture)
+1. [Project Overview](#1-project-overview)
+2. [Technical Architecture](#2-technical-architecture)
+   - [File Architecture](#23-file-architecture)
+3. [Core Features Breakdown](#3-core-features-breakdown)
+4. [Coin Economy System](#4-coin-economy-system)
+5. [Leaderboard & Social Features](#5-leaderboard--social-features)
+6. [Customization & Cosmetics](#6-customization--cosmetics)
+7. [Achievements System](#7-achievements-system)
+8. [Settings & Configuration](#8-settings--configuration)
+9. [Stats & History](#9-stats--history)
+10. [Progression System](#10-progression-system)
+11. [UI/UX Design](#11-uiux-design)
+12. [Performance & Optimization](#12-performance--optimization)
+13. [Testing Requirements](#13-testing-requirements)
+14. [Security & Safety](#14-security--safety)
+15. [Documentation](#15-documentation)
+16. [Build & Deploy](#16-build--deploy)
+17. [Future Considerations](#17-future-considerations)
+- [Appendix A: Technology Stack Recommendations](#appendix-a-technology-stack-recommendations)
+- [Appendix B: Development Priorities](#appendix-b-development-priorities)
 
 ---
 
@@ -107,6 +122,233 @@ miniGamba is a desktop overlay application that provides mini-casino games durin
 - Export creates valid JSON
 - Import validates before applying
 - User confirmation required
+
+---
+
+## 2.3 File Architecture
+
+### 2.3.1 Project Structure Overview
+
+```
+miniGamba/
+├── .github/                    # GitHub-specific files
+│   └── workflows/              # CI/CD workflows
+├── src/                        # Source code
+│   ├── main/                   # Main process (Electron)
+│   │   ├── index.ts            # Main entry point
+│   │   ├── windows/            # Window management
+│   │   │   ├── dashboard.ts   # Dashboard window controller
+│   │   │   └── overlay.ts     # Overlay window controller
+│   │   ├── services/           # Backend services
+│   │   │   ├── data/           # Data management
+│   │   │   │   ├── database.ts           # Database abstraction
+│   │   │   │   ├── user-data.ts          # User data management
+│   │   │   │   ├── game-history.ts      # Game history tracking
+│   │   │   │   └── achievements.ts      # Achievement tracking
+│   │   │   ├── game-detection/           # Game detection system
+│   │   │   │   ├── process-monitor.ts   # Process monitoring
+│   │   │   │   └── supported-games.ts   # Supported games list
+│   │   │   ├── activity-tracking/        # Activity tracking
+│   │   │   │   ├── video-tracker.ts     # Video watching detection
+│   │   │   │   └── idle-tracker.ts      # Idle time detection
+│   │   │   └── leaderboard/              # Leaderboard system
+│   │   │       ├── p2p-sync.ts          # P2P synchronization
+│   │   │       └── friend-codes.ts      # Friend code system
+│   │   ├── ipc/                # IPC handlers
+│   │   │   ├── game-handlers.ts         # Game-related IPC
+│   │   │   ├── settings-handlers.ts     # Settings IPC
+│   │   │   └── data-handlers.ts         # Data IPC
+│   │   └── utils/              # Utility functions
+│   │       ├── hotkeys.ts               # Hotkey management
+│   │       ├── crypto.ts                # Encryption utilities
+│   │       └── logger.ts                # Logging system
+│   │
+│   ├── renderer/               # Renderer processes (UI)
+│   │   ├── dashboard/          # Dashboard window
+│   │   │   ├── index.html      # Dashboard HTML entry
+│   │   │   ├── index.ts        # Dashboard TypeScript entry
+│   │   │   ├── styles/         # Dashboard styles
+│   │   │   │   ├── main.css
+│   │   │   │   └── themes/
+│   │   │   ├── components/     # React components
+│   │   │   │   ├── common/     # Shared components
+│   │   │   │   │   ├── Button.tsx
+│   │   │   │   │   ├── Card.tsx
+│   │   │   │   │   └── Modal.tsx
+│   │   │   │   ├── navigation/ # Navigation components
+│   │   │   │   │   ├── Sidebar.tsx
+│   │   │   │   │   └── TopBar.tsx
+│   │   │   │   └── pages/      # Page components
+│   │   │   │       ├── Home.tsx
+│   │   │   │       ├── GamesLibrary.tsx
+│   │   │   │       ├── Leaderboard.tsx
+│   │   │   │       ├── Achievements.tsx
+│   │   │   │       ├── Customization.tsx
+│   │   │   │       ├── Stats.tsx
+│   │   │   │       └── Settings.tsx
+│   │   │   ├── hooks/          # Custom React hooks
+│   │   │   │   ├── useCoins.ts
+│   │   │   │   ├── useAchievements.ts
+│   │   │   │   └── useSettings.ts
+│   │   │   └── state/          # State management
+│   │   │       ├── store.ts    # Redux/Zustand store
+│   │   │       └── slices/     # State slices
+│   │   │
+│   │   └── overlay/            # Overlay window
+│   │       ├── index.html      # Overlay HTML entry
+│   │       ├── index.ts        # Overlay TypeScript entry
+│   │       ├── styles/         # Overlay styles
+│   │       │   ├── main.css
+│   │       │   └── themes/     # Theme variations
+│   │       ├── components/     # React components
+│   │       │   ├── common/     # Shared overlay components
+│   │       │   │   ├── GameContainer.tsx
+│   │       │   │   ├── CoinDisplay.tsx
+│   │       │   │   └── BetControls.tsx
+│   │       │   └── games/      # Game-specific components
+│   │       │       ├── SlotMachine/
+│   │       │       │   ├── SlotMachine.tsx
+│   │       │       │   ├── Reel.tsx
+│   │       │       │   └── SlotMachine.module.css
+│   │       │       ├── Blackjack/
+│   │       │       │   ├── Blackjack.tsx
+│   │       │       │   ├── Card.tsx
+│   │       │       │   └── Blackjack.module.css
+│   │       │       ├── CoinFlip/
+│   │       │       │   ├── CoinFlip.tsx
+│   │       │       │   └── CoinFlip.module.css
+│   │       │       ├── HigherOrLower/
+│   │       │       │   ├── HigherOrLower.tsx
+│   │       │       │   └── HigherOrLower.module.css
+│   │       │       ├── MineSweeper/
+│   │       │       │   ├── MineSweeper.tsx
+│   │       │       │   ├── Tile.tsx
+│   │       │       │   └── MineSweeper.module.css
+│   │       │       ├── ScratchCards/
+│   │       │       │   ├── ScratchCards.tsx
+│   │       │       │   └── ScratchCards.module.css
+│   │       │       ├── WheelOfFortune/
+│   │       │       │   ├── WheelOfFortune.tsx
+│   │       │       │   └── WheelOfFortune.module.css
+│   │       │       ├── MiniDerby/
+│   │       │       │   ├── MiniDerby.tsx
+│   │       │       │   └── MiniDerby.module.css
+│   │       │       ├── DiceRoll/
+│   │       │       │   ├── DiceRoll.tsx
+│   │       │       │   └── DiceRoll.module.css
+│   │       │       └── MiniPoker/
+│   │       │           ├── MiniPoker.tsx
+│   │       │           └── MiniPoker.module.css
+│   │       ├── game-logic/     # Game logic (separate from UI)
+│   │       │   ├── base/
+│   │       │   │   └── GameEngine.ts
+│   │       │   ├── slot-machine.ts
+│   │       │   ├── blackjack.ts
+│   │       │   ├── coin-flip.ts
+│   │       │   ├── higher-or-lower.ts
+│   │       │   ├── mine-sweeper.ts
+│   │       │   ├── scratch-cards.ts
+│   │       │   ├── wheel-of-fortune.ts
+│   │       │   ├── mini-derby.ts
+│   │       │   ├── dice-roll.ts
+│   │       │   └── mini-poker.ts
+│   │       ├── hooks/          # Custom hooks for overlay
+│   │       │   ├── useGame.ts
+│   │       │   └── useOverlaySettings.ts
+│   │       └── state/          # Overlay state management
+│   │           └── overlay-store.ts
+│   │
+│   ├── shared/                 # Shared code between main and renderer
+│   │   ├── types/              # TypeScript types
+│   │   │   ├── game.types.ts
+│   │   │   ├── user.types.ts
+│   │   │   ├── achievement.types.ts
+│   │   │   └── settings.types.ts
+│   │   ├── constants/          # Shared constants
+│   │   │   ├── games.ts
+│   │   │   ├── achievements.ts
+│   │   │   └── cosmetics.ts
+│   │   └── utils/              # Shared utilities
+│   │       ├── validation.ts
+│   │       └── calculations.ts
+│   │
+│   └── preload/                # Preload scripts
+│       ├── dashboard-preload.ts
+│       └── overlay-preload.ts
+│
+├── assets/                     # Static assets
+│   ├── images/                 # Image assets
+│   │   ├── icons/              # App icons
+│   │   │   ├── app-icon.png
+│   │   │   └── tray-icon.png
+│   │   ├── games/              # Game assets
+│   │   │   ├── slot-symbols/
+│   │   │   ├── cards/
+│   │   │   ├── dice/
+│   │   │   └── misc/
+│   │   ├── backgrounds/        # Background images
+│   │   └── cosmetics/          # Cosmetic items
+│   ├── sounds/                 # Sound effects
+│   │   ├── ui/                 # UI sounds
+│   │   ├── games/              # Game sounds
+│   │   │   ├── slot-machine/
+│   │   │   ├── cards/
+│   │   │   └── coin-flip/
+│   │   └── music/              # Background music (if any)
+│   └── fonts/                  # Custom fonts
+│
+├── data/                       # User data directory (created at runtime)
+│   ├── user-data.db            # Main database
+│   ├── settings.json           # User settings
+│   └── backups/                # Backup directory
+│
+├── tests/                      # Test files
+│   ├── unit/                   # Unit tests
+│   │   ├── game-logic/
+│   │   └── utils/
+│   ├── integration/            # Integration tests
+│   └── e2e/                    # End-to-end tests
+│
+├── scripts/                    # Build and utility scripts
+│   ├── build.js                # Build script
+│   └── generate-icons.js       # Icon generation
+│
+├── docs/                       # Documentation
+│   ├── SETUP.md                # Setup instructions
+│   ├── ARCHITECTURE.md         # Architecture documentation
+│   ├── API.md                  # API documentation
+│   └── CONTRIBUTING.md         # Contributing guidelines
+│
+├── .gitignore                  # Git ignore file
+├── .eslintrc.js                # ESLint configuration
+├── .prettierrc                 # Prettier configuration
+├── tsconfig.json               # TypeScript configuration
+├── package.json                # Project dependencies
+├── package-lock.json           # Dependency lock file
+├── electron-builder.json       # Electron builder config
+├── webpack.config.js           # Webpack configuration
+├── README.md                   # Project README
+└── productReqDoc.md            # Product requirements document
+```
+
+### 2.3.2 Key Directory Purposes
+
+#### `/src/main/` - Main Process
+The main process handles all backend logic, native OS integration, and window management. This runs in Node.js with full system access.
+
+#### `/src/renderer/` - Renderer Processes
+The renderer processes handle the UI. Split into:
+- **dashboard/**: Full-featured management interface
+- **overlay/**: Lightweight gaming overlay
+
+#### `/src/shared/` - Shared Code
+Code shared between main and renderer processes, including types, constants, and utilities.
+
+#### `/assets/` - Static Assets
+All images, sounds, and other static resources organized by category.
+
+#### `/tests/` - Test Suite
+Comprehensive test coverage including unit, integration, and end-to-end tests.
 
 ---
 
