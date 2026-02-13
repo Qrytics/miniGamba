@@ -3,7 +3,7 @@
  * Tests EVERY game and EVERY button in the overlay
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, ConsoleMessage } from '@playwright/test';
 import { launchApp, takeScreenshot, waitForElement, elementExists, getOverlayWindow, TestContext } from './setup';
 
 let testContext: TestContext;
@@ -17,9 +17,9 @@ test.afterAll(async () => {
 });
 
 // Helper to set up console error tracking
-function setupConsoleErrorTracking(page: any): { errors: string[]; dispose: () => void } {
+function setupConsoleErrorTracking(page: Page): { errors: string[]; dispose: () => void } {
   const errors: string[] = [];
-  const handler = (msg: any) => {
+  const handler = (msg: ConsoleMessage) => {
     if (msg.type() === 'error') {
       errors.push(msg.text());
     }
@@ -181,11 +181,11 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
         
         // Test HIT button
         await hitBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card animation
         
         // Test STAND button
         await standBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for result animation
       }
     }
     
@@ -260,7 +260,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(startBtn).not.toBeNull();
     if (startBtn) {
       await startBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for game start
       
       // After starting, test HIGHER and LOWER buttons
       const higherBtn = await overlayWindow.$('button:has-text("HIGHER")');
@@ -270,19 +270,19 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
       if (higherBtn) {
         expect(higherBtn).not.toBeNull();
         await higherBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card reveal
       }
       
       if (lowerBtn) {
         expect(lowerBtn).not.toBeNull();
         await lowerBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card reveal
       }
       
       if (cashOutBtn) {
         expect(cashOutBtn).not.toBeNull();
         await cashOutBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for cash out
       }
     }
     
@@ -322,7 +322,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(startBtn).not.toBeNull();
     if (startBtn) {
       await startBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for game start
       
       // Test grid cells (click a few)
       const gridCells = await overlayWindow.$$('button[style*="width: 50px"], button[style*="height: 50px"]');
@@ -330,7 +330,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
         // Click first few cells
         for (let i = 0; i < Math.min(3, gridCells.length); i++) {
           await gridCells[i].click();
-          await overlayWindow.waitForTimeout(300);
+          await overlayWindow.waitForTimeout(100); // Brief wait for reveal animation
         }
       }
       
@@ -339,7 +339,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
       if (cashOutBtn) {
         expect(cashOutBtn).not.toBeNull();
         await cashOutBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for cash out
       }
     }
     
@@ -543,7 +543,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(dashboardBtn).not.toBeNull();
     if (dashboardBtn) {
       await dashboardBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for window switch
     }
     
     // Test Minimize button using stable data-testid
@@ -551,7 +551,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(minimizeBtn).not.toBeNull();
     if (minimizeBtn) {
       await minimizeBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for minimize animation
     }
     
     // Test Close button using stable data-testid
