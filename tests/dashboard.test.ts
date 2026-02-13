@@ -73,35 +73,27 @@ test.describe('Dashboard Window', () => {
     // Wait for sidebar to be ready
     await mainWindow.waitForSelector('.app-sidebar', { timeout: 10000 });
     
-    // Click on Games page - try multiple selectors
-    let gamesButton = await mainWindow.$('button:has-text("Games")');
+    // Click on Games page - using stable data-testid selector
+    const gamesButton = await mainWindow.$('button[data-testid="games-btn"]');
+    expect(gamesButton).not.toBeNull();
     if (!gamesButton) {
-      gamesButton = await mainWindow.$('button:has-text("🎮")');
-    }
-    if (!gamesButton) {
-      gamesButton = await mainWindow.$('.app-sidebar button:nth-of-type(2)');
+      throw new Error('Games button not found');
     }
     
-    if (gamesButton) {
-      await gamesButton.click();
-      await mainWindow.waitForTimeout(1000);
-      await takeScreenshot(mainWindow, 'dashboard-games-page');
-    }
+    await gamesButton.click();
+    await mainWindow.waitForSelector('[data-testid="games-page-header"]', { timeout: 5000 });
+    await takeScreenshot(mainWindow, 'dashboard-games-page');
     
-    // Click on Stats page - try multiple selectors
-    let statsButton = await mainWindow.$('button:has-text("Stats")');
+    // Click on Stats page - using stable data-testid selector
+    const statsButton = await mainWindow.$('button[data-testid="stats-btn"]');
+    expect(statsButton).not.toBeNull();
     if (!statsButton) {
-      statsButton = await mainWindow.$('button:has-text("📊")');
-    }
-    if (!statsButton) {
-      statsButton = await mainWindow.$('.app-sidebar button:nth-of-type(4)');
+      throw new Error('Stats button not found');
     }
     
-    if (statsButton) {
-      await statsButton.click();
-      await mainWindow.waitForTimeout(1000);
-      await takeScreenshot(mainWindow, 'dashboard-stats-page');
-    }
+    await statsButton.click();
+    await mainWindow.waitForSelector('[data-testid="stats-page-header"]', { timeout: 5000 });
+    await takeScreenshot(mainWindow, 'dashboard-stats-page');
   });
 
   test('should display user data', async () => {

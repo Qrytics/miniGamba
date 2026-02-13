@@ -34,7 +34,8 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
     setResult(null);
 
     try {
-      await window.electronAPI.startGame('coin-flip', bet);
+      const startResult = await window.electronAPI.startGame('coin-flip', bet);
+      const sessionId = startResult?.sessionId;
       engine.start(bet);
       
       // Flip animation
@@ -48,6 +49,15 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
       await engine.flip(choice);
       const state = engine.getState();
       const endResult = engine.end();
+      
+      // Guard against undefined result from engine.end()
+      if (!endResult) {
+        console.error('engine.end() returned undefined');
+        setResult({ bet, payout: 0, win: false, result: 'loss' });
+        await window.electronAPI.endGame('coin-flip', { bet, payout: 0, win: false, result: 'loss', sessionId });
+        onCoinsUpdate();
+        return;
+      }
 
       const gameResult = {
         ...state,
@@ -56,6 +66,7 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
         payout: endResult.payout,
         win: endResult.result === 'win',
         result: endResult.result,
+        sessionId,
       };
 
       setCoinFace(state.coinResult || 'heads');

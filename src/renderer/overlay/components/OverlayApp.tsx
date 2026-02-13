@@ -72,24 +72,24 @@ const OverlayApp: React.FC = () => {
     <div className="overlay-app">
       <div className="overlay-header">
         <div className="header-left">
-          <div className="coin-display">
+          <div className="coin-display" data-testid="overlay-coin-display">
             <PixelIcon name="money" size={20} aria-hidden={true} />
             <span>{userData?.coins?.toLocaleString() || 0}</span>
           </div>
           {currentGame && (
-            <button className="control-btn" onClick={() => setCurrentGame(null)}>
+            <button className="control-btn" onClick={() => setCurrentGame(null)} data-testid="overlay-back-btn">
               ← Back
             </button>
           )}
         </div>
         <div className="header-controls">
-          <button className="control-btn" onClick={handleOpenDashboard} title="Dashboard">
+          <button className="control-btn" onClick={handleOpenDashboard} title="Dashboard" data-testid="overlay-nav-dashboard">
             <PixelIcon name="chart" size={18} aria-hidden={true} />
           </button>
-          <button className="control-btn" onClick={handleMinimize}>
+          <button className="control-btn" onClick={handleMinimize} data-testid="overlay-minimize-btn">
             −
           </button>
-          <button className="close-btn" onClick={handleClose}>
+          <button className="close-btn" onClick={handleClose} data-testid="overlay-close-btn">
             ×
           </button>
         </div>
@@ -105,6 +105,7 @@ const OverlayApp: React.FC = () => {
                   key={game.id}
                   className="game-btn"
                   onClick={() => setCurrentGame(game.id)}
+                  data-testid={`game-btn-${game.id}`}
                 >
                   <span className="game-btn-icon">
                     <PixelIcon name={game.icon} size={32} aria-hidden={true} />

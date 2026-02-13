@@ -3,7 +3,7 @@
  * Tests EVERY game and EVERY button in the overlay
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, ConsoleMessage } from '@playwright/test';
 import { launchApp, takeScreenshot, waitForElement, elementExists, getOverlayWindow, TestContext } from './setup';
 
 let testContext: TestContext;
@@ -16,14 +16,29 @@ test.afterAll(async () => {
   await testContext.app.close();
 });
 
+// Helper to set up console error tracking
+function setupConsoleErrorTracking(page: Page): { errors: string[]; dispose: () => void } {
+  const errors: string[] = [];
+  const handler = (msg: ConsoleMessage) => {
+    if (msg.type() === 'error') {
+      errors.push(msg.text());
+    }
+  };
+  page.on('console', handler);
+  
+  return {
+    errors,
+    dispose: () => page.off('console', handler)
+  };
+}
+
 // Helper to navigate back to game selector
 async function goBackToGameSelector(overlayWindow: any) {
-  const backButton = await overlayWindow.$('button:has-text("Back"), button:has-text("←")');
+  const backButton = await overlayWindow.$('button[data-testid="overlay-back-btn"]');
   if (backButton) {
     try {
       await backButton.click();
-      await overlayWindow.waitForTimeout(1000);
-      await waitForElement(overlayWindow, '.game-selector', 5000);
+      await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
     } catch (error) {
       // If back button doesn't work, try refreshing or navigating differently
       console.warn('Could not navigate back:', error);
@@ -82,26 +97,24 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Coin Flip
-    const coinFlipBtn = await overlayWindow.$('button:has-text("Coin Flip"), button:has-text("🪙")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Coin Flip using stable data-testid
+    const coinFlipBtn = await overlayWindow.$('button[data-testid="game-btn-coin-flip"]');
     expect(coinFlipBtn).not.toBeNull();
     if (!coinFlipBtn) return;
     
     await coinFlipBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Coin Flip');
     
     // Test Heads button
-    const headsBtn = await overlayWindow.$('button:has-text("Heads"), button:has-text("👑")');
+    const headsBtn = await overlayWindow.$('button:has-text("Heads")');
     expect(headsBtn).not.toBeNull();
     if (headsBtn) {
       await headsBtn.click();
@@ -109,7 +122,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     }
     
     // Test Tails button
-    const tailsBtn = await overlayWindow.$('button:has-text("Tails"), button:has-text("🪙")');
+    const tailsBtn = await overlayWindow.$('button:has-text("Tails")');
     expect(tailsBtn).not.toBeNull();
     if (tailsBtn) {
       await tailsBtn.click();
@@ -124,6 +137,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Blackjack game - all buttons', async () => {
@@ -132,20 +148,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Blackjack
-    const blackjackBtn = await overlayWindow.$('button:has-text("Blackjack"), button:has-text("🃏")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Blackjack using stable data-testid
+    const blackjackBtn = await overlayWindow.$('button[data-testid="game-btn-blackjack"]');
     expect(blackjackBtn).not.toBeNull();
     if (!blackjackBtn) return;
     
     await blackjackBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Blackjack');
@@ -155,7 +169,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(dealBtn).not.toBeNull();
     if (dealBtn) {
       await dealBtn.click();
-      await overlayWindow.waitForTimeout(2000);
+      await overlayWindow.waitForSelector('button:has-text("HIT"), button:has-text("STAND")', { timeout: 3000 }).catch(() => null);
       
       // After dealing, test HIT and STAND buttons
       const hitBtn = await overlayWindow.$('button:has-text("HIT")');
@@ -167,11 +181,11 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
         
         // Test HIT button
         await hitBtn.click();
-        await overlayWindow.waitForTimeout(1000);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card animation
         
         // Test STAND button
         await standBtn.click();
-        await overlayWindow.waitForTimeout(1000);
+        await overlayWindow.waitForTimeout(100); // Brief wait for result animation
       }
     }
     
@@ -179,6 +193,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Slot Machine game - all buttons', async () => {
@@ -187,20 +204,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Slots
-    const slotsBtn = await overlayWindow.$('button:has-text("Slots"), button:has-text("🎰")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Slots using stable data-testid
+    const slotsBtn = await overlayWindow.$('button[data-testid="game-btn-slot-machine"]');
     expect(slotsBtn).not.toBeNull();
     if (!slotsBtn) return;
     
     await slotsBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Slot Machine');
@@ -213,6 +228,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Higher or Lower game - all buttons', async () => {
@@ -221,20 +239,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Hi/Lo
-    const hiloBtn = await overlayWindow.$('button:has-text("Hi/Lo"), button:has-text("🎯")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Hi/Lo using stable data-testid
+    const hiloBtn = await overlayWindow.$('button[data-testid="game-btn-higher-or-lower"]');
     expect(hiloBtn).not.toBeNull();
     if (!hiloBtn) return;
     
     await hiloBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Higher or Lower');
@@ -244,29 +260,29 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(startBtn).not.toBeNull();
     if (startBtn) {
       await startBtn.click();
-      await overlayWindow.waitForTimeout(1500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for game start
       
       // After starting, test HIGHER and LOWER buttons
-      const higherBtn = await overlayWindow.$('button:has-text("HIGHER"), button:has-text("📈")');
-      const lowerBtn = await overlayWindow.$('button:has-text("LOWER"), button:has-text("📉")');
-      const cashOutBtn = await overlayWindow.$('button:has-text("CASH OUT"), button:has-text("💰")');
+      const higherBtn = await overlayWindow.$('button:has-text("HIGHER")');
+      const lowerBtn = await overlayWindow.$('button:has-text("LOWER")');
+      const cashOutBtn = await overlayWindow.$('button:has-text("CASH OUT")');
       
       if (higherBtn) {
         expect(higherBtn).not.toBeNull();
         await higherBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card reveal
       }
       
       if (lowerBtn) {
         expect(lowerBtn).not.toBeNull();
         await lowerBtn.click();
-        await overlayWindow.waitForTimeout(500);
+        await overlayWindow.waitForTimeout(100); // Brief wait for card reveal
       }
       
       if (cashOutBtn) {
         expect(cashOutBtn).not.toBeNull();
         await cashOutBtn.click();
-        await overlayWindow.waitForTimeout(1000);
+        await overlayWindow.waitForTimeout(100); // Brief wait for cash out
       }
     }
     
@@ -274,6 +290,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Mine Sweeper game - all buttons', async () => {
@@ -282,20 +301,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Mines
-    const minesBtn = await overlayWindow.$('button:has-text("Mines"), button:has-text("💣")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Mines using stable data-testid
+    const minesBtn = await overlayWindow.$('button[data-testid="game-btn-mine-sweeper"]');
     expect(minesBtn).not.toBeNull();
     if (!minesBtn) return;
     
     await minesBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Mine Sweeper');
@@ -305,7 +322,7 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(startBtn).not.toBeNull();
     if (startBtn) {
       await startBtn.click();
-      await overlayWindow.waitForTimeout(1500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for game start
       
       // Test grid cells (click a few)
       const gridCells = await overlayWindow.$$('button[style*="width: 50px"], button[style*="height: 50px"]');
@@ -313,16 +330,16 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
         // Click first few cells
         for (let i = 0; i < Math.min(3, gridCells.length); i++) {
           await gridCells[i].click();
-          await overlayWindow.waitForTimeout(300);
+          await overlayWindow.waitForTimeout(100); // Brief wait for reveal animation
         }
       }
       
       // Test CASH OUT button
-      const cashOutBtn = await overlayWindow.$('button:has-text("CASH OUT"), button:has-text("💰")');
+      const cashOutBtn = await overlayWindow.$('button:has-text("CASH OUT")');
       if (cashOutBtn) {
         expect(cashOutBtn).not.toBeNull();
         await cashOutBtn.click();
-        await overlayWindow.waitForTimeout(1000);
+        await overlayWindow.waitForTimeout(100); // Brief wait for cash out
       }
     }
     
@@ -330,6 +347,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Scratch Cards game - all buttons', async () => {
@@ -338,20 +358,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Scratch
-    const scratchBtn = await overlayWindow.$('button:has-text("Scratch"), button:has-text("🎫")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Scratch using stable data-testid
+    const scratchBtn = await overlayWindow.$('button[data-testid="game-btn-scratch-cards"]');
     expect(scratchBtn).not.toBeNull();
     if (!scratchBtn) return;
     
     await scratchBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Scratch Cards');
@@ -364,6 +382,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Wheel of Fortune game - all buttons', async () => {
@@ -372,20 +393,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Wheel
-    const wheelBtn = await overlayWindow.$('button:has-text("Wheel"), button:has-text("🎡")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Wheel using stable data-testid
+    const wheelBtn = await overlayWindow.$('button[data-testid="game-btn-wheel-of-fortune"]');
     expect(wheelBtn).not.toBeNull();
     if (!wheelBtn) return;
     
     await wheelBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Wheel of Fortune');
@@ -398,6 +417,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Mini Derby game - all buttons', async () => {
@@ -406,20 +428,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Derby
-    const derbyBtn = await overlayWindow.$('button:has-text("Derby"), button:has-text("🏇")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Derby using stable data-testid
+    const derbyBtn = await overlayWindow.$('button[data-testid="game-btn-mini-derby"]');
     expect(derbyBtn).not.toBeNull();
     if (!derbyBtn) return;
     
     await derbyBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Mini Derby');
@@ -432,6 +452,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Dice Roll game - all buttons', async () => {
@@ -440,20 +463,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Dice
-    const diceBtn = await overlayWindow.$('button:has-text("Dice"), button:has-text("🎲")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Dice using stable data-testid
+    const diceBtn = await overlayWindow.$('button[data-testid="game-btn-dice-roll"]');
     expect(diceBtn).not.toBeNull();
     if (!diceBtn) return;
     
     await diceBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Dice Roll');
@@ -466,6 +487,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test Mini Poker game - all buttons', async () => {
@@ -474,20 +498,18 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Navigate to Poker
-    const pokerBtn = await overlayWindow.$('button:has-text("Poker"), button:has-text("♠️")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Navigate to Poker using stable data-testid
+    const pokerBtn = await overlayWindow.$('button[data-testid="game-btn-mini-poker"]');
     expect(pokerBtn).not.toBeNull();
     if (!pokerBtn) return;
     
     await pokerBtn.click();
-    await overlayWindow.waitForTimeout(1500);
-    
-    // Verify game loaded
-    const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-    expect(gameContainer).toBe(true);
+    await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
     
     // Test bet controls
     await testBetControls(overlayWindow, 'Mini Poker');
@@ -500,6 +522,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     
     // Go back
     await goBackToGameSelector(overlayWindow);
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test all overlay header buttons', async () => {
@@ -508,30 +533,35 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
-    await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
     
-    // Test Dashboard button
-    const dashboardBtn = await overlayWindow.$('button:has-text("📊")');
+    await overlayWindow.waitForLoadState('domcontentloaded');
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
+    
+    // Test Dashboard button using stable data-testid
+    const dashboardBtn = await overlayWindow.$('button[data-testid="overlay-nav-dashboard"]');
     expect(dashboardBtn).not.toBeNull();
     if (dashboardBtn) {
       await dashboardBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for window switch
     }
     
-    // Test Minimize button
-    const minimizeBtn = await overlayWindow.$('button:has-text("−")');
+    // Test Minimize button using stable data-testid
+    const minimizeBtn = await overlayWindow.$('button[data-testid="overlay-minimize-btn"]');
     expect(minimizeBtn).not.toBeNull();
     if (minimizeBtn) {
       await minimizeBtn.click();
-      await overlayWindow.waitForTimeout(500);
+      await overlayWindow.waitForTimeout(100); // Brief wait for minimize animation
     }
     
-    // Test Close button
-    const closeBtn = await overlayWindow.$('.close-btn, button:has-text("×")');
+    // Test Close button using stable data-testid
+    const closeBtn = await overlayWindow.$('button[data-testid="overlay-close-btn"]');
     expect(closeBtn).not.toBeNull();
     
     await takeScreenshot(overlayWindow, 'overlay-header-buttons');
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should verify all 10 games are accessible', async () => {
@@ -540,32 +570,20 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
+    
     await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
     
-    // Ensure we're on game selector
-    await waitForElement(overlayWindow, '.game-selector', 5000);
-    
-    // List of all expected games
+    // List of all expected games with their test IDs
     const expectedGames = [
-      { name: 'Slots', icon: '🎰' },
-      { name: 'Blackjack', icon: '🃏' },
-      { name: 'Coin Flip', icon: '🪙' },
-      { name: 'Hi/Lo', icon: '🎯' },
-      { name: 'Mines', icon: '💣' },
-      { name: 'Scratch', icon: '🎫' },
-      { name: 'Wheel', icon: '🎡' },
-      { name: 'Derby', icon: '🏇' },
-      { name: 'Dice', icon: '🎲' },
-      { name: 'Poker', icon: '♠️' },
+      'slot-machine', 'blackjack', 'coin-flip', 'higher-or-lower', 'mine-sweeper',
+      'scratch-cards', 'wheel-of-fortune', 'mini-derby', 'dice-roll', 'mini-poker'
     ];
     
-    // Verify each game button exists
-    for (const game of expectedGames) {
-      let gameBtn = await overlayWindow.$(`button:has-text("${game.name}")`);
-      if (!gameBtn) {
-        gameBtn = await overlayWindow.$(`button:has-text("${game.icon}")`);
-      }
+    // Verify each game button exists using stable data-testid
+    for (const gameId of expectedGames) {
+      const gameBtn = await overlayWindow.$(`button[data-testid="game-btn-${gameId}"]`);
       expect(gameBtn).not.toBeNull();
     }
     
@@ -574,6 +592,9 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(gameButtons.length).toBe(10);
     
     await takeScreenshot(overlayWindow, 'all-games-accessible');
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 
   test('should test navigation between games', async () => {
@@ -582,38 +603,29 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     expect(overlayWindow).not.toBeNull();
     if (!overlayWindow) return;
     
+    const { errors, dispose } = setupConsoleErrorTracking(overlayWindow);
+    
     await overlayWindow.waitForLoadState('domcontentloaded');
-    await overlayWindow.waitForTimeout(2000);
+    await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
     
-    // Test navigating to multiple games
-    const gamesToTest = ['Slots', 'Coin Flip', 'Dice'];
+    // Test navigating to multiple games using stable data-testid
+    const gamesToTest = [
+      { id: 'slot-machine', name: 'Slots' },
+      { id: 'coin-flip', name: 'Coin Flip' },
+      { id: 'dice-roll', name: 'Dice' }
+    ];
     
-    for (const gameName of gamesToTest) {
+    for (const game of gamesToTest) {
       // Ensure we're on game selector
-      await waitForElement(overlayWindow, '.game-selector', 5000);
+      await overlayWindow.waitForSelector('.game-selector', { timeout: 5000 });
       
-      // Click game
-      let gameBtn = await overlayWindow.$(`button:has-text("${gameName}")`);
-      if (!gameBtn) {
-        // Try finding by partial match
-        const allButtons = await overlayWindow.$$('.game-btn');
-        for (const btn of allButtons) {
-          const text = await btn.textContent();
-          if (text && text.includes(gameName)) {
-            gameBtn = btn;
-            break;
-          }
-        }
-      }
+      // Click game using stable data-testid
+      const gameBtn = await overlayWindow.$(`button[data-testid="game-btn-${game.id}"]`);
       
       expect(gameBtn).not.toBeNull();
       if (gameBtn) {
         await gameBtn.click();
-        await overlayWindow.waitForTimeout(1500);
-        
-        // Verify game loaded
-        const gameContainer = await waitForElement(overlayWindow, '.game-container', 5000);
-        expect(gameContainer).toBe(true);
+        await overlayWindow.waitForSelector('.game-container', { timeout: 5000 });
         
         // Go back
         await goBackToGameSelector(overlayWindow);
@@ -621,5 +633,8 @@ test.describe('Comprehensive Overlay Tests - All Games and Buttons', () => {
     }
     
     await takeScreenshot(overlayWindow, 'navigation-between-games');
+    
+    dispose();
+    expect(errors.length).toBe(0);
   });
 });

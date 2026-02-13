@@ -84,6 +84,7 @@ const App: React.FC = () => {
                 <button 
                   className={currentPage === 'games' ? 'active' : ''}
                   onClick={() => setCurrentPage('games')}
+                  data-testid="games-btn"
                 >
                   <PixelIcon name="game" size={20} aria-hidden={true} /> Games
                 </button>
@@ -100,6 +101,7 @@ const App: React.FC = () => {
                 <button 
                   className={currentPage === 'stats' ? 'active' : ''}
                   onClick={() => setCurrentPage('stats')}
+                  data-testid="stats-btn"
                 >
                   <PixelIcon name="chart" size={20} aria-hidden={true} /> Stats
                 </button>

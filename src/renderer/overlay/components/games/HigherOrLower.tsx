@@ -11,10 +11,12 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   const [streak, setStreak] = useState(0);
   const [result, setResult] = useState<any>(null);
   const [playing, setPlaying] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const handleStart = async () => {
     try {
-      await window.electronAPI.startGame('higher-or-lower', bet);
+      const startResult = await window.electronAPI.startGame('higher-or-lower', bet);
+      setSessionId(startResult?.sessionId || null);
       setCurrentCard('K♠');
       setStreak(0);
       setResult(null);
@@ -31,13 +33,14 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       setStreak(streak + 1);
       setCurrentCard(['A♥', 'K♦', 'Q♣', '10♠'][Math.floor(Math.random() * 4)]);
     } else {
-      const payout = bet * (1 + streak * 0.2);
+      const payout = 0; // Set payout to 0 for losses
       const gameResult = { 
         bet: bet,
         payout: payout,
         result: 'loss',
         win: false,
-        streak 
+        streak,
+        sessionId
       };
       setResult(gameResult);
       setPlaying(false);
@@ -53,7 +56,8 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       payout: payout,
       result: 'win',
       win: true,
-      streak 
+      streak,
+      sessionId
     };
     setResult(gameResult);
     setPlaying(false);
