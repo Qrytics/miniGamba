@@ -130,7 +130,7 @@ export class HigherOrLower extends GameEngine {
 
   /**
    * Calculate payout based on current streak
-   * Streak of 1 = 1.2x, 2 = 1.5x, 3 = 2x, 5 = 5x, 8 = 15x, 10 = 50x
+   * Multipliers: 1=1.2x, 2=1.5x, 3=2x, 4=3x, 5=5x, 6=8x, 7=12x, 8=15x, 9=30x, 10+=50x
    */
   calculatePayout(): number {
     const multipliers: Record<number, number> = {
