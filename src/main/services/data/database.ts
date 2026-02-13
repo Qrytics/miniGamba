@@ -7,7 +7,6 @@ import Database from 'better-sqlite3';
 import * as path from 'path';
 import { app } from 'electron';
 import { User, UserProfile } from '../../../shared/types/user.types';
-import { GameType, GameResult } from '../../../shared/types/game.types';
 
 export class DatabaseService {
   private db: Database.Database | null = null;
