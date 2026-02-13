@@ -16,6 +16,11 @@ export interface CoinFlipState {
 }
 
 export class CoinFlip extends GameEngine {
+  // Animation constants
+  private static readonly ANIMATION_DURATION = 1500; // milliseconds
+  private static readonly FRAME_INTERVAL = 100; // milliseconds
+  private static readonly TOTAL_FRAMES = CoinFlip.ANIMATION_DURATION / CoinFlip.FRAME_INTERVAL;
+
   private choice: 'heads' | 'tails' | null = null;
   private coinResult: 'heads' | 'tails' | null = null;
   private flipping = false;
@@ -84,20 +89,16 @@ export class CoinFlip extends GameEngine {
       this.initialBet = this.bet;
     }
     
-    // Simulate coin flip animation (15 frames ~1.5 seconds)
-    const animationDuration = 1500;
-    const frameInterval = 100;
-    const totalFrames = animationDuration / frameInterval;
-    
+    // Simulate coin flip animation
     const animationPromise = new Promise<void>((resolve) => {
       const interval = setInterval(() => {
         this.animationFrame++;
         
-        if (this.animationFrame >= totalFrames) {
+        if (this.animationFrame >= CoinFlip.TOTAL_FRAMES) {
           clearInterval(interval);
           resolve();
         }
-      }, frameInterval);
+      }, CoinFlip.FRAME_INTERVAL);
     });
     
     await animationPromise;
@@ -189,7 +190,6 @@ export class CoinFlip extends GameEngine {
    */
   getAnimationProgress(): number {
     if (!this.flipping) return 0;
-    const maxFrames = 15; // Total animation frames
-    return Math.min(this.animationFrame / maxFrames, 1);
+    return Math.min(this.animationFrame / CoinFlip.TOTAL_FRAMES, 1);
   }
 }
