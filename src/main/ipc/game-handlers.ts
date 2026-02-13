@@ -4,37 +4,90 @@
  */
 
 import { ipcMain } from 'electron';
+import { userDataService } from '../services/data/user-data';
+import { gameHistoryService } from '../services/data/game-history';
+import { achievementService } from '../services/data/achievement-service';
+import { GameType, GameResult } from '../../shared/types/game.types';
 
-/**
- * Register all game-related IPC handlers
- */
-export function registerGameHandlers(): void {
-  // TODO: Handle game start
-  ipcMain.handle('game:start', async (event, gameType: string, bet: number) => {
-    // TODO: Validate bet amount
-    // TODO: Start game session
-    // TODO: Deduct bet from user coins
-    return { success: true };
-  });
+// Register all game-related IPC handlers
+ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
+  try {
+    const user = userDataService.getUser();
+    
+    // Validate bet amount
+    if (bet <= 0) {
+      return { success: false, error: 'Invalid bet amount' };
+    }
+    
+    if (user.coins < bet) {
+      return { success: false, error: 'Insufficient coins' };
+    }
+    
+    // Deduct bet from user coins
+    const removed = userDataService.removeCoins(user.id, bet);
+    
+    if (!removed) {
+      return { success: false, error: 'Failed to deduct coins' };
+    }
+    
+    return { success: true, currentCoins: user.coins - bet };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});
 
-  // TODO: Handle game end
-  ipcMain.handle('game:end', async (event, gameType: string, result: any) => {
-    // TODO: Calculate payout
-    // TODO: Update user coins
-    // TODO: Record game in history
-    // TODO: Check achievements
-    return { success: true, payout: 0 };
-  });
+ipcMain.handle('game:end', async (event, gameType: GameType, bet: number, result: GameResult, payout: number, details?: any) => {
+  try {
+    const user = userDataService.getUser();
+    
+    // Award payout
+    if (payout > 0) {
+      userDataService.addCoins(user.id, payout);
+    }
+    
+    // Record game in history
+    gameHistoryService.recordGame(user.id, gameType, bet, result, payout, details);
+    
+    // Award XP
+    const xpGained = Math.floor(bet / 10); // 1 XP per 10 coins bet
+    const levelUpResult = userDataService.addXP(user.id, xpGained);
+    
+    // Check achievements
+    const unlockedAchievements = achievementService.checkAchievements(user.id, {
+      type: 'game_played',
+      data: { gameType, result, payout, bet }
+    });
+    
+    return { 
+      success: true, 
+      payout,
+      currentCoins: user.coins + payout,
+      xpGained,
+      leveledUp: levelUpResult.leveledUp,
+      newLevel: levelUpResult.newLevel,
+      unlockedAchievements
+    };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});
 
-  // TODO: Handle get game stats
-  ipcMain.handle('game:getStats', async (event, gameType?: string) => {
-    // TODO: Get game statistics
-    return {};
-  });
+ipcMain.handle('game:getStats', async (event, gameType?: GameType) => {
+  try {
+    const user = userDataService.getUser();
+    const stats = gameHistoryService.getGameStats(user.id, gameType);
+    return { success: true, stats };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});
 
-  // TODO: Handle get game history
-  ipcMain.handle('game:getHistory', async (event, limit: number, offset: number) => {
-    // TODO: Get game history
-    return [];
-  });
-}
+ipcMain.handle('game:getHistory', async (event, options?: any) => {
+  try {
+    const user = userDataService.getUser();
+    const history = gameHistoryService.getGameHistory(user.id, options);
+    return { success: true, history };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});

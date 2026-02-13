@@ -9,8 +9,6 @@ let dashboardWindow: BrowserWindow | null = null;
  * view stats, configure settings, and access all features
  */
 export function createDashboardWindow(): BrowserWindow {
-  // TODO: Load saved window position and size from settings
-  
   dashboardWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -19,28 +17,31 @@ export function createDashboardWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../../preload/dashboard-preload.js'),
+      preload: path.join(__dirname, '../preload/dashboard-preload.js'),
     },
     title: 'miniGamba Dashboard',
-    icon: path.join(__dirname, '../../../assets/images/icons/app-icon.png'),
-    // TODO: Add custom window frame styling
+    backgroundColor: '#1a1a2e',
+    show: false, // Don't show until ready
   });
 
-  // TODO: Load the dashboard HTML
-  dashboardWindow.loadFile('src/renderer/dashboard/index.html');
+  // Load the dashboard HTML
+  const isDev = process.env.NODE_ENV === 'development';
+  if (isDev) {
+    dashboardWindow.loadURL('http://localhost:3000');
+    dashboardWindow.webContents.openDevTools();
+  } else {
+    dashboardWindow.loadFile(path.join(__dirname, '../renderer/dashboard/index.html'));
+  }
 
-  // TODO: Save window position and size on close
-  dashboardWindow.on('close', () => {
-    // Save window bounds
+  // Show window when ready
+  dashboardWindow.once('ready-to-show', () => {
+    dashboardWindow?.show();
   });
 
   dashboardWindow.on('closed', () => {
     dashboardWindow = null;
   });
 
-  // TODO: Set up menu bar
-  // TODO: Set up dev tools in development mode
-  
   return dashboardWindow;
 }
 
