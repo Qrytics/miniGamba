@@ -5,7 +5,6 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 
-// TODO: Define API interface
 interface ElectronAPI {
   // Game operations
   startGame: (gameType: string, bet: number) => Promise<any>;
@@ -25,12 +24,30 @@ interface ElectronAPI {
   resetData: () => Promise<any>;
   backupData: () => Promise<any>;
   restoreData: (backupPath: string) => Promise<any>;
+  updateProfile: (profile: any) => Promise<any>;
+
+  // Achievement operations
+  getAchievements: () => Promise<any>;
+  getUnlockedAchievements: () => Promise<any>;
+  getAchievementProgress: () => Promise<any>;
+
+  // Daily tasks operations
+  getDailyTasks: () => Promise<any>;
+  updateTaskProgress: (taskId: string, progress: number) => Promise<any>;
+  claimTaskReward: (taskId: string) => Promise<any>;
+
+  // Hourly bonus operations
+  getHourlyBonus: () => Promise<any>;
+  claimHourlyBonus: () => Promise<any>;
+
+  // Investment operations
+  getInvestments: () => Promise<any>;
+  createInvestment: (amount: number, riskLevel: string) => Promise<any>;
+  cashOutInvestment: (investmentId: number) => Promise<any>;
 
   // Window operations
   launchOverlay: () => void;
   closeOverlay: () => void;
-
-  // TODO: Add more API methods as needed
 }
 
 const api: ElectronAPI = {
@@ -52,6 +69,26 @@ const api: ElectronAPI = {
   resetData: () => ipcRenderer.invoke('data:reset'),
   backupData: () => ipcRenderer.invoke('data:backup'),
   restoreData: (backupPath) => ipcRenderer.invoke('data:restore', backupPath),
+  updateProfile: (profile) => ipcRenderer.invoke('data:updateProfile', profile),
+
+  // Achievement operations
+  getAchievements: () => ipcRenderer.invoke('data:getAchievements'),
+  getUnlockedAchievements: () => ipcRenderer.invoke('data:getUnlockedAchievements'),
+  getAchievementProgress: () => ipcRenderer.invoke('data:getAchievementProgress'),
+
+  // Daily tasks operations
+  getDailyTasks: () => ipcRenderer.invoke('data:getDailyTasks'),
+  updateTaskProgress: (taskId, progress) => ipcRenderer.invoke('data:updateTaskProgress', taskId, progress),
+  claimTaskReward: (taskId) => ipcRenderer.invoke('data:claimTaskReward', taskId),
+
+  // Hourly bonus operations
+  getHourlyBonus: () => ipcRenderer.invoke('data:getHourlyBonus'),
+  claimHourlyBonus: () => ipcRenderer.invoke('data:claimHourlyBonus'),
+
+  // Investment operations
+  getInvestments: () => ipcRenderer.invoke('data:getInvestments'),
+  createInvestment: (amount, riskLevel) => ipcRenderer.invoke('data:createInvestment', amount, riskLevel),
+  cashOutInvestment: (investmentId) => ipcRenderer.invoke('data:cashOutInvestment', investmentId),
 
   // Window operations
   launchOverlay: () => ipcRenderer.send('window:launchOverlay'),

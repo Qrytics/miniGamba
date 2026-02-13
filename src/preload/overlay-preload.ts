@@ -5,11 +5,11 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 
-// TODO: Define API interface
 interface ElectronAPI {
   // Game operations
   startGame: (gameType: string, bet: number) => Promise<any>;
   endGame: (gameType: string, result: any) => Promise<any>;
+  getGameStats: (gameType?: string) => Promise<any>;
   
   // User data
   getUserData: () => Promise<any>;
@@ -19,18 +19,27 @@ interface ElectronAPI {
   getOverlaySettings: () => Promise<any>;
   setOverlayOpacity: (opacity: number) => void;
   setOverlaySize: (width: number, height: number) => void;
+  setClickThrough: (enabled: boolean) => void;
+  
+  // Daily tasks
+  getDailyTasks: () => Promise<any>;
+  updateTaskProgress: (taskId: string, progress: number) => Promise<any>;
+
+  // Hourly bonus
+  getHourlyBonus: () => Promise<any>;
+  claimHourlyBonus: () => Promise<any>;
   
   // Window operations
   closeOverlay: () => void;
   minimizeOverlay: () => void;
-
-  // TODO: Add more API methods as needed
+  openDashboard: () => void;
 }
 
 const api: ElectronAPI = {
   // Game operations
   startGame: (gameType, bet) => ipcRenderer.invoke('game:start', gameType, bet),
   endGame: (gameType, result) => ipcRenderer.invoke('game:end', gameType, result),
+  getGameStats: (gameType) => ipcRenderer.invoke('game:getStats', gameType),
   
   // User data
   getUserData: () => ipcRenderer.invoke('data:getUser'),
@@ -40,10 +49,20 @@ const api: ElectronAPI = {
   getOverlaySettings: () => ipcRenderer.invoke('settings:overlay'),
   setOverlayOpacity: (opacity) => ipcRenderer.send('overlay:setOpacity', opacity),
   setOverlaySize: (width, height) => ipcRenderer.send('overlay:setSize', width, height),
+  setClickThrough: (enabled) => ipcRenderer.send('overlay:setClickThrough', enabled),
+
+  // Daily tasks
+  getDailyTasks: () => ipcRenderer.invoke('data:getDailyTasks'),
+  updateTaskProgress: (taskId, progress) => ipcRenderer.invoke('data:updateTaskProgress', taskId, progress),
+
+  // Hourly bonus
+  getHourlyBonus: () => ipcRenderer.invoke('data:getHourlyBonus'),
+  claimHourlyBonus: () => ipcRenderer.invoke('data:claimHourlyBonus'),
   
   // Window operations
   closeOverlay: () => ipcRenderer.send('window:closeOverlay'),
   minimizeOverlay: () => ipcRenderer.send('window:minimizeOverlay'),
+  openDashboard: () => ipcRenderer.send('window:openDashboard'),
 };
 
 // Expose API to renderer process
