@@ -3,21 +3,39 @@
  * Tracks user activity and stops coin earning during idle periods
  */
 
-// TODO: Import system idle detection library (electron-idle-time or similar)
+import { powerMonitor } from 'electron';
 
 let lastActivityTime = Date.now();
 let idleThresholdMs = 5 * 60 * 1000; // 5 minutes
 let checkInterval: NodeJS.Timeout | null = null;
+let isIdle = false;
+let listeners: Array<(idle: boolean) => void> = [];
 
 /**
  * Start idle time tracking
- * TODO: Implement idle detection
  */
 export function startIdleTracking(): void {
   console.log('Starting idle tracking...');
   
-  // TODO: Set up idle time checking
-  // checkInterval = setInterval(checkIdleTime, 30000); // Check every 30 seconds
+  // Use Electron's powerMonitor to detect lock/unlock
+  powerMonitor.on('lock-screen', () => {
+    onIdle();
+  });
+
+  powerMonitor.on('unlock-screen', () => {
+    onActive();
+  });
+
+  powerMonitor.on('suspend', () => {
+    onIdle();
+  });
+
+  powerMonitor.on('resume', () => {
+    onActive();
+  });
+
+  // Check idle state periodically
+  checkInterval = setInterval(checkIdleTime, 30000); // Check every 30 seconds
   
   console.log('Idle tracking started');
 }
@@ -30,51 +48,67 @@ export function stopIdleTracking(): void {
     clearInterval(checkInterval);
     checkInterval = null;
   }
+  powerMonitor.removeAllListeners('lock-screen');
+  powerMonitor.removeAllListeners('unlock-screen');
+  powerMonitor.removeAllListeners('suspend');
+  powerMonitor.removeAllListeners('resume');
   console.log('Idle tracking stopped');
 }
 
 /**
- * Check if user is idle
- * TODO: Implement idle checking
+ * Check if user is idle based on system idle time
  */
 function checkIdleTime(): void {
-  // TODO: Get system idle time
-  // TODO: Update lastActivityTime if user is active
-  // TODO: Trigger onIdle if threshold exceeded
-  // TODO: Trigger onActive when user returns
+  const systemIdleTime = powerMonitor.getSystemIdleTime() * 1000; // Convert to ms
+  
+  if (systemIdleTime > idleThresholdMs && !isIdle) {
+    onIdle();
+  } else if (systemIdleTime < idleThresholdMs && isIdle) {
+    onActive();
+  }
 }
 
 /**
  * Handle user becoming idle
  */
 function onIdle(): void {
+  if (isIdle) return;
+  
+  isIdle = true;
   console.log('User is now idle');
-  // TODO: Pause passive coin earning
-  // TODO: Notify renderer process
+  
+  // Notify listeners
+  listeners.forEach(listener => listener(true));
 }
 
 /**
  * Handle user becoming active
  */
 function onActive(): void {
-  console.log('User is now active');
+  if (!isIdle) return;
+  
+  isIdle = false;
   lastActivityTime = Date.now();
-  // TODO: Resume passive coin earning
-  // TODO: Notify renderer process
+  console.log('User is now active');
+  
+  // Notify listeners
+  listeners.forEach(listener => listener(false));
 }
 
 /**
  * Check if user is currently idle
  */
 export function isUserIdle(): boolean {
-  const idleTime = Date.now() - lastActivityTime;
-  return idleTime > idleThresholdMs;
+  return isIdle;
 }
 
 /**
  * Get idle time in milliseconds
  */
 export function getIdleTime(): number {
+  if (!isIdle) {
+    return powerMonitor.getSystemIdleTime() * 1000;
+  }
   return Date.now() - lastActivityTime;
 }
 
@@ -84,4 +118,18 @@ export function getIdleTime(): number {
 export function setIdleThreshold(minutes: number): void {
   idleThresholdMs = minutes * 60 * 1000;
   console.log('Idle threshold set to', minutes, 'minutes');
+}
+
+/**
+ * Add idle state change listener
+ */
+export function addIdleListener(listener: (idle: boolean) => void): void {
+  listeners.push(listener);
+}
+
+/**
+ * Remove idle state change listener
+ */
+export function removeIdleListener(listener: (idle: boolean) => void): void {
+  listeners = listeners.filter(l => l !== listener);
 }
