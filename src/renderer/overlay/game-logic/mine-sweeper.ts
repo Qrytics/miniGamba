@@ -281,17 +281,17 @@ export class MineSweeper extends GameEngine {
     }
 
     const totalTiles = this.gridSize * this.gridSize;
-    const safeTiles = totalTiles - this.mineCount;
     
     // Calculate multiplier using probability-based formula
-    // Each reveal increases multiplier based on odds of hitting a mine
+    // Each reveal increases multiplier based on odds of NOT hitting a mine
+    // Formula: multiply by (tiles_remaining / safe_tiles_remaining) for each reveal
     let multiplier = 1;
     for (let i = 0; i < this.revealedCount; i++) {
       const tilesRemaining = totalTiles - i;
-      const minesRemaining = this.mineCount;
-      const safeTilesRemaining = tilesRemaining - minesRemaining;
+      const safeTilesRemaining = tilesRemaining - this.mineCount;
       
       // Multiplier increases based on risk: totalRemaining / safeRemaining
+      // This represents the inverse probability of hitting a mine
       const riskFactor = tilesRemaining / safeTilesRemaining;
       multiplier *= riskFactor;
     }
