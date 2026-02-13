@@ -1,5 +1,8 @@
 import { BrowserWindow } from 'electron';
-import path from 'path';
+
+// Provided by @electron-forge/plugin-webpack for the "dashboard" entry point
+declare const DASHBOARD_WEBPACK_ENTRY: string;
+declare const DASHBOARD_PRELOAD_WEBPACK_ENTRY: string;
 
 let dashboardWindow: BrowserWindow | null = null;
 
@@ -17,26 +20,37 @@ export function createDashboardWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../preload/dashboard-preload.js'),
+      // Use webpack-provided preload bundle so the dev server + production builds both work
+      preload: DASHBOARD_PRELOAD_WEBPACK_ENTRY,
     },
     title: 'miniGamba Dashboard',
     backgroundColor: '#1a1a2e',
     show: false, // Don't show until ready
   });
 
-  // Load the dashboard HTML
-  const isDev = process.env.NODE_ENV === 'development';
-  if (isDev) {
-    dashboardWindow.loadURL('http://localhost:3000');
-    dashboardWindow.webContents.openDevTools();
-  } else {
-    dashboardWindow.loadFile(path.join(__dirname, '../renderer/dashboard/index.html'));
-  }
+  // Load the dashboard renderer (dev server or production bundle, handled by webpack plugin)
+  console.log('Loading dashboard from:', DASHBOARD_WEBPACK_ENTRY);
+  dashboardWindow.loadURL(DASHBOARD_WEBPACK_ENTRY).catch((error) => {
+    console.error('Failed to load dashboard:', error);
+    console.error('Attempted URL:', DASHBOARD_WEBPACK_ENTRY);
+    // Retry after a short delay in case dev server is still starting
+    setTimeout(() => {
+      console.log('Retrying dashboard load...');
+      dashboardWindow?.loadURL(DASHBOARD_WEBPACK_ENTRY).catch((retryError) => {
+        console.error('Retry failed:', retryError);
+      });
+    }, 2000);
+  });
 
   // Show window when ready
   dashboardWindow.once('ready-to-show', () => {
     dashboardWindow?.show();
   });
+
+  // Open dev tools in development (but not during testing)
+  if ((process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) && !process.env.PLAYWRIGHT_TEST) {
+    dashboardWindow.webContents.openDevTools();
+  }
 
   dashboardWindow.on('closed', () => {
     dashboardWindow = null;

@@ -14,6 +14,7 @@ interface ElectronAPI {
   // User data
   getUserData: () => Promise<any>;
   updateCoins: (amount: number) => Promise<any>;
+  addCoins: (amount: number) => Promise<any>; // Test-only
   
   // Settings
   getOverlaySettings: () => Promise<any>;
@@ -44,6 +45,7 @@ const api: ElectronAPI = {
   // User data
   getUserData: () => ipcRenderer.invoke('data:getUser'),
   updateCoins: (amount) => ipcRenderer.invoke('data:updateCoins', amount),
+  addCoins: (amount) => ipcRenderer.invoke('data:addCoins', amount), // Test-only
   
   // Settings
   getOverlaySettings: () => ipcRenderer.invoke('settings:overlay'),

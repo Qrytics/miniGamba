@@ -46,9 +46,47 @@ ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
   }
 });
 
-ipcMain.handle('game:end', async (event, gameType: GameType, bet: number, result: GameResult, payout: number, details?: any) => {
+ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) => {
   try {
     const user = userDataService.getUser();
+    
+    // Extract bet and payout from result data
+    // The bet should be stored when startGame is called, but we need to get it from resultData
+    // Check multiple possible locations for bet
+    let bet = resultData.bet;
+    if (!bet && resultData.state && resultData.state.bet) {
+      bet = resultData.state.bet;
+    }
+    if (!bet && typeof resultData.payout === 'number' && resultData.payout > 0) {
+      // If payout exists, bet was likely the original bet amount
+      // For coin flip: payout is bet * 2 if win, 0 if loss
+      // So if payout > 0, bet is likely payout / 2
+      bet = Math.floor(resultData.payout / 2);
+    }
+    if (!bet || bet <= 0) {
+      // Fallback: use a default bet amount based on game type
+      bet = 10; // Default minimum bet
+    }
+    
+    const payout = resultData.payout || 0;
+    
+    // Determine result: check resultData first, then infer from payout
+    let result: GameResult = 'loss';
+    if (resultData.result) {
+      result = resultData.result;
+    } else if (resultData.win === true || (typeof resultData.win === 'boolean' && resultData.win)) {
+      result = 'win';
+    } else if (resultData.win === false) {
+      result = 'loss';
+    } else if (payout > bet) {
+      result = 'win';
+    } else if (payout === bet) {
+      result = 'push';
+    } else {
+      result = 'loss';
+    }
+    
+    const details = resultData;
     
     // Award payout
     if (payout > 0) {

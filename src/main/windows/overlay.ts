@@ -1,5 +1,8 @@
 import { BrowserWindow, screen } from 'electron';
-import path from 'path';
+
+// Provided by @electron-forge/plugin-webpack for the "overlay" entry point
+declare const OVERLAY_WEBPACK_ENTRY: string;
+declare const OVERLAY_PRELOAD_WEBPACK_ENTRY: string;
 
 let overlayWindow: BrowserWindow | null = null;
 
@@ -26,25 +29,36 @@ export function createOverlayWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../preload/overlay-preload.js'),
+      preload: OVERLAY_PRELOAD_WEBPACK_ENTRY,
     },
     backgroundColor: '#00000000', // Fully transparent
     show: false,
   });
 
-  // Load the overlay HTML
-  const isDev = process.env.NODE_ENV === 'development';
-  if (isDev) {
-    overlayWindow.loadURL('http://localhost:3001');
-  } else {
-    overlayWindow.loadFile(path.join(__dirname, '../renderer/overlay/index.html'));
-  }
+  // Load the overlay renderer (dev server or production bundle, handled by webpack plugin)
+  overlayWindow.loadURL(OVERLAY_WEBPACK_ENTRY).catch((error) => {
+    console.error('Failed to load overlay:', error);
+    // Retry after a short delay in case dev server is still starting
+    setTimeout(() => {
+      overlayWindow?.loadURL(OVERLAY_WEBPACK_ENTRY).catch((retryError) => {
+        console.error('Retry failed:', retryError);
+      });
+    }, 2000);
+  });
 
   // Show window when ready
   overlayWindow.once('ready-to-show', () => {
     overlayWindow?.show();
     overlayWindow?.setOpacity(0.9);
   });
+
+  // Don't open DevTools during testing
+  if (process.env.PLAYWRIGHT_TEST) {
+    // DevTools disabled for tests
+  } else if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+    // Optionally open DevTools in development (commented out for overlay)
+    // overlayWindow.webContents.openDevTools();
+  }
 
   overlayWindow.on('closed', () => {
     overlayWindow = null;

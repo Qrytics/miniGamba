@@ -13,8 +13,23 @@ export class DatabaseService {
   private dbPath: string;
 
   constructor() {
-    const userDataPath = app.getPath('userData');
-    this.dbPath = path.join(userDataPath, 'minigamba.db');
+    // In test mode, use worker-specific database path
+    if (process.env.PLAYWRIGHT_TEST === 'true') {
+      // Use ELECTRON_USER_DATA if set (from --user-data-dir), otherwise use app path
+      let userDataPath: string;
+      if (process.env.ELECTRON_USER_DATA) {
+        userDataPath = process.env.ELECTRON_USER_DATA;
+      } else {
+        userDataPath = app.getPath('userData');
+      }
+      
+      // Use worker index if available, otherwise use process ID
+      const workerId = process.env.TEST_WORKER_INDEX || process.pid.toString();
+      this.dbPath = path.join(userDataPath, `minigamba-worker-${workerId}.db`);
+    } else {
+      const userDataPath = app.getPath('userData');
+      this.dbPath = path.join(userDataPath, 'minigamba.db');
+    }
   }
 
   /**
@@ -336,3 +351,11 @@ export class DatabaseService {
 }
 
 export const databaseService = new DatabaseService();
+
+/**
+ * Backwards-compatible helper used by leaderboard services.
+ * Returns the active better-sqlite3 instance.
+ */
+export function getDatabase(): Database.Database {
+  return databaseService.getDb();
+}

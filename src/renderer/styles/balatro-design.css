@@ -1,0 +1,108 @@
+/**
+ * Balatro-inspired UI/UX design tokens and base system
+ * Retro-pixel, neon-accented, tactically animated
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Press+Start+2P&display=swap');
+
+:root {
+  /* Backgrounds - very dark, no pure black */
+  --balatro-bg-primary: #0D0D0F;
+  --balatro-bg-secondary: #16161A;
+  --balatro-panel-base: #1E1E24;
+  --balatro-panel-shadow: #111115;
+
+  /* Accent colors (neon-pastel, use with glow) */
+  --balatro-red: #FF4B4B;
+  --balatro-green: #48FF9A;
+  --balatro-blue: #4BA3FF;
+  --balatro-purple: #A855F7;
+  --balatro-yellow: #FFD84B;
+  --balatro-cyan: #3CF3FF;
+
+  /* Suit / card accents */
+  --balatro-hearts: #FF4B4B;
+  --balatro-diamonds: #FF6A6A;
+  --balatro-clubs: #4BFF88;
+  --balatro-spades: #B4B4FF;
+
+  /* Glow (opacity 35-50%) */
+  --balatro-glow-opacity: 0.45;
+  --balatro-glow-blur: 8px;
+  --balatro-glow-blur-hover: 14px;
+
+  /* Typography - pixel-aligned, bold preferred */
+  --balatro-font-display: 'Press Start 2P', 'JetBrains Mono', monospace;
+  --balatro-font-mono: 'JetBrains Mono', monospace;
+  --balatro-font-size-title: 32px;
+  --balatro-font-size-section: 22px;
+  --balatro-font-size-primary: 17px;
+  --balatro-font-size-secondary: 13px;
+  --balatro-font-size-micro: 11px;
+  --balatro-line-height: 1.15;
+  --balatro-letter-spacing: 0.03em;
+
+  /* Spacing - 8px grid */
+  --balatro-space-1: 8px;
+  --balatro-space-2: 16px;
+  --balatro-space-3: 24px;
+  --balatro-space-4: 32px;
+
+  /* Panel / border - angular/edged, no rounded corners */
+  --balatro-border: 1px solid rgba(255, 255, 255, 0.06);
+  --balatro-radius: 0;
+  --balatro-radius-card: 0;
+
+  /* Card aspect 2.5:3.5 */
+  --balatro-card-width: 100px;
+  --balatro-card-height: 140px;
+
+  /* Motion - elastic overshoot */
+  --balatro-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --balatro-duration-fast: 180ms;
+  --balatro-duration-mid: 350ms;
+  --balatro-duration-slow: 450ms;
+
+  /* Shadows */
+  --balatro-shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --balatro-shadow-card: 0 4px 8px rgba(0, 0, 0, 0.6);
+  --balatro-shadow-card-hover: 0 6px 14px rgba(0, 0, 0, 0.5);
+  --balatro-shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* Button states */
+  --balatro-btn-hover-scale: 1.04;
+  --balatro-btn-active-scale: 0.96;
+  --balatro-btn-disabled-opacity: 0.4;
+}
+
+/* Base typography when design system is active */
+.balatro-theme {
+  font-family: var(--balatro-font-mono);
+  -webkit-font-smoothing: none;
+  font-smoothing: none;
+  letter-spacing: var(--balatro-letter-spacing);
+  line-height: var(--balatro-line-height);
+}
+
+.balatro-theme .balatro-title {
+  font-family: var(--balatro-font-display);
+  font-size: var(--balatro-font-size-title);
+}
+
+.balatro-theme .balatro-section {
+  font-size: var(--balatro-font-size-section);
+  font-weight: 700;
+}
+
+.balatro-theme .balatro-primary {
+  font-size: var(--balatro-font-size-primary);
+  font-weight: 600;
+}
+
+.balatro-theme .balatro-secondary {
+  font-size: var(--balatro-font-size-secondary);
+}
+
+.balatro-theme .balatro-micro {
+  font-size: var(--balatro-font-size-micro);
+}

@@ -1,17 +1,17 @@
 :root {
-  --primary-color: #8b5cf6;
-  --primary-hover: #7c3aed;
-  --secondary-color: #ec4899;
-  --background: #1a1a2e;
-  --surface: #16213e;
-  --surface-hover: #1e2a4a;
+  --primary-color: var(--balatro-purple);
+  --primary-hover: #b966ff;
+  --secondary-color: var(--balatro-cyan);
+  --background: var(--balatro-bg-primary);
+  --surface: var(--balatro-panel-base);
+  --surface-hover: var(--balatro-bg-secondary);
   --text-primary: #ffffff;
   --text-secondary: #a0aec0;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --border: #2d3748;
-  --gold: #fbbf24;
+  --success: var(--balatro-green);
+  --warning: var(--balatro-yellow);
+  --danger: var(--balatro-red);
+  --border: var(--balatro-border);
+  --gold: var(--balatro-yellow);
 }
 
 * {
@@ -21,14 +21,12 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--balatro-font-mono);
   background: var(--background);
   color: var(--text-primary);
   overflow: hidden;
+  letter-spacing: var(--balatro-letter-spacing);
+  line-height: var(--balatro-line-height);
 }
 
 .app {
@@ -41,8 +39,8 @@ body {
 /* Header */
 .app-header {
   background: var(--surface);
-  padding: 1rem 2rem;
-  border-bottom: 1px solid var(--border);
+  padding: var(--balatro-space-2) var(--balatro-space-4);
+  border-bottom: var(--balatro-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,12 +48,12 @@ body {
 }
 
 .app-header h1 {
-  font-size: 1.5rem;
+  font-size: var(--balatro-font-size-section);
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--balatro-cyan);
+  display: flex;
+  align-items: center;
+  gap: var(--balatro-space-1);
 }
 
 .header-user {
@@ -67,22 +65,24 @@ body {
 .coin-display {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--balatro-space-1);
   background: var(--surface-hover);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
+  padding: var(--balatro-space-1) var(--balatro-space-2);
+  border-radius: var(--balatro-radius);
+  font-weight: 700;
+  font-size: var(--balatro-font-size-primary);
+  color: var(--balatro-yellow);
+  box-shadow: 0 0 var(--balatro-glow-blur) rgba(255, 216, 75, 0.35);
 }
 
 .level-display {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--balatro-space-1);
   background: var(--primary-color);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
+  padding: var(--balatro-space-1) var(--balatro-space-2);
+  border-radius: var(--balatro-radius);
+  font-weight: 700;
 }
 
 /* Layout */
@@ -95,8 +95,8 @@ body {
 .app-sidebar {
   width: 250px;
   background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 1.5rem 0;
+  border-right: var(--balatro-border);
+  padding: var(--balatro-space-3) 0;
   overflow-y: auto;
   flex-shrink: 0;
 }
@@ -113,16 +113,18 @@ body {
 .app-sidebar nav button {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
+  gap: var(--balatro-space-2);
+  padding: var(--balatro-space-2) var(--balatro-space-3);
   color: var(--text-secondary);
   text-decoration: none;
-  transition: all 0.2s;
+  transition: background var(--balatro-duration-fast) ease,
+    transform var(--balatro-duration-fast) var(--balatro-ease);
   border: none;
   background: none;
   width: 100%;
   text-align: left;
-  font-size: 1rem;
+  font-size: var(--balatro-font-size-primary);
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -133,22 +135,24 @@ body {
   background: var(--surface-hover);
   color: var(--text-primary);
   border-left: 3px solid var(--primary-color);
-  padding-left: calc(1.5rem - 3px);
+  padding-left: calc(var(--balatro-space-3) - 3px);
 }
 
 .app-content {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem;
+  padding: var(--balatro-space-4);
+  background: var(--balatro-bg-secondary);
 }
 
-/* Cards */
+/* Cards - flat panel, subtle depth */
 .card {
   background: var(--surface);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  margin-bottom: 1.5rem;
+  border-radius: var(--balatro-radius-card);
+  padding: var(--balatro-space-3);
+  border: var(--balatro-border);
+  margin-bottom: var(--balatro-space-3);
+  box-shadow: var(--balatro-shadow-panel);
 }
 
 .card-header {
@@ -165,16 +169,16 @@ body {
 
 /* Buttons */
 .btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: var(--balatro-space-2) var(--balatro-space-3);
+  border-radius: var(--balatro-radius);
   border: none;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: var(--balatro-font-size-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform var(--balatro-duration-fast) var(--balatro-ease);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--balatro-space-1);
 }
 
 .btn-primary {
@@ -183,27 +187,44 @@ body {
 }
 
 .btn-primary:hover {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(-4px) scale(var(--balatro-btn-hover-scale));
+}
+
+.btn-primary:active {
+  transform: scale(var(--balatro-btn-active-scale));
 }
 
 .btn-secondary {
   background: var(--surface-hover);
   color: var(--text-primary);
+  border: var(--balatro-border);
 }
 
 .btn-secondary:hover {
-  background: var(--border);
+  transform: scale(var(--balatro-btn-hover-scale));
 }
 
 .btn-success {
   background: var(--success);
-  color: white;
+  color: var(--balatro-bg-primary);
+}
+
+.btn-success:hover {
+  transform: scale(var(--balatro-btn-hover-scale));
 }
 
 .btn-danger {
   background: var(--danger);
   color: white;
+}
+
+.btn-danger:hover {
+  transform: scale(var(--balatro-btn-hover-scale));
+}
+
+.btn:disabled {
+  opacity: var(--balatro-btn-disabled-opacity);
+  cursor: not-allowed;
 }
 
 /* Grid */
@@ -248,7 +269,7 @@ body {
 /* Stat Cards */
 .stat-card {
   background: var(--surface);
-  border-radius: 0.75rem;
+  border-radius: 0;
   padding: 1.5rem;
   border: 1px solid var(--border);
   text-align: center;
@@ -268,7 +289,7 @@ body {
 /* Progress Bar */
 .progress-bar {
   background: var(--surface-hover);
-  border-radius: 9999px;
+  border-radius: 0;
   height: 0.5rem;
   overflow: hidden;
   margin: 0.5rem 0;
@@ -287,7 +308,7 @@ body {
   align-items: center;
   padding: 1rem;
   background: var(--surface);
-  border-radius: 0.75rem;
+  border-radius: 0;
   border: 1px solid var(--border);
   transition: all 0.2s;
   cursor: pointer;
@@ -317,18 +338,23 @@ body {
 /* Game Card */
 .game-card {
   background: var(--surface);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
+  border-radius: var(--balatro-radius-card);
+  padding: var(--balatro-space-3);
+  border: var(--balatro-border);
   text-align: center;
-  transition: all 0.2s;
+  transition: transform var(--balatro-duration-mid) var(--balatro-ease),
+    box-shadow var(--balatro-duration-mid) ease;
   cursor: pointer;
+  box-shadow: var(--balatro-shadow-panel);
 }
 
 .game-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary-color);
-  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: var(--balatro-shadow-card-hover);
+}
+
+.game-card:active {
+  transform: translateY(-2px) scale(var(--balatro-btn-active-scale));
 }
 
 .game-icon {
@@ -358,7 +384,7 @@ body {
   padding: 0.75rem;
   background: var(--surface-hover);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: 0;
   color: var(--text-primary);
   font-size: 1rem;
 }
@@ -392,7 +418,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {

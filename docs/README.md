@@ -1,43 +1,30 @@
 # miniGamba - Documentation
 
-This directory contains project documentation.
+This directory contains project documentation. All docs are in **Markdown**; there are no PDFs in the repo.
 
-## Planned Documentation
+## Documentation Index
 
-### SETUP.md
-Step-by-step instructions for:
-- Installing dependencies
-- Setting up development environment
-- Building the application
-- Running in development mode
+See **[DOCUMENTATION.md](DOCUMENTATION.md)** for the full list of documentation files and how to **generate PDFs** from Markdown (Pandoc, VS Code, or browser Print to PDF).
 
-### ARCHITECTURE.md
-Technical architecture overview:
-- System design
-- Component hierarchy
-- Data flow
-- IPC communication
-- State management
+## Docs in This Folder
 
-### API.md
-API documentation for:
-- IPC methods
-- Game engine API
-- Service APIs
-- Utility functions
+| File | Description |
+|------|-------------|
+| [SETUP.md](SETUP.md) | Install, run, build, test, E2E, analyze |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, main/renderer/shared, IPC, stack |
+| [DOCUMENTATION.md](DOCUMENTATION.md) | Index of all docs + PDF generation |
+| [README.md](README.md) | This file |
 
-### CONTRIBUTING.md
-Guidelines for contributors:
-- Code style
-- Commit conventions
-- Pull request process
-- Testing requirements
+## Root-Level Docs
 
-## TODO
+- **README.md** – Project overview, games, economy, features
+- **IMPLEMENTATION_STATUS.md** – What’s done (backend, games, UI, build)
+- **TESTING_GUIDE.md** – E2E, test:analyze, stopping tests
+- **tests/README.md** – Testing pipeline, analyze, single-worker run
 
-- [ ] Create SETUP.md with installation instructions
-- [ ] Create ARCHITECTURE.md with technical details
-- [ ] Create API.md documenting all APIs
-- [ ] Create CONTRIBUTING.md with contribution guidelines
-- [ ] Add inline code documentation
-- [ ] Generate API docs from JSDoc comments
+## Currently Implemented
+
+- Core: SQLite, user data, settings, game history, achievements, daily tasks, hourly bonus, investments
+- All 10 games with UI and logic
+- Dashboard and overlay with Balatro-inspired UI, angular/edged panels, pixel-style icons
+- E2E tests; `npm run test:analyze` for E2E + test-data bugs

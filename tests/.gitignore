@@ -1,0 +1,5 @@
+screenshots/
+reports/
+test-results/
+bug-reports/
+*.log

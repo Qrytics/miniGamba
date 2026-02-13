@@ -1,4 +1,5 @@
-/* Overlay Main Styles */
+/* Overlay Main Styles - Balatro-inspired */
+@import '../../styles/balatro-design.css';
 
 * {
   margin: 0;
@@ -7,63 +8,74 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: var(--balatro-font-mono);
   background: transparent;
   color: #eee;
   user-select: none;
+  letter-spacing: var(--balatro-letter-spacing);
+  line-height: var(--balatro-line-height);
 }
 
 .overlay-app {
   width: 100vw;
   height: 100vh;
-  background: rgba(26, 26, 46, 0.95);
-  border-radius: 12px;
-  border: 2px solid #e94560;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  background: var(--balatro-bg-primary);
+  border-radius: var(--balatro-radius);
+  border: var(--balatro-border);
+  box-shadow: var(--balatro-shadow-lift);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 
 .overlay-header {
-  background: rgba(22, 33, 62, 0.9);
-  padding: 0.75rem 1rem;
+  background: var(--balatro-panel-base);
+  padding: var(--balatro-space-2) var(--balatro-space-3);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #e94560;
-  cursor: move; /* TODO: Make draggable */
+  border-bottom: var(--balatro-border);
+  cursor: move;
 }
 
 .coin-display {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #ffd700;
+  font-size: var(--balatro-font-size-primary);
+  font-weight: 700;
+  color: var(--balatro-yellow);
+  filter: drop-shadow(0 0 var(--balatro-glow-blur) rgba(255, 216, 75, 0.45));
 }
 
 .close-btn {
-  background: transparent;
-  border: none;
+  background: var(--balatro-panel-base);
+  border: var(--balatro-border);
   color: #eee;
-  font-size: 2rem;
+  font-size: var(--balatro-font-size-section);
   cursor: pointer;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: transform var(--balatro-duration-fast) var(--balatro-ease),
+    background var(--balatro-duration-fast) ease;
 }
 
 .close-btn:hover {
-  color: #e94560;
-  transform: scale(1.1);
+  color: var(--balatro-red);
+  background: rgba(255, 75, 75, 0.15);
+  transform: scale(var(--balatro-btn-hover-scale));
+}
+
+.close-btn:active {
+  transform: scale(var(--balatro-btn-active-scale));
 }
 
 .overlay-content {
   flex: 1;
-  padding: 1.5rem;
+  padding: var(--balatro-space-3);
   overflow-y: auto;
+  background: var(--balatro-bg-secondary);
 }
 
 .game-selector {
@@ -71,34 +83,42 @@ body {
 }
 
 .game-selector h2 {
-  color: #e94560;
-  margin-bottom: 1.5rem;
+  color: var(--balatro-cyan);
+  margin-bottom: var(--balatro-space-3);
+  font-size: var(--balatro-font-size-section);
+  font-weight: 700;
 }
 
 .game-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: var(--balatro-space-2);
   max-width: 500px;
   margin: 0 auto;
 }
 
 .game-grid button {
-  padding: 1.5rem 1rem;
-  font-size: 1.1rem;
-  background: rgba(22, 33, 62, 0.8);
+  padding: var(--balatro-space-2) var(--balatro-space-3);
+  font-size: var(--balatro-font-size-secondary);
+  font-weight: 600;
+  background: var(--balatro-panel-base);
   color: #eee;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
+  border: var(--balatro-border);
+  border-radius: var(--balatro-radius);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform var(--balatro-duration-mid) var(--balatro-ease),
+    box-shadow var(--balatro-duration-mid) ease,
+    border-color var(--balatro-duration-fast) ease;
 }
 
 .game-grid button:hover {
-  background: rgba(233, 69, 96, 0.2);
-  border-color: #e94560;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+  border-color: var(--balatro-purple);
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: var(--balatro-shadow-card-hover);
+}
+
+.game-grid button:active {
+  transform: translateY(-2px) scale(var(--balatro-btn-active-scale));
 }
 
 .game-container {
@@ -106,31 +126,35 @@ body {
 }
 
 .game-placeholder {
-  padding: 2rem;
+  padding: var(--balatro-space-4);
 }
 
 .game-placeholder h3 {
-  color: #e94560;
-  margin-bottom: 1rem;
+  color: var(--balatro-cyan);
+  margin-bottom: var(--balatro-space-2);
   text-transform: capitalize;
+  font-size: var(--balatro-font-size-section);
 }
 
 .game-placeholder button {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background: #e94560;
+  margin-top: var(--balatro-space-2);
+  padding: var(--balatro-space-2) var(--balatro-space-3);
+  background: var(--balatro-purple);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--balatro-radius);
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 700;
+  font-size: var(--balatro-font-size-primary);
+  transition: transform var(--balatro-duration-fast) var(--balatro-ease),
+    background var(--balatro-duration-fast) ease;
 }
 
 .game-placeholder button:hover {
-  background: #c23854;
-  transform: translateY(-2px);
+  background: #b966ff;
+  transform: translateY(-4px) scale(var(--balatro-btn-hover-scale));
 }
 
-/* TODO: Add game-specific styles */
-/* TODO: Add animations for wins/losses */
-/* TODO: Add theme support */
+.game-placeholder button:active {
+  transform: scale(var(--balatro-btn-active-scale));
+}

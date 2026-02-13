@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PixelIcon } from '../../../components/PixelIcon';
 
 interface GameProps {
   onCoinsUpdate: () => void;
@@ -11,7 +12,12 @@ export const ScratchCards: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const handlePlay = async () => {
     try {
       await window.electronAPI.startGame('scratch-cards', bet);
-      const result = { payout: Math.random() > 0.7 ? bet * 2 : 0 };
+      const result = { 
+        bet: bet,
+        payout: Math.random() > 0.7 ? bet * 2 : 0,
+        result: Math.random() > 0.7 ? 'win' : 'loss',
+        win: Math.random() > 0.7,
+      };
       await window.electronAPI.endGame('scratch-cards', result);
       onCoinsUpdate();
     } catch (error) {
@@ -22,7 +28,7 @@ export const ScratchCards: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🎫 Scratch Cards</h2>
+        <h2 className="game-title"><PixelIcon name="ticket" size={28} aria-hidden={true} /> Scratch Cards</h2>
       </div>
       <div className="game-interface">
         <div className="game-display">
@@ -47,7 +53,13 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const handleSpin = async () => {
     try {
       await window.electronAPI.startGame('wheel-of-fortune', bet);
-      const result = { payout: bet * (1 + Math.random() * 5) };
+      const payout = bet * (1 + Math.random() * 5);
+      const result = { 
+        bet: bet,
+        payout: payout,
+        result: payout > bet ? 'win' : 'loss',
+        win: payout > bet,
+      };
       await window.electronAPI.endGame('wheel-of-fortune', result);
       onCoinsUpdate();
     } catch (error) {
@@ -58,12 +70,12 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🎡 Wheel of Fortune</h2>
+        <h2 className="game-title"><PixelIcon name="wheel" size={28} aria-hidden={true} /> Wheel of Fortune</h2>
       </div>
       <div className="game-interface">
         <div className="game-display">
-          <div style={{ width: '200px', height: '200px', borderRadius: '50%', background: 'linear-gradient(45deg, #f59e0b, #ef4444, #8b5cf6, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
-            🎡
+          <div style={{ width: '200px', height: '200px', borderRadius: 0, background: 'linear-gradient(45deg, #f59e0b, #ef4444, #8b5cf6, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <PixelIcon name="wheel" size={80} aria-hidden={true} />
           </div>
         </div>
         <div className="game-controls">
@@ -85,7 +97,13 @@ export const MiniDerby: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const handleRace = async () => {
     try {
       await window.electronAPI.startGame('mini-derby', bet);
-      const result = { payout: Math.random() > 0.75 ? bet * 3 : 0 };
+      const payout = Math.random() > 0.75 ? bet * 3 : 0;
+      const result = { 
+        bet: bet,
+        payout: payout,
+        result: payout > 0 ? 'win' : 'loss',
+        win: payout > 0,
+      };
       await window.electronAPI.endGame('mini-derby', result);
       onCoinsUpdate();
     } catch (error) {
@@ -96,12 +114,17 @@ export const MiniDerby: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🏇 Mini Derby</h2>
+        <h2 className="game-title"><PixelIcon name="horse" size={28} aria-hidden={true} /> Mini Derby</h2>
       </div>
       <div className="game-interface">
         <div className="game-display">
           <p className="text-muted">Pick a racer and watch them compete!</p>
-          <div style={{ fontSize: '3rem', marginTop: '1rem' }}>🏇 🏇 🏇 🏇</div>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'center' }}>
+            <PixelIcon name="horse" size={48} aria-hidden={true} />
+            <PixelIcon name="horse" size={48} aria-hidden={true} />
+            <PixelIcon name="horse" size={48} aria-hidden={true} />
+            <PixelIcon name="horse" size={48} aria-hidden={true} />
+          </div>
         </div>
         <div className="game-controls">
           <div className="bet-controls">
@@ -122,7 +145,13 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const handleRoll = async () => {
     try {
       await window.electronAPI.startGame('dice-roll', bet);
-      const result = { payout: Math.random() > 0.6 ? bet * 2 : 0 };
+      const payout = Math.random() > 0.6 ? bet * 2 : 0;
+      const result = { 
+        bet: bet,
+        payout: payout,
+        result: payout > 0 ? 'win' : 'loss',
+        win: payout > 0,
+      };
       await window.electronAPI.endGame('dice-roll', result);
       onCoinsUpdate();
     } catch (error) {
@@ -133,11 +162,14 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">🎲 Dice Roll</h2>
+        <h2 className="game-title"><PixelIcon name="dice" size={28} aria-hidden={true} /> Dice Roll</h2>
       </div>
       <div className="game-interface">
         <div className="game-display">
-          <div style={{ fontSize: '5rem' }}>🎲 🎲</div>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <PixelIcon name="dice" size={64} aria-hidden={true} />
+            <PixelIcon name="dice" size={64} aria-hidden={true} />
+          </div>
         </div>
         <div className="game-controls">
           <div className="bet-controls">
@@ -158,7 +190,13 @@ export const MiniPoker: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const handlePlay = async () => {
     try {
       await window.electronAPI.startGame('mini-poker', bet);
-      const result = { payout: Math.random() > 0.65 ? bet * 2 : 0 };
+      const payout = Math.random() > 0.65 ? bet * 2 : 0;
+      const result = { 
+        bet: bet,
+        payout: payout,
+        result: payout > 0 ? 'win' : 'loss',
+        win: payout > 0,
+      };
       await window.electronAPI.endGame('mini-poker', result);
       onCoinsUpdate();
     } catch (error) {
@@ -169,7 +207,7 @@ export const MiniPoker: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2 className="game-title">♠️ Mini Poker</h2>
+        <h2 className="game-title"><PixelIcon name="spade" size={28} aria-hidden={true} /> Mini Poker</h2>
       </div>
       <div className="game-interface">
         <div className="game-display">

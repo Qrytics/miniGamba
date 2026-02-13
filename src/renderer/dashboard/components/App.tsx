@@ -9,6 +9,7 @@ import AchievementsPage from '../pages/AchievementsPage';
 import StatsPage from '../pages/StatsPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
+import { PixelIcon } from '../../components/PixelIcon';
 import '../styles/dashboard.css';
 
 type PageType = 'home' | 'games' | 'achievements' | 'stats' | 'profile' | 'settings';
@@ -52,14 +53,16 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <div className="app-header">
-        <h1>🎰 miniGamba</h1>
+        <h1><PixelIcon name="slots" size={28} aria-hidden={true} /> miniGamba</h1>
         {userData && (
           <div className="header-user">
             <div className="coin-display">
-              💰 {userData.coins?.toLocaleString() || 0}
+              <PixelIcon name="money" size={22} aria-hidden={true} />
+              <span>{userData.coins?.toLocaleString() || 0}</span>
             </div>
             <div className="level-display">
-              ⭐ Level {userData.level || 1}
+              <PixelIcon name="star" size={22} aria-hidden={true} />
+              <span>Level {userData.level || 1}</span>
             </div>
           </div>
         )}
@@ -74,7 +77,7 @@ const App: React.FC = () => {
                   className={currentPage === 'home' ? 'active' : ''}
                   onClick={() => setCurrentPage('home')}
                 >
-                  🏠 Home
+                  <PixelIcon name="home" size={20} aria-hidden={true} /> Home
                 </button>
               </li>
               <li>
@@ -82,7 +85,7 @@ const App: React.FC = () => {
                   className={currentPage === 'games' ? 'active' : ''}
                   onClick={() => setCurrentPage('games')}
                 >
-                  🎮 Games
+                  <PixelIcon name="game" size={20} aria-hidden={true} /> Games
                 </button>
               </li>
               <li>
@@ -90,7 +93,7 @@ const App: React.FC = () => {
                   className={currentPage === 'achievements' ? 'active' : ''}
                   onClick={() => setCurrentPage('achievements')}
                 >
-                  🏆 Achievements
+                  <PixelIcon name="trophy" size={20} aria-hidden={true} /> Achievements
                 </button>
               </li>
               <li>
@@ -98,7 +101,7 @@ const App: React.FC = () => {
                   className={currentPage === 'stats' ? 'active' : ''}
                   onClick={() => setCurrentPage('stats')}
                 >
-                  📊 Stats
+                  <PixelIcon name="chart" size={20} aria-hidden={true} /> Stats
                 </button>
               </li>
               <li>
@@ -106,7 +109,7 @@ const App: React.FC = () => {
                   className={currentPage === 'profile' ? 'active' : ''}
                   onClick={() => setCurrentPage('profile')}
                 >
-                  👤 Profile
+                  <PixelIcon name="user" size={20} aria-hidden={true} /> Profile
                 </button>
               </li>
               <li>
@@ -114,12 +117,12 @@ const App: React.FC = () => {
                   className={currentPage === 'settings' ? 'active' : ''}
                   onClick={() => setCurrentPage('settings')}
                 >
-                  ⚙️ Settings
+                  <PixelIcon name="settings" size={20} aria-hidden={true} /> Settings
                 </button>
               </li>
               <li style={{ marginTop: '2rem' }}>
                 <button onClick={handleLaunchOverlay} className="btn btn-primary" style={{ width: '100%' }}>
-                  🚀 Launch Overlay
+                  <PixelIcon name="rocket" size={20} aria-hidden={true} /> Launch Overlay
                 </button>
               </li>
             </ul>

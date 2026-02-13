@@ -25,6 +25,7 @@ interface ElectronAPI {
   backupData: () => Promise<any>;
   restoreData: (backupPath: string) => Promise<any>;
   updateProfile: (profile: any) => Promise<any>;
+  addCoins: (amount: number) => Promise<any>; // Test-only
 
   // Achievement operations
   getAchievements: () => Promise<any>;
@@ -70,6 +71,7 @@ const api: ElectronAPI = {
   backupData: () => ipcRenderer.invoke('data:backup'),
   restoreData: (backupPath) => ipcRenderer.invoke('data:restore', backupPath),
   updateProfile: (profile) => ipcRenderer.invoke('data:updateProfile', profile),
+  addCoins: (amount) => ipcRenderer.invoke('data:addCoins', amount), // Test-only
 
   // Achievement operations
   getAchievements: () => ipcRenderer.invoke('data:getAchievements'),

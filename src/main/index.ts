@@ -9,6 +9,7 @@ import { createOverlayWindow } from './windows/overlay';
 import './ipc/game-handlers';
 import './ipc/settings-handlers';
 import './ipc/data-handlers';
+import './ipc/window-handlers';
 
 // Import services
 import { databaseService } from './services/data/database';
