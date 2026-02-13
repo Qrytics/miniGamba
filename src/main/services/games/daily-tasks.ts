@@ -356,10 +356,6 @@ export class DailyTasksService {
     // Daily tasks are date-based, so they automatically "reset" 
     // when getDailyTasks is called with a new date
     // This method can be used to trigger any end-of-day processing
-    
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayString = yesterday.toISOString().split('T')[0];
 
     // Check if yesterday's tasks were completed
     if (this.areAllTasksCompleted(userId)) {
