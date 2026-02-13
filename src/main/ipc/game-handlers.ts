@@ -58,10 +58,12 @@ ipcMain.handle('game:end', async (event, gameType: GameType, bet: number, result
       data: { gameType, result, payout, bet }
     });
     
+    const updatedUser = userDataService.getUser();
+    
     return { 
       success: true, 
       payout,
-      currentCoins: user.coins + payout,
+      currentCoins: updatedUser.coins,
       xpGained,
       leveledUp: levelUpResult.leveledUp,
       newLevel: levelUpResult.newLevel,
