@@ -233,7 +233,7 @@ export class WheelOfFortune extends GameEngine {
         { id: 5, type: 'multiplier', value: 10, weight: 5, color: colors[5], label: '10x Bet' },
         { id: 6, type: 'free-spins', value: 1, weight: 12, color: colors[6], label: '1 Free Spin' },
         { id: 7, type: 'free-spins', value: 3, weight: 5, color: colors[7], label: '3 Free Spins' },
-        { id: 8, type: 'cosmetic', value: this.getRandomCosmetic(), weight: 3, color: colors[8], label: 'Cosmetic' },
+        { id: 8, type: 'cosmetic', value: 'COSMETIC_PLACEHOLDER', weight: 3, color: colors[8], label: 'Cosmetic' },
         { id: 9, type: 'coins', value: 1000, weight: 2, color: colors[9], label: '1000 Coins!' },
       ];
     } else {
@@ -247,7 +247,7 @@ export class WheelOfFortune extends GameEngine {
         { id: 5, type: 'multiplier', value: 5, weight: 7, color: colors[5], label: '5x Bet' },
         { id: 6, type: 'free-spins', value: 1, weight: 8, color: colors[6], label: '1 Free Spin' },
         { id: 7, type: 'bankrupt', value: 0, weight: 12, color: '#2C3E50', label: 'BANKRUPT' },
-        { id: 8, type: 'cosmetic', value: this.getRandomCosmetic(), weight: 2, color: colors[8], label: 'Cosmetic' },
+        { id: 8, type: 'cosmetic', value: 'COSMETIC_PLACEHOLDER', weight: 2, color: colors[8], label: 'Cosmetic' },
         { id: 9, type: 'multiplier', value: 10, weight: 3, color: colors[9], label: '10x Bet!' },
       ];
     }
@@ -282,6 +282,11 @@ export class WheelOfFortune extends GameEngine {
    */
   private determineResult(): void {
     if (!this.currentSegment) return;
+    
+    // Generate random cosmetic on landing (not when generating segments)
+    if (this.currentSegment.type === 'cosmetic') {
+      this.currentSegment.value = this.getRandomCosmetic();
+    }
     
     switch (this.currentSegment.type) {
       case 'bankrupt':

@@ -216,7 +216,7 @@ export class DiceRoll extends GameEngine {
         return [sorted[2], sorted[1]];
       
       case 'exact':
-        // Find pair closest to target
+        // Find pair closest to target (maximizes win probability but doesn't guarantee win)
         const pairs: [number, number][] = [
           [threeDice[0], threeDice[1]],
           [threeDice[0], threeDice[2]],

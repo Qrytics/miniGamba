@@ -247,13 +247,13 @@ export class MiniPoker extends GameEngine {
   private isStraight(ranks: number[]): boolean {
     const sorted = [...ranks].sort((a, b) => a - b);
     
-    // Check for regular straight
-    if (sorted[2] - sorted[0] === 2 && sorted[1] - sorted[0] === 1) {
+    // Check for A-2-3 straight (Ace low) - special case
+    if (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 14) {
       return true;
     }
     
-    // Check for A-2-3 straight (Ace low)
-    if (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 14) {
+    // Check for regular straight (consecutive ranks)
+    if (sorted[2] - sorted[0] === 2 && sorted[1] - sorted[0] === 1) {
       return true;
     }
     
