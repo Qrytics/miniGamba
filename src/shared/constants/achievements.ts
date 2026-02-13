@@ -246,7 +246,7 @@ export const achievements: Record<string, Achievement> = {
   },
   'mini-mogul': {
     id: 'mini-mogul',
-    name: 'miniMogul',
+    name: 'Mini Mogul',
     description: 'Earn 1,000,000 coins total',
     category: 'economy',
     points: 300,

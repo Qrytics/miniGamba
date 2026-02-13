@@ -54,11 +54,9 @@ ipcMain.handle('settings:update', async (event, settings: UserSettings) => {
 ipcMain.handle('settings:reset', async () => {
   try {
     const user = userDataService.getUser();
-    // Get default settings by calling the private method indirectly
-    const defaultSettings = await ipcMain.handle('settings:get', async () => {
-      return userDataService.getUserSettings(999999); // Will return defaults
-    });
-    userDataService.updateUserSettings(user.id, defaultSettings as any);
+    // Get default settings directly from the service
+    const defaultSettings = userDataService.getUserSettings(999999); // Non-existent user returns defaults
+    userDataService.updateUserSettings(user.id, defaultSettings);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

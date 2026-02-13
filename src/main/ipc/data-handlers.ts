@@ -32,7 +32,6 @@ ipcMain.handle('data:getUserProfile', async () => {
 
 ipcMain.handle('data:updateUser', async (event, updates) => {
   try {
-    const user = userDataService.getUser();
     userDataService.updateUser(updates);
     return { success: true };
   } catch (error: any) {

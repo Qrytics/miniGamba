@@ -28,6 +28,11 @@ export class SlotMachine extends GameEngine {
   private holdReels: boolean[] = [false, false, false];
   private spinning = false;
   private currentTheme: 'classic' | 'gems' | 'skulls' | 'space' = 'classic';
+  private lastWinType: {
+    type: 'none' | 'two-of-kind' | 'three-of-kind' | 'jackpot';
+    symbol?: string;
+    multiplier: number;
+  } | null = null;
 
   // Symbol themes
   private symbolThemes = {
@@ -135,14 +140,14 @@ export class SlotMachine extends GameEngine {
         // Check if it's a jackpot (lucky seven or highest multiplier)
         if (symbol.multiplier >= 100) {
           this.result = 'win';
-          (this as any).lastWinType = {
+          this.lastWinType = {
             type: 'jackpot',
             symbol: symbol.icon,
             multiplier: symbol.multiplier
           };
         } else {
           this.result = 'win';
-          (this as any).lastWinType = {
+          this.lastWinType = {
             type: 'three-of-kind',
             symbol: symbol.icon,
             multiplier: symbol.multiplier
@@ -166,7 +171,7 @@ export class SlotMachine extends GameEngine {
       
       if (symbol) {
         this.result = 'win';
-        (this as any).lastWinType = {
+        this.lastWinType = {
           type: 'two-of-kind',
           symbol: symbol.icon,
           multiplier: Math.floor(symbol.multiplier * 0.5) // Half payout for 2 of kind
@@ -177,20 +182,18 @@ export class SlotMachine extends GameEngine {
     
     // No match
     this.result = 'loss';
-    (this as any).lastWinType = {
+    this.lastWinType = {
       type: 'none',
       multiplier: 0
     };
   }
 
   calculatePayout(): number {
-    const winType = (this as any).lastWinType;
-    
-    if (!winType || this.result !== 'win') {
+    if (!this.lastWinType || this.result !== 'win') {
       return 0;
     }
     
-    return this.bet * winType.multiplier;
+    return this.bet * this.lastWinType.multiplier;
   }
 
   getState(): SlotMachineState {
@@ -198,7 +201,7 @@ export class SlotMachine extends GameEngine {
       reels: this.reels,
       spinning: this.spinning,
       holdReels: this.holdReels,
-      result: (this as any).lastWinType || null
+      result: this.lastWinType
     };
   }
 
@@ -211,7 +214,7 @@ export class SlotMachine extends GameEngine {
     this.holdReels = [false, false, false];
     this.spinning = false;
     this.result = null;
-    (this as any).lastWinType = null;
+    this.lastWinType = null;
   }
 
   /**

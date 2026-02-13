@@ -97,13 +97,9 @@ export class AchievementService {
     const unlockedAchievements: AchievementId[] = [];
     
     const user = userDataService.getUser();
-    const progress = this.getAchievementProgress(userId);
 
     // Check gambling achievements
     if (event.type === 'game_played') {
-      const gameType = event.data?.gameType;
-      const result = event.data?.result;
-
       // First game ever
       if (user.totalGamesPlayed === 1 && this.tryUnlock(userId, 'first-spin')) {
         unlockedAchievements.push('first-spin');

@@ -264,32 +264,36 @@ export class DatabaseService {
   }
 
   /**
-   * Add coins to user balance
+   * Add coins to user balance (atomic operation)
    */
   public addCoins(userId: number, amount: number, earnedCoins: boolean = true): void {
     if (!this.db) throw new Error('Database not initialized');
 
-    const user = this.db.prepare('SELECT coins, total_coins_earned FROM users WHERE id = ?').get(userId) as any;
-    const newCoins = user.coins + amount;
-    const newTotalEarned = earnedCoins ? user.total_coins_earned + amount : user.total_coins_earned;
+    const earnedIncrement = earnedCoins ? amount : 0;
 
-    this.db.prepare('UPDATE users SET coins = ?, total_coins_earned = ? WHERE id = ?')
-      .run(newCoins, newTotalEarned, userId);
+    // Use atomic SQL operation to prevent race conditions
+    this.db.prepare(
+      'UPDATE users SET coins = coins + ?, total_coins_earned = total_coins_earned + ? WHERE id = ?'
+    ).run(amount, earnedIncrement, userId);
   }
 
   /**
-   * Generate a unique friend code
+   * Generate a unique friend code using cryptographically secure randomness
    */
   private generateFriendCode(): string {
+    const crypto = require('crypto');
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing characters
     let code = 'GAMBA-';
     
+    // Use crypto.randomBytes for secure random generation
+    const randomBytes = crypto.randomBytes(8);
+    
     for (let i = 0; i < 4; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+      code += chars.charAt(randomBytes[i] % chars.length);
     }
     code += '-';
-    for (let i = 0; i < 4; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 4; i < 8; i++) {
+      code += chars.charAt(randomBytes[i] % chars.length);
     }
 
     return code;

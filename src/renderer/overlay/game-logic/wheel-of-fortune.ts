@@ -63,13 +63,17 @@ export class WheelOfFortune extends GameEngine {
   checkDailyFreeSpin(): boolean {
     if (this.dailyFreeSpinUsed) return false;
     
-    // Check if last spin was more than 24 hours ago
+    // Check based on calendar date rather than 24-hour period
     if (!this.lastSpinTime) return true;
     
-    const now = Date.now();
-    const hoursSinceLastSpin = (now - this.lastSpinTime) / (1000 * 60 * 60);
+    const now = new Date();
+    const lastSpin = new Date(this.lastSpinTime);
     
-    if (hoursSinceLastSpin >= 24) {
+    // Compare calendar dates (YYYY-MM-DD)
+    const nowDate = now.toISOString().split('T')[0];
+    const lastSpinDate = lastSpin.toISOString().split('T')[0];
+    
+    if (nowDate !== lastSpinDate) {
       this.dailyFreeSpinUsed = false;
       return true;
     }
