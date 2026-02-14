@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CoinFlip as CoinFlipEngine } from '../../game-logic/coin-flip';
-import { PixelIcon } from '../../../components/PixelIcon';
+import { CoinFlip as CoinFlipEngine } from '../../../game-logic/coin-flip';
+import { PixelIcon } from '../../../../components/PixelIcon';
 
 interface CoinFlipProps {
   onCoinsUpdate: () => void;

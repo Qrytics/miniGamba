@@ -13,6 +13,7 @@ import './ipc/window-handlers';
 
 // Import services
 import { databaseService } from './services/data/database';
+import { createTray } from './services/tray';
 
 let dashboardWindow: BrowserWindow | null = null;
 let overlayWindow: BrowserWindow | null = null;
@@ -43,6 +44,7 @@ async function initialize() {
 app.on('ready', async () => {
   await initialize();
   dashboardWindow = createDashboardWindow();
+  createTray();
 });
 
 app.on('window-all-closed', () => {
