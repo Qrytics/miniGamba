@@ -4,9 +4,11 @@
  */
 
 import { GameEngine } from './base/GameEngine';
+import { ALL_SYMBOLS } from '../constants/slot-symbols';
+import type { SlotSymbolId } from '../constants/slot-symbols';
 
 export interface SlotSymbol {
-  icon: string;
+  icon: SlotSymbolId | string; // Symbol ID for classic (sprite), emoji for other themes
   name: string;
   weight: number; // Lower weight = more rare
   multiplier: number;
@@ -34,17 +36,14 @@ export class SlotMachine extends GameEngine {
     multiplier: number;
   } | null = null;
 
-  // Symbol themes
+  // Symbol themes - uses all 16 icons from slot-symbols
   private symbolThemes = {
-    classic: [
-      { icon: '🍒', name: 'Cherry', weight: 30, multiplier: 2 },
-      { icon: '🍋', name: 'Lemon', weight: 25, multiplier: 3 },
-      { icon: '🍊', name: 'Orange', weight: 20, multiplier: 4 },
-      { icon: '🍇', name: 'Grape', weight: 15, multiplier: 5 },
-      { icon: '⭐', name: 'Star', weight: 8, multiplier: 10 },
-      { icon: '💎', name: 'Diamond', weight: 1.5, multiplier: 50 },
-      { icon: '7️⃣', name: 'Lucky Seven', weight: 0.5, multiplier: 100 },
-    ],
+    classic: ALL_SYMBOLS.map(({ id, name, weight, multiplier }) => ({
+      icon: id,
+      name,
+      weight,
+      multiplier,
+    })),
     gems: [
       { icon: '💚', name: 'Emerald', weight: 30, multiplier: 2 },
       { icon: '💙', name: 'Sapphire', weight: 25, multiplier: 3 },
@@ -98,14 +97,14 @@ export class SlotMachine extends GameEngine {
   }
 
   /**
-   * Spin the reels
+   * Generate spin result immediately (for UI animation).
+   * Returns the new reels state before win check.
    */
-  async spin(): Promise<void> {
-    if (this.spinning) return;
-    
+  generateSpin(): string[][] {
+    if (this.spinning) return this.reels;
+
     this.spinning = true;
-    
-    // Spin non-held reels
+
     for (let i = 0; i < 3; i++) {
       if (!this.holdReels[i]) {
         this.reels[i] = [
@@ -115,15 +114,26 @@ export class SlotMachine extends GameEngine {
         ];
       }
     }
-    
-    // Simulate spin delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    this.spinning = false;
-    this.checkWin();
-    
-    // Reset holds after spin
+
     this.holdReels = [false, false, false];
+    return this.reels.map((col) => [...col]);
+  }
+
+  /**
+   * Finalize spin - run win check. Call after animation completes.
+   */
+  finalizeSpin(): void {
+    this.checkWin();
+    this.spinning = false;
+  }
+
+  /**
+   * Spin the reels (legacy - generates and waits 1s)
+   */
+  async spin(): Promise<void> {
+    this.generateSpin();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    this.finalizeSpin();
   }
 
   /**
@@ -206,10 +216,11 @@ export class SlotMachine extends GameEngine {
   }
 
   reset(): void {
+    const ids = ALL_SYMBOLS.map((s) => s.id);
     this.reels = [
-      ['🍒', '🍋', '🍊'],
-      ['🍋', '🍒', '🍇'],
-      ['🍊', '🍇', '🍒'],
+      [ids[0], ids[1], ids[2]],
+      [ids[3], ids[4], ids[5]],
+      [ids[6], ids[7], ids[8]],
     ];
     this.holdReels = [false, false, false];
     this.spinning = false;

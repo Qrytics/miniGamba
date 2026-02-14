@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Blackjack as BlackjackEngine } from '../../game-logic/blackjack';
-import { PixelIcon } from '../../../components/PixelIcon';
+import { Blackjack as BlackjackEngine } from '../../../game-logic/blackjack';
+import { PixelIcon } from '../../../../components/PixelIcon';
 
 interface BlackjackProps {
   onCoinsUpdate: () => void;

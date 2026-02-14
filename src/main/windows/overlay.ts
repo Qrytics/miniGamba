@@ -64,6 +64,42 @@ export function createOverlayWindow(): BrowserWindow {
     overlayWindow = null;
   });
 
+  // Constrain overlay to work area (above taskbar) - prevent dragging below taskbar
+  // Use will-move so we can preventDefault and setBounds before the OS applies the move
+  overlayWindow.on('will-move', (event: Electron.Event, newBounds: Electron.Rectangle) => {
+    if (!overlayWindow || overlayWindow.isDestroyed()) return;
+    const display = screen.getDisplayNearestPoint({
+      x: newBounds.x + Math.floor(newBounds.width / 2),
+      y: newBounds.y + Math.floor(newBounds.height / 2),
+    });
+    const { workArea } = display;
+
+    let needsClamp = false;
+    const clamped = { ...newBounds };
+
+    if (newBounds.x < workArea.x) {
+      clamped.x = workArea.x;
+      needsClamp = true;
+    }
+    if (newBounds.y < workArea.y) {
+      clamped.y = workArea.y;
+      needsClamp = true;
+    }
+    if (newBounds.x + newBounds.width > workArea.x + workArea.width) {
+      clamped.x = workArea.x + workArea.width - newBounds.width;
+      needsClamp = true;
+    }
+    if (newBounds.y + newBounds.height > workArea.y + workArea.height) {
+      clamped.y = workArea.y + workArea.height - newBounds.height;
+      needsClamp = true;
+    }
+
+    if (needsClamp) {
+      event.preventDefault();
+      overlayWindow.setBounds(clamped);
+    }
+  });
+
   return overlayWindow;
 }
 

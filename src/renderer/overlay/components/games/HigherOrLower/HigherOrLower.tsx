@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PixelIcon } from '../../../components/PixelIcon';
+import { PixelIcon } from '../../../../components/PixelIcon';
 
 interface HigherOrLowerProps {
   onCoinsUpdate: () => void;

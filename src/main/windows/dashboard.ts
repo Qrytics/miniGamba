@@ -1,4 +1,5 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeImage } from 'electron';
+import path from 'path';
 
 // Provided by @electron-forge/plugin-webpack for the "dashboard" entry point
 declare const DASHBOARD_WEBPACK_ENTRY: string;
@@ -6,13 +7,21 @@ declare const DASHBOARD_PRELOAD_WEBPACK_ENTRY: string;
 
 let dashboardWindow: BrowserWindow | null = null;
 
+function getIconPath(): string {
+  return path.join(app.getAppPath(), 'assets', 'icon.png');
+}
+
 /**
  * Create and configure the dashboard window
  * This is the main application window where users manage their account,
  * view stats, configure settings, and access all features
  */
 export function createDashboardWindow(): BrowserWindow {
+  const iconPath = getIconPath();
+  const icon = nativeImage.createFromPath(iconPath);
+
   dashboardWindow = new BrowserWindow({
+    icon: icon.isEmpty() ? undefined : icon,
     width: 1200,
     height: 800,
     minWidth: 800,
@@ -23,7 +32,7 @@ export function createDashboardWindow(): BrowserWindow {
       // Use webpack-provided preload bundle so the dev server + production builds both work
       preload: DASHBOARD_PRELOAD_WEBPACK_ENTRY,
     },
-    title: 'miniGamba Dashboard',
+    title: 'miniGamba',
     backgroundColor: '#1a1a2e',
     show: false, // Don't show until ready
   });

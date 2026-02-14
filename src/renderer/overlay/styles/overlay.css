@@ -50,13 +50,14 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  cursor: move;
+  -webkit-app-region: drag;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: var(--balatro-space-2);
+  -webkit-app-region: no-drag;
 }
 
 .coin-display {
@@ -75,6 +76,7 @@ body {
 .header-controls {
   display: flex;
   gap: var(--balatro-space-1);
+  -webkit-app-region: no-drag;
 }
 
 .control-btn {
@@ -334,26 +336,66 @@ body {
   cursor: not-allowed;
 }
 
-/* Slot Machine - reels with depth */
-.slot-reels {
-  display: flex;
-  gap: var(--balatro-space-2);
-  justify-content: center;
+/* Slot Machine - 3 columns with downward-scrolling reels */
+.slot-reels-wrapper {
+  position: relative;
   margin: var(--balatro-space-4) 0;
 }
 
-.slot-reel {
+.slot-reels-grid {
+  display: flex;
+  gap: var(--balatro-space-2);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Payline indicator - highlights middle row (horizontal center band) */
+.slot-reels-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 70px;
+  border-top: 2px solid rgba(255, 216, 75, 0.6);
+  border-bottom: 2px solid rgba(255, 216, 75, 0.6);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Each column - viewport showing 3 rows */
+.slot-reel-column {
+  width: 70px;
+  height: 210px;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--balatro-panel-base) 0%, var(--balatro-panel-shadow) 100%);
   border: var(--balatro-border);
   border-radius: var(--balatro-radius);
-  width: 100px;
-  height: 100px;
+  box-shadow: var(--balatro-shadow-card);
+  position: relative;
+}
+
+/* Middle column gets payline highlight (payline runs through center) */
+.slot-reels-grid .slot-reel-column:nth-child(2) {
+  z-index: 1;
+  box-shadow: var(--balatro-shadow-card), 0 0 8px rgba(255, 216, 75, 0.3);
+}
+
+/* Vertical strip of symbols - scrolls downward */
+.slot-reel-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.slot-reel-cell {
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
-  font-weight: 700;
-  box-shadow: var(--balatro-shadow-card);
+  flex-shrink: 0;
 }
 
 /* Card Display - 2.5:3.5 aspect, depth, suit colors */

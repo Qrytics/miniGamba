@@ -5,6 +5,28 @@
 
 import { ipcMain } from 'electron';
 import { createOverlayWindow, getOverlayWindow, toggleOverlay, closeOverlay } from '../windows/overlay';
+import { showDashboard } from '../windows/dashboard';
+
+// Handle overlay minimize - hide to tray (not taskbar)
+ipcMain.on('window:minimizeOverlay', () => {
+  try {
+    const overlay = getOverlayWindow();
+    if (overlay && overlay.isVisible()) {
+      overlay.hide();
+    }
+  } catch (error: any) {
+    console.error('Failed to minimize overlay:', error);
+  }
+});
+
+// Handle open dashboard
+ipcMain.on('window:openDashboard', () => {
+  try {
+    showDashboard();
+  } catch (error: any) {
+    console.error('Failed to open dashboard:', error);
+  }
+});
 
 // Handle overlay window launch
 ipcMain.on('window:launchOverlay', () => {

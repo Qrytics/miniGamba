@@ -95,7 +95,7 @@ export function registerDefaultHotkeys(overlayWindow: BrowserWindow | null): voi
 
   registerHotkey('CommandOrControl+Shift+M', 'Minimize Overlay', () => {
     if (overlayWindow && overlayWindow.isVisible()) {
-      overlayWindow.minimize();
+      overlayWindow.hide(); // Hide to tray
     }
   });
 
