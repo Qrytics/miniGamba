@@ -6,6 +6,92 @@ miniGamba is a desktop overlay app that turns your downtime into dopamine. Origi
 
 ---
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+1. **Node.js** - Version **20.x LTS** recommended
+   - Download from [nodejs.org](https://nodejs.org/)
+   - **Recommended:** Node.js v20.x LTS for best compatibility  
+   - **Supported:** Node.js v20.x, v22.x, v23.x, v24.x, v25.x (better-sqlite3 v12 requirement)
+   - **Note:** Node.js v18 is NOT supported by better-sqlite3 v12. Please use v20 or higher.
+   - To check your version: `node --version`
+   
+2. **Build Tools** (Required on Windows, recommended on all platforms)
+   - **Windows:** Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+     - During installation, select "Desktop development with C++"
+     - This is required for compiling native Node.js modules (like better-sqlite3)
+   - **macOS:** Install Xcode Command Line Tools: `xcode-select --install`
+   - **Linux:** Install build-essential: `sudo apt-get install build-essential` (Ubuntu/Debian)
+
+3. **Git** - [Download](https://git-scm.com/)
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Qrytics/miniGamba.git
+cd miniGamba
+
+# 2. Install dependencies
+npm install
+
+# 3. If you get errors about better-sqlite3, rebuild it:
+npm rebuild better-sqlite3
+
+# 4. Run the app in development mode
+npm run dev
+```
+
+**Note:** The project has been updated to use `better-sqlite3@12.0.0` which supports Node.js v20-v25. If you previously had issues with Node.js v24, they should now be resolved. Note that Node.js v18 is NOT supported - please use v20 or higher.
+
+### Building for Production
+
+```bash
+# Create a production build
+npm run build
+```
+
+The built application will be in the `out/` directory.
+
+### Common Issues
+
+#### Issue: `npm install` fails with build errors
+
+**Cause:** Missing build tools or incompatible Node.js version
+
+**Solutions:**
+1. **Check Node.js version:** Run `node --version`
+   - **Required:** Node.js v20 or higher (v18 is NOT supported)
+   - If you have v18, upgrade to v20 LTS from [nodejs.org](https://nodejs.org/)
+   - Or use [nvm](https://github.com/nvm-sh/nvm): `nvm install 20 && nvm use 20`
+2. **Windows users:** Make sure you have Visual Studio Build Tools installed (see Prerequisites above)
+3. **Clean install:** Delete `node_modules` and `package-lock.json`, then run `npm install` again
+
+#### Issue: "better-sqlite3" compilation errors
+
+**Solution:**
+- Ensure you have build tools installed (see Prerequisites)
+- Try rebuilding: `npm rebuild better-sqlite3`
+- On Windows, run PowerShell or Command Prompt as Administrator
+- Make sure Python is installed (Node-gyp requires Python 3.x)
+
+#### Issue: App won't start
+
+**Solution:**
+- Check that all dependencies installed successfully: look for errors in `npm install` output
+- Try running `npm run type-check` to see if there are any TypeScript errors
+- Check the console for error messages
+- Try deleting `node_modules` and running `npm install` again
+
+### Development
+
+See [docs/SETUP.md](docs/SETUP.md) for detailed development setup and workflow.
+
+---
+
 ## 📐 App Architecture
 
 ### Two-Mode Design
