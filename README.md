@@ -15,7 +15,7 @@ Before you begin, ensure you have the following installed:
 1. **Node.js** - Version **18.x** or **20.x** recommended
    - Download from [nodejs.org](https://nodejs.org/)
    - **Recommended:** Node.js v20.x LTS for best compatibility  
-   - **Supported:** Node.js v18.x, v20.x, v22.x, v24.x, v25.x (better-sqlite3 v12 requirement)
+   - **Supported:** Node.js v18.x, v20.x, v22.x, v23.x, v24.x, v25.x (better-sqlite3 v12 requirement)
    - To check your version: `node --version`
    
 2. **Build Tools** (Required on Windows, recommended on all platforms)
