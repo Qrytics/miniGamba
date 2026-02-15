@@ -6,6 +6,85 @@ miniGamba is a desktop overlay app that turns your downtime into dopamine. Origi
 
 ---
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+1. **Node.js** - Version **18.x** or **20.x** recommended
+   - Download from [nodejs.org](https://nodejs.org/)
+   - **Important:** If you have Node.js v24+, the app will still work, but you may need to ensure you have build tools installed
+   - To check your version: `node --version`
+   
+2. **Build Tools** (Required on Windows, recommended on all platforms)
+   - **Windows:** Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+     - During installation, select "Desktop development with C++"
+     - OR install via npm: `npm install --global windows-build-tools` (requires admin/elevated prompt)
+   - **macOS:** Install Xcode Command Line Tools: `xcode-select --install`
+   - **Linux:** Install build-essential: `sudo apt-get install build-essential` (Ubuntu/Debian)
+
+3. **Git** - [Download](https://git-scm.com/)
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Qrytics/miniGamba.git
+cd miniGamba
+
+# 2. Install dependencies
+npm install
+
+# 3. Run the app in development mode
+npm run dev
+```
+
+### Building for Production
+
+```bash
+# Create a production build
+npm run build
+```
+
+The built application will be in the `out/` directory.
+
+### Common Issues
+
+#### Issue: `npm install` fails with build errors
+
+**Cause:** Missing build tools or incompatible Node.js version
+
+**Solutions:**
+1. **Windows users:** Make sure you have Visual Studio Build Tools installed (see Prerequisites above)
+2. **If using Node.js v24+:** The app now supports it, but older versions may have had issues. Try updating to the latest version: `npm install`
+3. **Node.js version issues:** If you're having persistent problems, try using Node.js v20 LTS:
+   - Download from [nodejs.org](https://nodejs.org/)
+   - Or use [nvm](https://github.com/nvm-sh/nvm) to manage versions: `nvm install 20 && nvm use 20`
+4. **Clean install:** Delete `node_modules` and `package-lock.json`, then run `npm install` again
+
+#### Issue: "better-sqlite3" compilation errors
+
+**Solution:**
+- Ensure you have build tools installed (see Prerequisites)
+- Try rebuilding: `npm rebuild better-sqlite3`
+- On Windows, run PowerShell or Command Prompt as Administrator
+- Make sure Python is installed (Node-gyp requires Python 3.x)
+
+#### Issue: App won't start
+
+**Solution:**
+- Check that all dependencies installed successfully: look for errors in `npm install` output
+- Try running `npm run type-check` to see if there are any TypeScript errors
+- Check the console for error messages
+- Try deleting `node_modules` and running `npm install` again
+
+### Development
+
+See [docs/SETUP.md](docs/SETUP.md) for detailed development setup and workflow.
+
+---
+
 ## 📐 App Architecture
 
 ### Two-Mode Design
