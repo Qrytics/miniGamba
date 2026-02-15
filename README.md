@@ -12,10 +12,11 @@ miniGamba is a desktop overlay app that turns your downtime into dopamine. Origi
 
 Before you begin, ensure you have the following installed:
 
-1. **Node.js** - Version **18.x** or **20.x** recommended
+1. **Node.js** - Version **20.x LTS** recommended
    - Download from [nodejs.org](https://nodejs.org/)
    - **Recommended:** Node.js v20.x LTS for best compatibility  
-   - **Supported:** Node.js v18.x, v20.x, v22.x, v23.x, v24.x, v25.x (better-sqlite3 v12 requirement)
+   - **Supported:** Node.js v20.x, v22.x, v23.x, v24.x, v25.x (better-sqlite3 v12 requirement)
+   - **Note:** Node.js v18 is NOT supported by better-sqlite3 v12. Please use v20 or higher.
    - To check your version: `node --version`
    
 2. **Build Tools** (Required on Windows, recommended on all platforms)
@@ -62,12 +63,12 @@ The built application will be in the `out/` directory.
 **Cause:** Missing build tools or incompatible Node.js version
 
 **Solutions:**
-1. **Windows users:** Make sure you have Visual Studio Build Tools installed (see Prerequisites above)
-2. **If using Node.js v24+:** The app now supports it, but older versions may have had issues. Try updating to the latest version: `npm install`
-3. **Node.js version issues:** If you're having persistent problems, try using Node.js v20 LTS:
-   - Download from [nodejs.org](https://nodejs.org/)
-   - Or use [nvm](https://github.com/nvm-sh/nvm) to manage versions: `nvm install 20 && nvm use 20`
-4. **Clean install:** Delete `node_modules` and `package-lock.json`, then run `npm install` again
+1. **Check Node.js version:** Run `node --version`
+   - **Required:** Node.js v20 or higher (v18 is NOT supported)
+   - If you have v18, upgrade to v20 LTS from [nodejs.org](https://nodejs.org/)
+   - Or use [nvm](https://github.com/nvm-sh/nvm): `nvm install 20 && nvm use 20`
+2. **Windows users:** Make sure you have Visual Studio Build Tools installed (see Prerequisites above)
+3. **Clean install:** Delete `node_modules` and `package-lock.json`, then run `npm install` again
 
 #### Issue: "better-sqlite3" compilation errors
 

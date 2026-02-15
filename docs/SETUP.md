@@ -8,11 +8,12 @@ Before you begin, ensure you have the following installed:
 
 ### Required
 
-1. **Node.js** - Version **18.x** or **20.x LTS** recommended
+1. **Node.js** - Version **20.x LTS** recommended
    - [Download from nodejs.org](https://nodejs.org/)
    - **Recommended:** Node.js v20.x LTS for best compatibility
-   - **Supported:** Node.js v18.x, v20.x, v22.x, v23.x, v24.x, v25.x
+   - **Supported:** Node.js v20.x, v22.x, v23.x, v24.x, v25.x
    - **Note:** better-sqlite3 v12.0.0 officially supports Node.js v20.x, v22.x, v23.x, v24.x, v25.x
+   - **Important:** Node.js v18 is NOT supported. Please upgrade to v20 or higher.
    - Check your version: `node --version`
    - If you need to manage multiple Node versions, consider using [nvm](https://github.com/nvm-sh/nvm)
 
@@ -253,7 +254,8 @@ git push origin feature/your-feature-name
    ```bash
    node --version
    ```
-   - If using Node.js v24 or higher, make sure you have the latest package-lock.json
+   - **Required:** Node.js v20 or higher (v18 is NOT supported)
+   - If you have Node.js v18, upgrade to v20 LTS
    - Recommended: Use Node.js v20 LTS for best compatibility
 
 3. **Clean installation:**
@@ -299,9 +301,9 @@ git push origin feature/your-feature-name
 
 ### Issue: Node.js version conflicts
 
-**Problem:** You have Node.js v24+ but experiencing issues
+**Problem:** You have an unsupported Node.js version
 
-**Solution 1: Downgrade to Node.js v20 LTS (Recommended)**
+**Solution 1: Upgrade to Node.js v20 LTS (Recommended)**
 
 Using nvm (Node Version Manager):
 ```bash
@@ -320,12 +322,7 @@ node --version  # Should show v20.x.x
 npm install
 ```
 
-**Solution 2: Update dependencies**
-
-The repository now supports Node.js v24+ with updated dependencies:
-```bash
-npm install
-```
+**Important:** Node.js v18 is NOT supported by better-sqlite3 v12. You must use v20 or higher.
 
 ### Issue: Electron won't start
 
