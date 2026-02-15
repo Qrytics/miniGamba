@@ -11,7 +11,8 @@ Before you begin, ensure you have the following installed:
 1. **Node.js** - Version **18.x** or **20.x LTS** recommended
    - [Download from nodejs.org](https://nodejs.org/)
    - **Recommended:** Node.js v20.x LTS for best compatibility
-   - **Supported:** Node.js v18.x, v20.x, v22.x, v24.x+
+   - **Supported:** Node.js v18.x, v20.x, v22.x, v24.x, v25.x
+   - **Note:** better-sqlite3 v12.0.0 officially supports Node.js v20.x, v22.x, v23.x, v24.x, v25.x
    - Check your version: `node --version`
    - If you need to manage multiple Node versions, consider using [nvm](https://github.com/nvm-sh/nvm)
 
@@ -36,11 +37,12 @@ You have two options:
 3. Select "Desktop development with C++"
 4. Install (this will take several GB of space)
 
-**Option 2: Using npm (Simpler, but may not always work)**
+**Option 2: Using npm (Deprecated - Not Recommended)**
 ```bash
 # Run in PowerShell or Command Prompt as Administrator
 npm install --global windows-build-tools
 ```
+**Note:** The `windows-build-tools` package is deprecated and may not work on modern systems. Use Option 1 instead.
 
 #### macOS
 

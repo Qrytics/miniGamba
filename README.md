@@ -14,13 +14,14 @@ Before you begin, ensure you have the following installed:
 
 1. **Node.js** - Version **18.x** or **20.x** recommended
    - Download from [nodejs.org](https://nodejs.org/)
-   - **Important:** If you have Node.js v24+, the app will still work, but you may need to ensure you have build tools installed
+   - **Recommended:** Node.js v20.x LTS for best compatibility  
+   - **Supported:** Node.js v18.x, v20.x, v22.x, v24.x, v25.x (better-sqlite3 v12 requirement)
    - To check your version: `node --version`
    
 2. **Build Tools** (Required on Windows, recommended on all platforms)
    - **Windows:** Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
      - During installation, select "Desktop development with C++"
-     - OR install via npm: `npm install --global windows-build-tools` (requires admin/elevated prompt)
+     - This is required for compiling native Node.js modules (like better-sqlite3)
    - **macOS:** Install Xcode Command Line Tools: `xcode-select --install`
    - **Linux:** Install build-essential: `sudo apt-get install build-essential` (Ubuntu/Debian)
 
