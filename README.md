@@ -36,9 +36,14 @@ cd miniGamba
 # 2. Install dependencies
 npm install
 
-# 3. Run the app in development mode
+# 3. If you get errors about better-sqlite3, rebuild it:
+npm rebuild better-sqlite3
+
+# 4. Run the app in development mode
 npm run dev
 ```
+
+**Note:** The project has been updated to use `better-sqlite3@12.0.0` which supports Node.js v18-v25. If you previously had issues with Node.js v24, they should now be resolved.
 
 ### Building for Production
 
