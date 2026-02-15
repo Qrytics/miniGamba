@@ -45,7 +45,7 @@ npm rebuild better-sqlite3
 npm run dev
 ```
 
-**Note:** The project has been updated to use `better-sqlite3@12.0.0` which supports Node.js v18-v25. If you previously had issues with Node.js v24, they should now be resolved.
+**Note:** The project has been updated to use `better-sqlite3@12.0.0` which supports Node.js v20-v25. If you previously had issues with Node.js v24, they should now be resolved. Note that Node.js v18 is NOT supported - please use v20 or higher.
 
 ### Building for Production
 

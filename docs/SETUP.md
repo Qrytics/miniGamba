@@ -32,18 +32,13 @@ miniGamba uses `better-sqlite3`, which requires native compilation. You MUST hav
 
 You have two options:
 
-**Option 1: Visual Studio Build Tools (Recommended)**
+**Installation Steps:**
 1. Download [Visual Studio Build Tools 2022](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
 2. Run the installer
 3. Select "Desktop development with C++"
 4. Install (this will take several GB of space)
 
-**Option 2: Using npm (Deprecated - Not Recommended)**
-```bash
-# Run in PowerShell or Command Prompt as Administrator
-npm install --global windows-build-tools
-```
-**Note:** The `windows-build-tools` package is deprecated and may not work on modern systems. Use Option 1 instead.
+**Note:** The `windows-build-tools` npm package is deprecated and should not be used.
 
 #### macOS
 
