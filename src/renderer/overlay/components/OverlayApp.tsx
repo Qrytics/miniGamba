@@ -13,8 +13,11 @@ import WheelOfFortune from './games/WheelOfFortune';
 import MiniDerby from './games/MiniDerby';
 import DiceRoll from './games/DiceRoll';
 import MiniPoker from './games/MiniPoker';
+import LiveStatsPanel from './lol/LiveStatsPanel';
 import { PixelIcon, type PixelIconName } from '../../components/PixelIcon';
 import '../styles/overlay.css';
+
+type OverlayTab = 'games' | 'livestats';
 
 const GAMES: { id: string; name: string; icon: PixelIconName; component: React.ComponentType<{ onCoinsUpdate?: () => void }> }[] = [
   { id: 'slot-machine', name: 'Slots', icon: 'slots', component: SlotMachine },
@@ -31,6 +34,7 @@ const GAMES: { id: string; name: string; icon: PixelIconName; component: React.C
 
 const OverlayApp: React.FC = () => {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<OverlayTab>('games');
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -76,13 +80,31 @@ const OverlayApp: React.FC = () => {
             <PixelIcon name="money" size={20} aria-hidden={true} />
             <span>{userData?.coins?.toLocaleString() || 0}</span>
           </div>
-          {currentGame && (
+          {activeTab === 'games' && currentGame && (
             <button className="control-btn" onClick={() => setCurrentGame(null)} data-testid="overlay-back-btn">
               ← Back
             </button>
           )}
         </div>
         <div className="header-controls">
+          <button
+            className={`control-btn${activeTab === 'games' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('games'); setCurrentGame(null); }}
+            title="Mini-Games"
+            data-testid="overlay-tab-games"
+            style={{ fontSize: '0.8rem' }}
+          >
+            🎰
+          </button>
+          <button
+            className={`control-btn${activeTab === 'livestats' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('livestats'); setCurrentGame(null); }}
+            title="Live Game Stats"
+            data-testid="overlay-tab-livestats"
+            style={{ fontSize: '0.8rem' }}
+          >
+            🎮
+          </button>
           <button className="control-btn" onClick={handleOpenDashboard} title="Dashboard" data-testid="overlay-nav-dashboard">
             <PixelIcon name="chart" size={18} aria-hidden={true} />
           </button>
@@ -96,31 +118,37 @@ const OverlayApp: React.FC = () => {
       </div>
 
       <div className="overlay-content">
-        {currentGame === null ? (
-          <div className="game-selector">
-            <h2>Select a Game</h2>
-            <div className="game-grid">
-              {GAMES.map((game) => (
-                <button
-                  key={game.id}
-                  className="game-btn"
-                  onClick={() => setCurrentGame(game.id)}
-                  data-testid={`game-btn-${game.id}`}
-                >
-                  <span className="game-btn-icon">
-                    <PixelIcon name={game.icon} size={32} aria-hidden={true} />
-                  </span>
-                  <span>{game.name}</span>
-                </button>
-              ))}
+        {/* Live Stats Tab */}
+        {activeTab === 'livestats' && <LiveStatsPanel />}
+
+        {/* Games Tab */}
+        {activeTab === 'games' && (
+          currentGame === null ? (
+            <div className="game-selector">
+              <h2>Select a Game</h2>
+              <div className="game-grid">
+                {GAMES.map((game) => (
+                  <button
+                    key={game.id}
+                    className="game-btn"
+                    onClick={() => setCurrentGame(game.id)}
+                    data-testid={`game-btn-${game.id}`}
+                  >
+                    <span className="game-btn-icon">
+                      <PixelIcon name={game.icon} size={32} aria-hidden={true} />
+                    </span>
+                    <span>{game.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ) : CurrentGameComponent ? (
-          <CurrentGameComponent onCoinsUpdate={loadUserData} />
-        ) : (
-          <div className="text-center">
-            <p>Game not found</p>
-          </div>
+          ) : CurrentGameComponent ? (
+            <CurrentGameComponent onCoinsUpdate={loadUserData} />
+          ) : (
+            <div className="text-center">
+              <p>Game not found</p>
+            </div>
+          )
         )}
       </div>
     </div>

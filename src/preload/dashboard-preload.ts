@@ -46,6 +46,16 @@ interface ElectronAPI {
   createInvestment: (amount: number, riskLevel: string) => Promise<any>;
   cashOutInvestment: (investmentId: number) => Promise<any>;
 
+  // League of Legends operations
+  lolGetStatus: () => Promise<any>;
+  lolGetCurrentSummoner: () => Promise<any>;
+  lolGetSummonerByName: (name: string) => Promise<any>;
+  lolGetRankedStats: (summonerId: number) => Promise<any>;
+  lolGetChampionMasteries: (puuid: string) => Promise<any>;
+  lolGetMatchHistory: (puuid: string, begIndex?: number, endIndex?: number) => Promise<any>;
+  lolGetChampSelectSession: () => Promise<any>;
+  lolGetLiveGameData: () => Promise<any>;
+
   // Window operations
   launchOverlay: () => void;
   closeOverlay: () => void;
@@ -91,6 +101,16 @@ const api: ElectronAPI = {
   getInvestments: () => ipcRenderer.invoke('data:getInvestments'),
   createInvestment: (amount, riskLevel) => ipcRenderer.invoke('data:createInvestment', amount, riskLevel),
   cashOutInvestment: (investmentId) => ipcRenderer.invoke('data:cashOutInvestment', investmentId),
+
+  // League of Legends operations
+  lolGetStatus: () => ipcRenderer.invoke('lol:getStatus'),
+  lolGetCurrentSummoner: () => ipcRenderer.invoke('lol:getCurrentSummoner'),
+  lolGetSummonerByName: (name) => ipcRenderer.invoke('lol:getSummonerByName', name),
+  lolGetRankedStats: (summonerId) => ipcRenderer.invoke('lol:getRankedStats', summonerId),
+  lolGetChampionMasteries: (puuid) => ipcRenderer.invoke('lol:getChampionMasteries', puuid),
+  lolGetMatchHistory: (puuid, begIndex, endIndex) => ipcRenderer.invoke('lol:getMatchHistory', puuid, begIndex, endIndex),
+  lolGetChampSelectSession: () => ipcRenderer.invoke('lol:getChampSelectSession'),
+  lolGetLiveGameData: () => ipcRenderer.invoke('lol:getLiveGameData'),
 
   // Window operations
   launchOverlay: () => ipcRenderer.send('window:launchOverlay'),

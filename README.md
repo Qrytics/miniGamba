@@ -1,8 +1,20 @@
-# 🎰 miniGamba: The Ultimate In-Game Companion
+# 🎮 miniGamba: The All-In-One League of Legends Companion
 
-> *Lightweight. Addictive. Always running in the background.*
+> *Real-time LoL stats. Mini-casino. Always running in the background.*
 
-miniGamba is a desktop overlay app that turns your downtime into dopamine. Originally inspired by League of Legends death timers, miniGamba has evolved into a full-blown mini-casino and idle progression companion — running alongside whatever you're already doing. Die in game? Spin the slots. Watching YouTube? Earn passive coins. Waiting in queue? Hit the blackjack table. Your fake-credit empire never sleeps.
+miniGamba is a desktop overlay app and League of Legends companion — think Porofessor meets a mini-casino. It gives you live in-game stats, champion select analysis, summoner profiles, and match history powered by the League Client Update (LCU) API and the Live Client Data API. And when you're dead waiting for the respawn timer? Spin the slots, hit the blackjack table, or scratch a card.
+
+### 🔍 League of Legends Features (Porofessor-style)
+- **Summoner Lookup** — Search any summoner by name to see their rank, win rate, champion masteries, and match history (requires LoL client running)
+- **Live Game Stats** — Real-time scoreboard during your active match: KDA, CS, gold, HP/mana, and objective counters (Dragon, Baron, Turrets)
+- **Champion Select** — See all 10 players' assigned positions as soon as you enter champion select
+- **Status indicator** — Know at a glance whether the LoL client is connected, you're in champion select, or you're in a game
+- **Overlay Live Tab** — Flip to the 🎮 tab in the overlay for a compact in-game scoreboard without leaving the game
+
+### 🎰 Mini-Casino (Original Features)
+- Slot Machine, Blackjack, Coin Flip, Higher or Lower, Mine Sweeper, Scratch Cards, Wheel of Fortune, Mini Derby, Dice Roll, Mini Poker
+- Earn coins through hourly bonuses, daily tasks, and in-game events
+- Achievements, XP, levels, and investment system
 
 ---
 
@@ -100,17 +112,32 @@ miniGamba runs as **two separate experiences** from one app:
 
 1. **Dashboard Window (Main App)**
    - Opens when you click the miniGamba icon on your desktop
-   - This is your **home base** — settings, leaderboard, customization, achievements, coin wallet, and game history
+   - This is your **home base** — League of Legends stats, summoner lookup, live game view, settings, leaderboard, customization, achievements, coin wallet, and game history
    - Not an overlay — a normal desktop window you interact with before/after sessions
+   - **League of Legends section** in the sidebar: Summoner lookup and Live Game pages
+   - **Mini-Casino section** in the sidebar: Games, Achievements, Stats
    - From here you can launch the overlay
 
 2. **Overlay Mode (The miniGamba)**
-   - Launched from the Dashboard via a big "Start miniGamba" button
-   - A small, always-on-top, transparent/minimal overlay that floats over your game or browser
-   - This is where you actually **play the mini-games**, spin slots, scratch cards, etc.
+   - Launched from the Dashboard via a big "Launch Overlay" button
+   - A small, always-on-top, transparent/minimal overlay that floats over your game
+   - **Two tabs:**
+     - 🎰 **Games** — play mini-casino games during death timers and loading screens
+     - 🎮 **Live Stats** — compact in-game scoreboard showing KDA, CS, gold, and objectives
    - Can be repositioned, resized, and opacity-adjusted
    - Hotkey to toggle visibility (e.g., `Ctrl+Shift+G`)
    - Stays out of the way until you need it
+
+### Data Sources
+
+miniGamba uses two official Riot-approved API endpoints:
+
+| API | Port | When Active | What it provides |
+|---|---|---|---|
+| **LCU API** (League Client Update) | Dynamic (lockfile) | LoL client running | Summoner profiles, ranked stats, champion mastery, match history, champion select |
+| **Live Client Data API** | 2999 | During a match | Real-time KDA, gold, HP/mana, objectives |
+
+Both APIs use self-signed certificates on localhost — no external servers, no API keys required. Your data never leaves your machine.
 
 ---
 

@@ -9,10 +9,12 @@ import AchievementsPage from '../pages/AchievementsPage';
 import StatsPage from '../pages/StatsPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
+import SummonerPage from '../pages/SummonerPage';
+import LiveGamePage from '../pages/LiveGamePage';
 import { PixelIcon } from '../../components/PixelIcon';
 import '../styles/dashboard.css';
 
-type PageType = 'home' | 'games' | 'achievements' | 'stats' | 'profile' | 'settings';
+type PageType = 'home' | 'summoner' | 'livegame' | 'games' | 'achievements' | 'stats' | 'profile' | 'settings';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -80,6 +82,38 @@ const App: React.FC = () => {
                   <PixelIcon name="home" size={20} aria-hidden={true} /> Home
                 </button>
               </li>
+
+              {/* ── League of Legends section ── */}
+              <li style={{ marginTop: '1rem' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  League of Legends
+                </div>
+              </li>
+              <li>
+                <button
+                  className={currentPage === 'summoner' ? 'active' : ''}
+                  onClick={() => setCurrentPage('summoner')}
+                  data-testid="summoner-btn"
+                >
+                  🔍 Summoner
+                </button>
+              </li>
+              <li>
+                <button
+                  className={currentPage === 'livegame' ? 'active' : ''}
+                  onClick={() => setCurrentPage('livegame')}
+                  data-testid="livegame-btn"
+                >
+                  🎮 Live Game
+                </button>
+              </li>
+
+              {/* ── Mini-Casino section ── */}
+              <li style={{ marginTop: '1rem' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Mini-Casino
+                </div>
+              </li>
               <li>
                 <button 
                   className={currentPage === 'games' ? 'active' : ''}
@@ -105,6 +139,13 @@ const App: React.FC = () => {
                 >
                   <PixelIcon name="chart" size={20} aria-hidden={true} /> Stats
                 </button>
+              </li>
+
+              {/* ── Account section ── */}
+              <li style={{ marginTop: '1rem' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Account
+                </div>
               </li>
               <li>
                 <button 
@@ -133,6 +174,8 @@ const App: React.FC = () => {
         
         <main className="app-content">
           {currentPage === 'home' && <HomePage userData={userData} onRefresh={loadUserData} />}
+          {currentPage === 'summoner' && <SummonerPage />}
+          {currentPage === 'livegame' && <LiveGamePage />}
           {currentPage === 'games' && <GamesPage />}
           {currentPage === 'achievements' && <AchievementsPage />}
           {currentPage === 'stats' && <StatsPage />}

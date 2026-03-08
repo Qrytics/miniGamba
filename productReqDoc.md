@@ -1,8 +1,8 @@
-# 🎰 miniGamba - Product Requirements Document
+# 🎮 miniGamba - Product Requirements Document
 
-**Version:** 1.0  
-**Last Updated:** 2026-02-13  
-**Purpose:** Comprehensive breakdown of all features and implementation tasks for the miniGamba desktop overlay application
+**Version:** 2.0  
+**Last Updated:** 2026-03-08  
+**Purpose:** Comprehensive breakdown of all features for the miniGamba all-in-one League of Legends companion + mini-casino desktop application
 
 ---
 
@@ -11,21 +11,22 @@
 1. [Project Overview](#1-project-overview)
 2. [Technical Architecture](#2-technical-architecture)
    - [File Architecture](#23-file-architecture)
-3. [Core Features Breakdown](#3-core-features-breakdown)
-4. [Coin Economy System](#4-coin-economy-system)
-5. [Leaderboard & Social Features](#5-leaderboard--social-features)
-6. [Customization & Cosmetics](#6-customization--cosmetics)
-7. [Achievements System](#7-achievements-system)
-8. [Settings & Configuration](#8-settings--configuration)
-9. [Stats & History](#9-stats--history)
-10. [Progression System](#10-progression-system)
-11. [UI/UX Design](#11-uiux-design)
-12. [Performance & Optimization](#12-performance--optimization)
-13. [Testing Requirements](#13-testing-requirements)
-14. [Security & Safety](#14-security--safety)
-15. [Documentation](#15-documentation)
-16. [Build & Deploy](#16-build--deploy)
-17. [Future Considerations](#17-future-considerations)
+3. [League of Legends Features](#3-league-of-legends-features)
+4. [Core Mini-Casino Features](#4-core-mini-casino-features)
+5. [Coin Economy System](#5-coin-economy-system)
+6. [Leaderboard & Social Features](#6-leaderboard--social-features)
+7. [Customization & Cosmetics](#7-customization--cosmetics)
+8. [Achievements System](#8-achievements-system)
+9. [Settings & Configuration](#9-settings--configuration)
+10. [Stats & History](#10-stats--history)
+11. [Progression System](#11-progression-system)
+12. [UI/UX Design](#12-uiux-design)
+13. [Performance & Optimization](#13-performance--optimization)
+14. [Testing Requirements](#14-testing-requirements)
+15. [Security & Safety](#15-security--safety)
+16. [Documentation](#16-documentation)
+17. [Build & Deploy](#17-build--deploy)
+18. [Future Considerations](#18-future-considerations)
 - [Appendix A: Technology Stack Recommendations](#appendix-a-technology-stack-recommendations)
 - [Appendix B: Development Priorities](#appendix-b-development-priorities)
 
@@ -34,12 +35,14 @@
 ## 1. Project Overview
 
 ### 1.1 Product Description
-miniGamba is a desktop overlay application that provides mini-casino games during gaming downtime. It features two modes: a Dashboard window for management and an Overlay mode for gameplay.
+miniGamba is an all-in-one League of Legends companion desktop application, similar in scope to Porofessor, combined with a mini-casino suite for gaming downtime. It provides real-time in-game stats, summoner profiles, champion select analysis, and match history via the official Riot LCU and Live Client Data APIs — alongside 10 mini-casino games playable during death timers and loading screens.
 
 ### 1.2 Core Philosophy
+- **LoL companion first:** Real-time stats and summoner intelligence powered by official Riot APIs
 - No real money gambling (fake credits only)
 - No ads or data harvesting
 - Lightweight and performance-friendly
+- API-compliant only: LCU API + Live Client Data API (no memory reading)
 - Fun-first design for downtime entertainment
 
 ### 1.3 Target Platforms
@@ -47,6 +50,51 @@ miniGamba is a desktop overlay application that provides mini-casino games durin
 - Future: macOS, Linux support
 
 ---
+
+## 3. League of Legends Features
+
+### 3.1 Summoner Lookup (Porofessor-style)
+- Search any summoner by name via the LCU API
+- Display: Summoner level, profile icon
+- Ranked stats: Solo/Duo and Flex queue tier, LP, win/loss, win rate, hot streak indicator
+- Top champion masteries: champion name, mastery level, mastery points
+- Recent match history: game mode, KDA, win/loss, duration, time ago
+- Requires the LoL client to be running and the user to be logged in
+- Shows a clear "client not detected" message when LoL is not running
+
+### 3.2 Live Game Page
+- Auto-refreshes every 5 seconds
+- **In Game:** Full scoreboard from the Live Client Data API (port 2999)
+  - Blue and Red team scoreboards with KDA and CS per player
+  - Active player panel: level, current gold, HP, mana
+  - Objective tracker: Dragon kills, Baron kills, Turret kills
+  - Game timer
+- **Champion Select:** All 10 players' champions and positions from the LCU API
+  - Your team vs. enemy team displayed side-by-side
+  - Phase timer with color warning when time is low
+- **Client Connected (Lobby/Menu):** Status indicator, waiting message
+- **Client Offline:** Clear prompt to open LoL
+
+### 3.3 Live Stats Overlay Panel
+- Compact panel accessible from the 🎮 tab in the overlay window
+- Shows: game timer, Dragon/Baron counts, compact per-player KDA
+- Your stats: level, gold, HP/max HP
+- Auto-refreshes every 5 seconds
+- Gracefully shows "Not in a game" when no match is active
+
+### 3.4 Technical: LCU API Integration
+- Discovers the LCU API by reading the League lockfile (auto-detected across common paths)
+- Lockfile format: `LeagueClient:PID:PORT:PASSWORD:PROTOCOL`
+- All requests use Basic auth (`riot:password`) over HTTPS with self-signed cert
+- Polls for lockfile every 5 seconds; reconnects automatically when client restarts
+- No external API key required — works entirely on localhost
+
+### 3.5 Technical: Live Client Data API
+- Connects to `https://127.0.0.1:2999/liveclientdata/allgamedata`
+- Active only during a match; auto-detects game state
+- Polls every 3 seconds for live data
+- Self-signed certificate ignored (localhost-only, safe)
+
 
 ## 2. Technical Architecture
 
