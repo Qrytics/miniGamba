@@ -34,6 +34,11 @@ interface ElectronAPI {
   closeOverlay: () => void;
   minimizeOverlay: () => void;
   openDashboard: () => void;
+
+  // League of Legends operations
+  lolGetStatus: () => Promise<any>;
+  lolGetLiveGameData: () => Promise<any>;
+  lolGetChampSelectSession: () => Promise<any>;
 }
 
 const api: ElectronAPI = {
@@ -64,6 +69,11 @@ const api: ElectronAPI = {
   closeOverlay: () => ipcRenderer.send('window:closeOverlay'),
   minimizeOverlay: () => ipcRenderer.send('window:minimizeOverlay'),
   openDashboard: () => ipcRenderer.send('window:openDashboard'),
+
+  // League of Legends operations
+  lolGetStatus: () => ipcRenderer.invoke('lol:getStatus'),
+  lolGetLiveGameData: () => ipcRenderer.invoke('lol:getLiveGameData'),
+  lolGetChampSelectSession: () => ipcRenderer.invoke('lol:getChampSelectSession'),
 };
 
 // Conditionally expose addCoins for test environments only

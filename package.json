@@ -1,7 +1,7 @@
 {
   "name": "minigamba",
   "version": "1.0.0",
-  "description": "miniGamba - The Ultimate In-Game Companion. A desktop overlay app that turns your downtime into dopamine.",
+  "description": "miniGamba - All-in-One League of Legends Companion. Real-time LoL stats, summoner lookup, and champion select analysis powered by the LCU API — plus a full mini-casino suite for your death timers.",
   "main": ".webpack/main/index.js",
   "author": "Qrytics",
   "license": "MIT",

@@ -10,10 +10,13 @@ import './ipc/game-handlers';
 import './ipc/settings-handlers';
 import './ipc/data-handlers';
 import './ipc/window-handlers';
+import './ipc/lol-handlers';
 
 // Import services
 import { databaseService } from './services/data/database';
 import { createTray } from './services/tray';
+import { lcuService } from './services/lol/lcu-service';
+import { liveClientService } from './services/lol/live-client-service';
 
 let dashboardWindow: BrowserWindow | null = null;
 let overlayWindow: BrowserWindow | null = null;
@@ -32,6 +35,10 @@ async function initialize() {
     databaseService.getOrCreateUser();
     
     console.log('miniGamba initialized successfully');
+    
+    // Start League of Legends service polling
+    lcuService.startPolling();
+    liveClientService.startPolling();
   } catch (error) {
     console.error('Failed to initialize miniGamba:', error);
     app.quit();
@@ -62,6 +69,8 @@ app.on('activate', () => {
 // Handle app shutdown
 app.on('before-quit', async () => {
   // Clean up services
+  lcuService.stopPolling();
+  liveClientService.stopPolling();
   databaseService.close();
 });
 
