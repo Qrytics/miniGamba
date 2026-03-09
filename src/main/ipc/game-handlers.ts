@@ -3,10 +3,11 @@
  * Handles communication between renderer and main process for games
  */
 
-import { ipcMain } from 'electron';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { userDataService } from '../services/data/user-data';
 import { gameHistoryService } from '../services/data/game-history';
 import { achievementService } from '../services/data/achievement-service';
+import { databaseService } from '../services/data/database';
 import { GameType, GameResult } from '../../shared/types/game.types';
 import { generateUUID } from '../utils/crypto';
 
@@ -18,7 +19,7 @@ interface ActiveBet {
 const activeBets = new Map<string, ActiveBet>();
 
 // Register all game-related IPC handlers
-ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
+ipcMain.handle('game:start', async (_event: IpcMainInvokeEvent, gameType: GameType, bet: number) => {
   try {
     // Validate gameType
     const validGameTypes: GameType[] = [
@@ -53,18 +54,18 @@ ipcMain.handle('game:start', async (event, gameType: GameType, bet: number) => {
     activeBets.set(sessionId, { gameType, bet });
     
     return { success: true, currentCoins: user.coins - bet, sessionId };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) => {
+ipcMain.handle('game:end', async (_event: IpcMainInvokeEvent, gameType: GameType, resultData: Record<string, unknown>) => {
   try {
     const user = userDataService.getUser();
     
     // Extract bet from sessionId if available, otherwise fallback to resultData.bet
-    let bet = resultData.bet;
-    const sessionId = resultData.sessionId;
+    let bet = typeof resultData['bet'] === 'number' ? resultData['bet'] : 0;
+    const sessionId = typeof resultData['sessionId'] === 'string' ? resultData['sessionId'] : null;
     
     if (sessionId && activeBets.has(sessionId)) {
       const activeBet = activeBets.get(sessionId)!;
@@ -73,45 +74,54 @@ ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) =>
       activeBets.delete(sessionId);
     }
     
-    // Fallback: if bet is still not found, try resultData.bet
+    // Fallback: if bet is still not found, use a safe minimum
     if (!bet || bet <= 0) {
-      bet = resultData.bet || 10; // Use provided bet or default
+      bet = 10;
     }
     
-    const payout = resultData.payout || 0;
+    const payout = typeof resultData['payout'] === 'number' ? resultData['payout'] : 0;
     
     // Determine result: check resultData first, then infer from payout
     let result: GameResult = 'loss';
-    if (resultData.result) {
-      result = resultData.result;
-    } else if (resultData.win === true || (typeof resultData.win === 'boolean' && resultData.win)) {
+    if (resultData['result'] === 'win' || resultData['result'] === 'loss' || resultData['result'] === 'push') {
+      result = resultData['result'] as GameResult;
+    } else if (resultData['win'] === true) {
       result = 'win';
-    } else if (resultData.win === false) {
+    } else if (resultData['win'] === false) {
       result = 'loss';
     } else if (payout > bet) {
       result = 'win';
     } else if (payout === bet) {
       result = 'push';
-    } else {
-      result = 'loss';
     }
     
-    const details = resultData;
-    
-    // Award payout
-    if (payout > 0) {
-      userDataService.addCoins(user.id, payout);
-    }
-    
-    // Record game in history
-    gameHistoryService.recordGame(user.id, gameType, bet, result, payout, details);
-    
-    // Award XP
+    // Wrap all post-game operations in a single SQLite transaction so the
+    // database stays consistent even if the process is killed mid-operation.
+    const db = databaseService.getDb();
     const xpGained = Math.floor(bet / 10); // 1 XP per 10 coins bet
-    const levelUpResult = userDataService.addXP(user.id, xpGained);
-    
-    // Check achievements
-    const unlockedAchievements = achievementService.checkAchievements(user.id, {
+
+    let leveledUp = false;
+    let newLevel: number | undefined;
+    let unlockedAchievements: string[] = [];
+
+    db.transaction(() => {
+      // Award payout
+      if (payout > 0) {
+        userDataService.addCoins(user.id, payout);
+      }
+
+      // Record game in history
+      gameHistoryService.recordGame(user.id, gameType, bet, result, payout, resultData);
+
+      // Award XP
+      const levelUpResult = userDataService.addXP(user.id, xpGained);
+      leveledUp = levelUpResult.leveledUp;
+      newLevel = levelUpResult.newLevel;
+    })();
+
+    // Achievement checking is done outside the transaction since it involves
+    // multiple reads and writes that are each individually atomic.
+    unlockedAchievements = achievementService.checkAchievements(user.id, {
       type: 'game_played',
       data: { gameType, result, payout, bet }
     });
@@ -123,31 +133,31 @@ ipcMain.handle('game:end', async (event, gameType: GameType, resultData: any) =>
       payout,
       currentCoins: updatedUser.coins,
       xpGained,
-      leveledUp: levelUpResult.leveledUp,
-      newLevel: levelUpResult.newLevel,
+      leveledUp,
+      newLevel,
       unlockedAchievements
     };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('game:getStats', async (event, gameType?: GameType) => {
+ipcMain.handle('game:getStats', async (_event: IpcMainInvokeEvent, gameType?: GameType) => {
   try {
     const user = userDataService.getUser();
     const stats = gameHistoryService.getGameStats(user.id, gameType);
     return { success: true, stats };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('game:getHistory', async (event, options?: any) => {
+ipcMain.handle('game:getHistory', async (_event: IpcMainInvokeEvent, options?: Record<string, unknown>) => {
   try {
     const user = userDataService.getUser();
     const history = gameHistoryService.getGameHistory(user.id, options);
     return { success: true, history };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });

@@ -3,7 +3,7 @@
  * Handles communication between renderer and main process for settings
  */
 
-import { ipcMain } from 'electron';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { userDataService } from '../services/data/user-data';
 import { setOverlayOpacity, setOverlaySize, setClickThrough } from '../windows/overlay';
 import { UserSettings } from '../../shared/types/user.types';
@@ -13,12 +13,12 @@ ipcMain.handle('settings:get', async () => {
     const user = userDataService.getUser();
     const settings = userDataService.getUserSettings(user.id);
     return { success: true, settings };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('settings:update', async (event, settings: UserSettings) => {
+ipcMain.handle('settings:update', async (_event: IpcMainInvokeEvent, settings: UserSettings) => {
   try {
     const user = userDataService.getUser();
     userDataService.updateUserSettings(user.id, settings);
@@ -46,8 +46,8 @@ ipcMain.handle('settings:update', async (event, settings: UserSettings) => {
     }
     
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -58,12 +58,12 @@ ipcMain.handle('settings:reset', async () => {
     const defaultSettings = userDataService.getUserSettings(999999); // Non-existent user returns defaults
     userDataService.updateUserSettings(user.id, defaultSettings);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('settings:updateOverlay', async (event, opacity?: number, size?: string, clickThrough?: boolean) => {
+ipcMain.handle('settings:updateOverlay', async (_event: IpcMainInvokeEvent, opacity?: number, size?: string, clickThrough?: boolean) => {
   try {
     if (opacity !== undefined) {
       setOverlayOpacity(opacity);
@@ -86,7 +86,7 @@ ipcMain.handle('settings:updateOverlay', async (event, opacity?: number, size?: 
     }
     
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });

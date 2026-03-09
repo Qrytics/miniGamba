@@ -14,6 +14,7 @@ import MiniDerby from './games/MiniDerby';
 import DiceRoll from './games/DiceRoll';
 import MiniPoker from './games/MiniPoker';
 import LiveStatsPanel from './lol/LiveStatsPanel';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { PixelIcon, type PixelIconName } from '../../components/PixelIcon';
 import '../styles/overlay.css';
 
@@ -119,7 +120,11 @@ const OverlayApp: React.FC = () => {
 
       <div className="overlay-content">
         {/* Live Stats Tab */}
-        {activeTab === 'livestats' && <LiveStatsPanel />}
+        {activeTab === 'livestats' && (
+          <ErrorBoundary>
+            <LiveStatsPanel />
+          </ErrorBoundary>
+        )}
 
         {/* Games Tab */}
         {activeTab === 'games' && (
@@ -143,7 +148,9 @@ const OverlayApp: React.FC = () => {
               </div>
             </div>
           ) : CurrentGameComponent ? (
-            <CurrentGameComponent onCoinsUpdate={loadUserData} />
+            <ErrorBoundary key={currentGame}>
+              <CurrentGameComponent onCoinsUpdate={loadUserData} />
+            </ErrorBoundary>
           ) : (
             <div className="text-center">
               <p>Game not found</p>

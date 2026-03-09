@@ -17,6 +17,7 @@ import { databaseService } from './services/data/database';
 import { createTray } from './services/tray';
 import { lcuService } from './services/lol/lcu-service';
 import { liveClientService } from './services/lol/live-client-service';
+import { logger } from './utils/logger';
 
 let dashboardWindow: BrowserWindow | null = null;
 let overlayWindow: BrowserWindow | null = null;
@@ -25,7 +26,9 @@ let overlayWindow: BrowserWindow | null = null;
  * Initialize the application
  */
 async function initialize() {
-  console.log('Initializing miniGamba...');
+  // Wire up the logger to the user-data directory as early as possible.
+  logger.setLogDirectory(app.getPath('userData'));
+  logger.info('Initializing miniGamba...');
   
   try {
     // Initialize database
@@ -34,13 +37,13 @@ async function initialize() {
     // Create or get default user
     databaseService.getOrCreateUser();
     
-    console.log('miniGamba initialized successfully');
+    logger.info('miniGamba initialized successfully');
     
     // Start League of Legends service polling
     lcuService.startPolling();
     liveClientService.startPolling();
   } catch (error) {
-    console.error('Failed to initialize miniGamba:', error);
+    logger.error('Failed to initialize miniGamba', error instanceof Error ? error : new Error(String(error)));
     app.quit();
   }
 }

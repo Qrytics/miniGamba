@@ -11,6 +11,7 @@ import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
 import SummonerPage from '../pages/SummonerPage';
 import LiveGamePage from '../pages/LiveGamePage';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { PixelIcon } from '../../components/PixelIcon';
 import '../styles/dashboard.css';
 
@@ -173,14 +174,16 @@ const App: React.FC = () => {
         </aside>
         
         <main className="app-content">
-          {currentPage === 'home' && <HomePage userData={userData} onRefresh={loadUserData} />}
-          {currentPage === 'summoner' && <SummonerPage />}
-          {currentPage === 'livegame' && <LiveGamePage />}
-          {currentPage === 'games' && <GamesPage />}
-          {currentPage === 'achievements' && <AchievementsPage />}
-          {currentPage === 'stats' && <StatsPage />}
-          {currentPage === 'profile' && <ProfilePage userData={userData} onUpdate={loadUserData} />}
-          {currentPage === 'settings' && <SettingsPage />}
+          <ErrorBoundary>
+            {currentPage === 'home' && <HomePage userData={userData} onRefresh={loadUserData} />}
+            {currentPage === 'summoner' && <SummonerPage />}
+            {currentPage === 'livegame' && <LiveGamePage />}
+            {currentPage === 'games' && <GamesPage />}
+            {currentPage === 'achievements' && <AchievementsPage />}
+            {currentPage === 'stats' && <StatsPage />}
+            {currentPage === 'profile' && <ProfilePage userData={userData} onUpdate={loadUserData} />}
+            {currentPage === 'settings' && <SettingsPage />}
+          </ErrorBoundary>
         </main>
       </div>
     </div>

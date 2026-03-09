@@ -219,12 +219,122 @@ export class UserDataService {
   }
 
   /**
-   * Import user data from JSON
+   * Import user data from a previously exported JSON backup.
+   *
+   * Only the safe, user-controlled fields are restored — system fields like
+   * `id` and `created_at` are ignored so the import cannot corrupt primary
+   * keys or foreign-key relationships.
    */
-  public importUserData(data: any): void {
-    // This would restore user data from backup
-    // Implementation would involve careful validation and database inserts
-    console.warn('Import user data not fully implemented yet');
+  public importUserData(data: unknown): void {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid import data: expected a JSON object');
+    }
+
+    const obj = data as Record<string, unknown>;
+
+    const db = databaseService.getDb();
+
+    db.transaction(() => {
+      // ── Restore username ──────────────────────────────────────────────
+      const user = obj['user'];
+      if (user && typeof user === 'object') {
+        const u = user as Record<string, unknown>;
+        const updates: Partial<import('../../../shared/types/user.types').User> = {};
+
+        if (typeof u['username'] === 'string' && u['username'].trim().length > 0) {
+          updates.username = u['username'].trim().slice(0, 64);
+        }
+        if (typeof u['prestigeLevel'] === 'number' && u['prestigeLevel'] >= 0) {
+          updates.prestigeLevel = Math.floor(u['prestigeLevel']);
+        }
+
+        if (Object.keys(updates).length > 0) {
+          this.updateUser(updates);
+        }
+      }
+
+      // ── Restore profile (avatar, border, title only) ──────────────────
+      const profile = obj['profile'];
+      if (profile && typeof profile === 'object') {
+        const p = profile as Record<string, unknown>;
+        const currentUser = this.getUser();
+        const profileUpdates: Partial<import('../../../shared/types/user.types').UserProfile> = {};
+
+        if (typeof p['avatar'] === 'string') profileUpdates.avatar = p['avatar'];
+        if (typeof p['border'] === 'string') profileUpdates.border = p['border'];
+        if (typeof p['title'] === 'string') profileUpdates.title = p['title'];
+
+        if (Object.keys(profileUpdates).length > 0) {
+          this.updateUserProfile(currentUser.id, profileUpdates);
+        }
+      }
+
+      // ── Restore settings ──────────────────────────────────────────────
+      const settings = obj['settings'];
+      if (settings && typeof settings === 'object') {
+        const currentUser = this.getUser();
+        // Merge with defaults so any missing keys are filled in safely.
+        const defaults = this.getDefaultSettings();
+        const merged = this.deepMerge(defaults, settings as Record<string, unknown>);
+        this.updateUserSettings(currentUser.id, merged);
+      }
+
+      // ── Restore achievements ──────────────────────────────────────────
+      const achievements = obj['achievements'];
+      if (Array.isArray(achievements)) {
+        const currentUser = this.getUser();
+        for (const ach of achievements) {
+          if (ach && typeof ach === 'object') {
+            const a = ach as Record<string, unknown>;
+            if (typeof a['achievement_id'] === 'string') {
+              db.prepare(`
+                INSERT OR IGNORE INTO user_achievements (user_id, achievement_id, unlocked_at)
+                VALUES (?, ?, ?)
+              `).run(
+                currentUser.id,
+                a['achievement_id'],
+                typeof a['unlocked_at'] === 'string' ? a['unlocked_at'] : new Date().toISOString()
+              );
+            }
+          }
+        }
+      }
+    })();
+  }
+
+  /**
+   * Recursively merge `override` into `base` without replacing missing keys
+   * in `base` with unexpected values from the import.
+   */
+  private deepMerge(
+    base: Record<string, unknown>,
+    override: Record<string, unknown>
+  ): import('../../../shared/types/user.types').UserSettings {
+    const result: Record<string, unknown> = { ...base };
+
+    for (const key of Object.keys(base)) {
+      if (Object.prototype.hasOwnProperty.call(override, key)) {
+        const baseVal = base[key];
+        const overrideVal = override[key];
+        if (
+          baseVal !== null &&
+          typeof baseVal === 'object' &&
+          overrideVal !== null &&
+          typeof overrideVal === 'object' &&
+          !Array.isArray(baseVal)
+        ) {
+          result[key] = this.deepMerge(
+            baseVal as Record<string, unknown>,
+            overrideVal as Record<string, unknown>
+          );
+        } else if (typeof baseVal === typeof overrideVal) {
+          result[key] = overrideVal;
+        }
+        // If types differ, keep the base (safe default).
+      }
+    }
+
+    return result as import('../../../shared/types/user.types').UserSettings;
   }
 }
 

@@ -127,7 +127,11 @@ export class InvestmentService {
   }
 
   /**
-   * Collect investment returns
+   * Collect investment returns.
+   *
+   * All reads and writes are wrapped in a single SQLite transaction so that the
+   * "mark as collected" and "award coins" steps are atomic — the user can never
+   * collect the same investment twice even under concurrent IPC calls.
    */
   public collectInvestment(userId: number, investmentId: number): { 
     principal: number; 
@@ -137,62 +141,72 @@ export class InvestmentService {
   } {
     const db = databaseService.getDb();
     
-    // Get investment
-    const investment = db.prepare(`
-      SELECT * FROM investments 
-      WHERE id = ? AND user_id = ? AND collected = 0
-    `).get(investmentId, userId) as any;
-
-    if (!investment) {
-      throw new Error('Investment not found or already collected');
-    }
-
-    const inv: Investment = {
-      id: investment.id,
-      userId: investment.user_id,
-      amount: investment.amount,
-      riskLevel: investment.risk_level as RiskLevel,
-      createdAt: new Date(investment.created_at),
-      maturityDate: new Date(investment.maturity_date),
-      collected: false
-    };
-
-    // Calculate returns
-    const profile = this.riskProfiles[inv.riskLevel];
-    const daysInvested = Math.floor(
-      (new Date().getTime() - inv.createdAt.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    let principal = inv.amount;
+    let principal = 0;
     let returns = 0;
+    let total = 0;
     let wasLoss = false;
+    let investmentForAchievements: Investment | null = null;
+    let returnsForAchievements = 0;
 
-    // Check for loss
-    if (Math.random() * 100 < profile.lossChance) {
-      // Loss occurred
-      const lossAmount = Math.floor(inv.amount * (profile.lossAmount / 100));
-      principal = inv.amount - lossAmount;
-      wasLoss = true;
-    } else {
-      // Calculate gains
-      const dailyReturnAmount = inv.amount * (profile.dailyReturn / 100);
-      returns = Math.floor(dailyReturnAmount * Math.max(daysInvested, profile.maturityDays));
+    db.transaction(() => {
+      // Get and lock the investment row
+      const investment = db.prepare(`
+        SELECT * FROM investments 
+        WHERE id = ? AND user_id = ? AND collected = 0
+      `).get(investmentId, userId) as Record<string, unknown> | undefined;
+
+      if (!investment) {
+        throw new Error('Investment not found or already collected');
+      }
+
+      const inv: Investment = {
+        id: investment['id'] as number,
+        userId: investment['user_id'] as number,
+        amount: investment['amount'] as number,
+        riskLevel: investment['risk_level'] as RiskLevel,
+        createdAt: new Date(investment['created_at'] as string),
+        maturityDate: new Date(investment['maturity_date'] as string),
+        collected: false
+      };
+
+      // Calculate returns
+      const profile = this.riskProfiles[inv.riskLevel];
+      const daysInvested = Math.floor(
+        (new Date().getTime() - inv.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      principal = inv.amount;
+
+      // Check for loss
+      if (Math.random() * 100 < profile.lossChance) {
+        const lossAmount = Math.floor(inv.amount * (profile.lossAmount / 100));
+        principal = inv.amount - lossAmount;
+        wasLoss = true;
+      } else {
+        const dailyReturnAmount = inv.amount * (profile.dailyReturn / 100);
+        returns = Math.floor(dailyReturnAmount * Math.max(daysInvested, profile.maturityDays));
+      }
+
+      total = principal + returns;
+
+      // Award coins
+      userDataService.addCoins(userId, total, false);
+
+      // Mark as collected
+      db.prepare(`
+        UPDATE investments 
+        SET collected = 1
+        WHERE id = ?
+      `).run(investmentId);
+
+      investmentForAchievements = inv;
+      returnsForAchievements = returns;
+    })();
+
+    // Achievement checking outside the transaction
+    if (investmentForAchievements) {
+      this.checkInvestmentAchievements(userId, investmentForAchievements, returnsForAchievements);
     }
-
-    const total = principal + returns;
-
-    // Award coins
-    userDataService.addCoins(userId, total, false); // Don't count as "earned"
-
-    // Mark as collected
-    db.prepare(`
-      UPDATE investments 
-      SET collected = 1
-      WHERE id = ?
-    `).run(investmentId);
-
-    // Check achievements
-    this.checkInvestmentAchievements(userId, inv, returns);
 
     return { principal, returns, total, wasLoss };
   }

@@ -75,35 +75,70 @@ export class HourlyBonusService {
   }
 
   /**
-   * Claim hourly bonus
+   * Claim hourly bonus.
+   *
+   * The status check and the coin/timestamp update are combined inside a
+   * single SQLite transaction so that concurrent invocations (e.g. the user
+   * double-clicking the button) cannot both succeed and award coins twice.
    */
-  public claimBonus(userId: number): { coins: number; hours: number; bonusEvent?: any } {
-    const status = this.getStatus(userId);
-
-    if (!status.canClaim) {
-      throw new Error('Bonus not yet available');
-    }
-
+  public claimBonus(userId: number): { coins: number; hours: number; bonusEvent?: unknown } {
     const db = databaseService.getDb();
     const now = new Date();
 
-    // Calculate total coins (base amount × unclaimed hours)
-    const totalCoins = this.BONUS_AMOUNT * status.unclaimedHours;
+    let totalCoins = 0;
+    let unclaimedHours = 0;
 
-    // Award coins
-    userDataService.addCoins(userId, totalCoins);
+    db.transaction(() => {
+      // Re-read the row inside the transaction so we hold a write lock.
+      const status = db.prepare(`
+        SELECT last_claimed, unclaimed_hours
+        FROM hourly_bonus
+        WHERE user_id = ?
+      `).get(userId) as { last_claimed: string | null; unclaimed_hours: number } | undefined;
 
-    // Update last claimed time
-    db.prepare(`
-      UPDATE hourly_bonus 
-      SET last_claimed = ?, unclaimed_hours = 0
-      WHERE user_id = ?
-    `).run(now.toISOString(), userId);
+      let canClaim = false;
 
-    // Check for achievements
+      if (!status) {
+        // First-ever claim — row hasn't been created yet.
+        db.prepare(`
+          INSERT INTO hourly_bonus (user_id, last_claimed, unclaimed_hours)
+          VALUES (?, ?, 0)
+        `).run(userId, now.toISOString());
+        canClaim = true;
+        unclaimedHours = 1;
+      } else {
+        const lastClaimed = status.last_claimed ? new Date(status.last_claimed) : null;
+        const hoursSince = lastClaimed
+          ? Math.floor((now.getTime() - lastClaimed.getTime()) / this.HOUR_MS)
+          : 1;
+
+        canClaim = hoursSince >= 1 || !lastClaimed;
+        if (!canClaim) {
+          throw new Error('Bonus not yet available');
+        }
+
+        unclaimedHours = Math.min(
+          hoursSince > 0 ? hoursSince : status.unclaimed_hours,
+          this.MAX_STACK
+        );
+
+        db.prepare(`
+          UPDATE hourly_bonus
+          SET last_claimed = ?, unclaimed_hours = 0
+          WHERE user_id = ?
+        `).run(now.toISOString(), userId);
+      }
+
+      totalCoins = this.BONUS_AMOUNT * unclaimedHours;
+
+      // Award coins inside the transaction so the balance is always consistent.
+      userDataService.addCoins(userId, totalCoins);
+    })();
+
+    // Achievement checking and bonus events are outside the transaction because
+    // they are read-heavy and failures there must not roll back the coin award.
     this.checkAchievements(userId, now);
 
-    // Random bonus event (10% chance)
     let bonusEvent = null;
     if (Math.random() < 0.1) {
       bonusEvent = this.triggerBonusEvent(userId);
@@ -111,7 +146,7 @@ export class HourlyBonusService {
 
     return {
       coins: totalCoins,
-      hours: status.unclaimedHours,
+      hours: unclaimedHours,
       bonusEvent
     };
   }

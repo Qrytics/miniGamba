@@ -5,7 +5,7 @@
  * in a safe, structured way via Electron's IPC mechanism.
  */
 
-import { ipcMain } from 'electron';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { lcuService } from '../services/lol/lcu-service';
 import { liveClientService } from '../services/lol/live-client-service';
 
@@ -24,14 +24,14 @@ ipcMain.handle('lol:getCurrentSummoner', async () => {
   try {
     const summoner = await lcuService.getCurrentSummoner();
     return { success: true, summoner };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // ── Summoner lookup ─────────────────────────────────────────────────────────
 
-ipcMain.handle('lol:getSummonerByName', async (_event, name: string) => {
+ipcMain.handle('lol:getSummonerByName', async (_event: IpcMainInvokeEvent, name: string) => {
   try {
     if (!name || typeof name !== 'string') {
       return { success: false, error: 'Invalid summoner name' };
@@ -42,50 +42,50 @@ ipcMain.handle('lol:getSummonerByName', async (_event, name: string) => {
     }
     const summoner = await lcuService.getSummonerByName(trimmed);
     return { success: true, summoner };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // ── Ranked stats ─────────────────────────────────────────────────────────────
 
-ipcMain.handle('lol:getRankedStats', async (_event, summonerId: number) => {
+ipcMain.handle('lol:getRankedStats', async (_event: IpcMainInvokeEvent, summonerId: number) => {
   try {
     if (!summonerId || typeof summonerId !== 'number') {
       return { success: false, error: 'Invalid summoner ID' };
     }
     const ranked = await lcuService.getRankedStats(summonerId);
     return { success: true, ranked };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // ── Champion masteries ────────────────────────────────────────────────────────
 
-ipcMain.handle('lol:getChampionMasteries', async (_event, puuid: string) => {
+ipcMain.handle('lol:getChampionMasteries', async (_event: IpcMainInvokeEvent, puuid: string) => {
   try {
     if (!puuid || typeof puuid !== 'string') {
       return { success: false, error: 'Invalid PUUID' };
     }
     const masteries = await lcuService.getChampionMasteries(puuid);
     return { success: true, masteries };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // ── Match history ─────────────────────────────────────────────────────────────
 
-ipcMain.handle('lol:getMatchHistory', async (_event, puuid: string, begIndex = 0, endIndex = 19) => {
+ipcMain.handle('lol:getMatchHistory', async (_event: IpcMainInvokeEvent, puuid: string, begIndex = 0, endIndex = 19) => {
   try {
     if (!puuid || typeof puuid !== 'string') {
       return { success: false, error: 'Invalid PUUID' };
     }
     const matches = await lcuService.getMatchHistory(puuid, begIndex, endIndex);
     return { success: true, matches };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -95,8 +95,8 @@ ipcMain.handle('lol:getChampSelectSession', async () => {
   try {
     const session = await lcuService.getChampSelectSession();
     return { success: true, session };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -115,7 +115,7 @@ ipcMain.handle('lol:getLiveGameData', async () => {
     }
     const data = liveClientService.getCachedData();
     return { success: true, data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
