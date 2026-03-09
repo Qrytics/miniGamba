@@ -7,6 +7,8 @@ import Database from 'better-sqlite3';
 import * as path from 'path';
 import { app } from 'electron';
 import { User } from '../../../shared/types/user.types';
+import { logger } from '../../utils/logger';
+import { generateFriendCode } from '../../utils/crypto';
 
 export class DatabaseService {
   private db: Database.Database | null = null;
@@ -38,7 +40,7 @@ export class DatabaseService {
   public initialize(): void {
     this.db = new Database(this.dbPath);
     this.createTables();
-    console.log('Database initialized at:', this.dbPath);
+    logger.info('Database initialized at:', this.dbPath);
   }
 
   /**
@@ -201,7 +203,7 @@ export class DatabaseService {
       )
     `);
 
-    console.log('Database tables created successfully');
+    logger.info('Database tables created successfully');
   }
 
   /**
@@ -293,25 +295,11 @@ export class DatabaseService {
   }
 
   /**
-   * Generate a unique friend code using cryptographically secure randomness
+   * Generate a unique friend code using cryptographically secure randomness.
+   * Delegates to the shared crypto utility.
    */
   private generateFriendCode(): string {
-    const crypto = require('crypto');
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing characters
-    let code = 'GAMBA-';
-    
-    // Use crypto.randomBytes for secure random generation
-    const randomBytes = crypto.randomBytes(8);
-    
-    for (let i = 0; i < 4; i++) {
-      code += chars.charAt(randomBytes[i] % chars.length);
-    }
-    code += '-';
-    for (let i = 4; i < 8; i++) {
-      code += chars.charAt(randomBytes[i] % chars.length);
-    }
-
-    return code;
+    return generateFriendCode();
   }
 
   /**

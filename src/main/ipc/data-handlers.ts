@@ -3,20 +3,22 @@
  * Handles communication between renderer and main process for data
  */
 
-import { ipcMain } from 'electron';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { userDataService } from '../services/data/user-data';
 import { achievementService } from '../services/data/achievement-service';
 import { dailyTasksService } from '../services/games/daily-tasks';
 import { hourlyBonusService } from '../services/games/hourly-bonus';
 import { investmentService } from '../services/games/investment';
+import { RiskLevel } from '../services/games/investment';
+import { UserSettings } from '../../shared/types/user.types';
 
 // User data handlers
 ipcMain.handle('data:getUser', async () => {
   try {
     const user = userDataService.getUser();
     return { success: true, user };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -25,27 +27,27 @@ ipcMain.handle('data:getUserProfile', async () => {
     const user = userDataService.getUser();
     const profile = userDataService.getUserProfile(user.id);
     return { success: true, profile };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('data:updateUser', async (event, updates) => {
+ipcMain.handle('data:updateUser', async (_event: IpcMainInvokeEvent, updates: Partial<import('../../shared/types/user.types').User>) => {
   try {
     userDataService.updateUser(updates);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('data:updateProfile', async (event, updates) => {
+ipcMain.handle('data:updateProfile', async (_event: IpcMainInvokeEvent, updates: Partial<import('../../shared/types/user.types').UserProfile>) => {
   try {
     const user = userDataService.getUser();
     userDataService.updateUserProfile(user.id, updates);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -57,8 +59,8 @@ ipcMain.handle('data:getAchievements', async () => {
     const totalPoints = achievementService.getTotalAchievementPoints(user.id);
     const completion = achievementService.getCompletionPercentage(user.id);
     return { success: true, unlocked, totalPoints, completion };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -70,18 +72,18 @@ ipcMain.handle('data:getDailyTasks', async () => {
     const progress = dailyTasksService.getTaskProgress(user.id);
     const allCompleted = dailyTasksService.areAllTasksCompleted(user.id);
     return { success: true, tasks, progress, allCompleted };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('data:updateTaskProgress', async (event, taskId, increment) => {
+ipcMain.handle('data:updateTaskProgress', async (_event: IpcMainInvokeEvent, taskId: string, increment: number) => {
   try {
     const user = userDataService.getUser();
     const completed = dailyTasksService.updateTaskProgress(user.id, taskId, increment);
     return { success: true, completed };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -91,8 +93,8 @@ ipcMain.handle('data:getHourlyBonusStatus', async () => {
     const user = userDataService.getUser();
     const status = hourlyBonusService.getStatus(user.id);
     return { success: true, status };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -101,19 +103,19 @@ ipcMain.handle('data:claimHourlyBonus', async () => {
     const user = userDataService.getUser();
     const result = hourlyBonusService.claimBonus(user.id);
     return { success: true, ...result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // Investment handlers
-ipcMain.handle('data:createInvestment', async (event, amount, riskLevel) => {
+ipcMain.handle('data:createInvestment', async (_event: IpcMainInvokeEvent, amount: number, riskLevel: RiskLevel) => {
   try {
     const user = userDataService.getUser();
     const investment = investmentService.createInvestment(user.id, amount, riskLevel);
     return { success: true, investment };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -122,18 +124,18 @@ ipcMain.handle('data:getInvestments', async () => {
     const user = userDataService.getUser();
     const investments = investmentService.getActiveInvestments(user.id);
     return { success: true, investments };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('data:collectInvestment', async (event, investmentId) => {
+ipcMain.handle('data:collectInvestment', async (_event: IpcMainInvokeEvent, investmentId: number) => {
   try {
     const user = userDataService.getUser();
     const result = investmentService.collectInvestment(user.id, investmentId);
     return { success: true, ...result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
@@ -143,23 +145,23 @@ ipcMain.handle('data:export', async () => {
     const user = userDataService.getUser();
     const data = userDataService.exportUserData(user.id);
     return { success: true, data: JSON.stringify(data, null, 2) };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
-ipcMain.handle('data:import', async (event, jsonData: string) => {
+ipcMain.handle('data:import', async (_event: IpcMainInvokeEvent, jsonData: string) => {
   try {
-    const data = JSON.parse(jsonData);
+    const data = JSON.parse(jsonData) as unknown;
     userDataService.importUserData(data);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });
 
 // Test-only handler: Add coins (only works in test mode)
-ipcMain.handle('data:addCoins', async (event, amount: number) => {
+ipcMain.handle('data:addCoins', async (_event: IpcMainInvokeEvent, amount: number) => {
   // Only allow in test mode
   if (process.env.PLAYWRIGHT_TEST !== 'true' && process.env.NODE_ENV !== 'test') {
     return { success: false, error: 'This handler is only available in test mode' };
@@ -170,7 +172,7 @@ ipcMain.handle('data:addCoins', async (event, amount: number) => {
     userDataService.addCoins(user.id, amount, false); // Don't count as earned
     const updatedUser = userDataService.getUser();
     return { success: true, coins: updatedUser.coins };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 });

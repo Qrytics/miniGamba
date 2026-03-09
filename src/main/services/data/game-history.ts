@@ -74,14 +74,14 @@ export class GameHistoryService {
         VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         userId, gameType,
-        isWin ? 1 : 0,          // wins: 1 if win, 0 if loss
-        isWin ? 0 : 1,          // losses: 0 if win, 1 if loss
-        betAmount,              // total wagered
-        payout,                 // total won (includes returned bet on win)
-        isWin ? profit : 0,     // biggest win (profit, not payout)
-        isWin ? 0 : betAmount,  // biggest loss (bet amount on loss)
-        isWin ? 1 : 0,          // current streak
-        isWin ? 1 : 0           // best streak
+        isWin ? 1 : 0,          // wins
+        isWin ? 0 : 1,          // losses
+        betAmount,              // total_wagered
+        payout,                 // total_won
+        isWin ? profit : 0,     // biggest_win (profit on win, or 0)
+        isWin ? 0 : profit,     // biggest_loss (profit on loss = negative value, or 0)
+        isWin ? 1 : 0,          // current_streak
+        isWin ? 1 : 0           // best_streak
       );
     } else {
       // Update existing stats
