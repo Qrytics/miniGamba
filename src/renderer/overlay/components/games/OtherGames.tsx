@@ -25,7 +25,7 @@ function genScratchGrid(win: boolean): string[] {
   const pick = () => SCRATCH_SYMBOLS[Math.floor(Math.random() * SCRATCH_SYMBOLS.length)];
   const grid = Array.from({ length: 9 }, pick);
   if (win) {
-    // guarantee 3 matching symbols in a row/col/diagonal
+    // Guarantee 3 matching symbols in a row (rows only)
     const sym = SCRATCH_SYMBOLS[Math.floor(Math.random() * SCRATCH_SYMBOLS.length)];
     const row = Math.floor(Math.random() * 3) * 3;
     grid[row] = sym;
@@ -380,10 +380,12 @@ export const MiniDerby: React.FC<GameProps> = ({ onCoinsUpdate }) => {
       </div>
       <div className="game-interface">
         {result && (
-          <div className={`result-display ${result.win ? 'win' : 'loss'}`}>
-            {result.win
-              ? `🏆 ${result.horse} wins! +${result.payout} coins!`
-              : `💸 ${HORSES[winner ?? 0]?.name} won. Better luck next time!`}
+          <div className={`result-display ${(result as Record<string,unknown>).win ? 'win' : 'loss'}`}>
+            {(result as Record<string,unknown>).win
+              ? `🏆 ${(result as Record<string,unknown>).horse as string} wins! +${(result as Record<string,unknown>).payout as number} coins!`
+              : winner !== null
+                ? `💸 ${HORSES[winner]?.name} won. Better luck next time!`
+                : '💸 Better luck next time!'}
           </div>
         )}
         <div className="game-display" style={{ flexDirection: 'column', width: '100%', gap: '0.5rem' }}>
@@ -597,7 +599,7 @@ function handRank(cards: { rank: string; suit: string; value: number }[]) {
   const vals = cards.map((c) => c.value).sort((a, b) => a - b);
   const suits = cards.map((c) => c.suit);
   const flush = suits.every((s) => s === suits[0]);
-  const straight = vals[2] - vals[0] === 2 && new Set(vals).size === 3;
+  const straight = vals[1] === vals[0] + 1 && vals[2] === vals[1] + 1;
   const counts = vals.reduce<Record<number, number>>((acc, v) => { acc[v] = (acc[v] || 0) + 1; return acc; }, {});
   const freqs = Object.values(counts).sort((a, b) => b - a);
 
@@ -638,10 +640,13 @@ export const MiniPoker: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   };
 
   const handleDraw = async () => {
+    let drawIndex = 0;
     const newHand = hand.map((card, i) => {
       if (held[i]) return card;
       const drawn = deckRef.current.shift();
-      if (drawn) { playReveal(); }
+      const delay = drawIndex * 150;
+      drawIndex++;
+      if (drawn) { setTimeout(() => playReveal(), delay); }
       return drawn ?? card;
     });
 

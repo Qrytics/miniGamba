@@ -57,15 +57,15 @@ ipcMain.handle('data:getAchievements', async () => {
     const unlocked = achievementService.getUnlockedAchievements(user.id);
     const totalPoints = achievementService.getTotalAchievementPoints(user.id);
     const completion = achievementService.getCompletionPercentage(user.id);
-    const unlockedIds = new Set(unlocked.map((u) => u.achievementId));
+    const unlockedIdStrings = new Set(unlocked.map((u) => u.achievementId as string));
 
     // Import achievement definitions and merge with unlock status so the
     // renderer can display all achievements (locked + unlocked) in one list.
     const { achievements: achievementDefs } = await import('../../shared/constants/achievements');
     const allAchievements = Object.values(achievementDefs).map((def) => ({
       ...def,
-      unlocked: unlockedIds.has(def.id as never),
-      unlockedAt: unlocked.find((u) => u.achievementId === (def.id as never))?.unlockedAt ?? null,
+      unlocked: unlockedIdStrings.has(def.id),
+      unlockedAt: unlocked.find((u) => (u.achievementId as string) === def.id)?.unlockedAt ?? null,
     }));
 
     return { success: true, achievements: allAchievements, totalPoints, completion };
