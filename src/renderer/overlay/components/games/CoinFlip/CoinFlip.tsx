@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CoinFlip as CoinFlipEngine } from '../../../game-logic/coin-flip';
 import { PixelIcon } from '../../../../components/PixelIcon';
+import { playCoinFlip, playWin, playLoss, playBet } from '../../../utils/sounds';
 
 interface CoinFlipProps {
   onCoinsUpdate: () => void;
@@ -36,6 +37,8 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
     try {
       const startResult = await window.electronAPI.startGame('coin-flip', bet);
       const sessionId = startResult?.sessionId;
+      playBet();
+      playCoinFlip();
       engine.start(bet);
       
       // Flip animation
@@ -71,7 +74,7 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
 
       setCoinFace(state.coinResult || 'heads');
       setResult(gameResult);
-      
+      if (endResult.result === 'win') playWin(); else playLoss();
       await window.electronAPI.endGame('coin-flip', gameResult);
       onCoinsUpdate();
     } catch (error) {

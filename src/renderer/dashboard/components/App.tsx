@@ -29,7 +29,8 @@ const App: React.FC = () => {
   const loadUserData = async () => {
     try {
       const data = await window.electronAPI.getUserData();
-      setUserData(data);
+      // IPC returns { success, user } – unwrap user object
+      setUserData(data?.user ?? data);
     } catch (error) {
       console.error('Failed to load user data:', error);
     } finally {
@@ -86,7 +87,7 @@ const App: React.FC = () => {
 
               {/* ── League of Legends section ── */}
               <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
                   League of Legends
                 </div>
               </li>
@@ -111,7 +112,7 @@ const App: React.FC = () => {
 
               {/* ── Mini-Casino section ── */}
               <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
                   Mini-Casino
                 </div>
               </li>
@@ -144,7 +145,7 @@ const App: React.FC = () => {
 
               {/* ── Account section ── */}
               <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
                   Account
                 </div>
               </li>

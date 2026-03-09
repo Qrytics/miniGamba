@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const AchievementsPage: React.FC = () => {
-  const [achievements, setAchievements] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<Record<string, unknown>[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
@@ -12,8 +12,9 @@ const AchievementsPage: React.FC = () => {
   const loadAchievements = async () => {
     try {
       if (window.electronAPI.getAchievements) {
-        const data = await window.electronAPI.getAchievements();
-        setAchievements(data || []);
+        const res = await window.electronAPI.getAchievements();
+        // IPC now returns { success, achievements, totalPoints, completion }
+        setAchievements(res?.achievements || []);
       }
     } catch (error) {
       console.error('Failed to load achievements:', error);

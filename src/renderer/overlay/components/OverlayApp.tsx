@@ -45,7 +45,8 @@ const OverlayApp: React.FC = () => {
   const loadUserData = async () => {
     try {
       const data = await window.electronAPI.getUserData();
-      setUserData(data);
+      // IPC returns { success, user } – unwrap user object
+      setUserData(data?.user ?? data);
     } catch (error) {
       console.error('Failed to load user data:', error);
     }

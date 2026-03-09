@@ -17,16 +17,19 @@ const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
   const loadData = async () => {
     try {
       if (window.electronAPI.getDailyTasks) {
-        const tasks = await window.electronAPI.getDailyTasks();
-        setDailyTasks(tasks || []);
+        const res = await window.electronAPI.getDailyTasks();
+        // IPC returns { success, tasks, progress, allCompleted }
+        setDailyTasks(res?.tasks || res || []);
       }
       if (window.electronAPI.getHourlyBonus) {
-        const bonus = await window.electronAPI.getHourlyBonus();
-        setHourlyBonus(bonus);
+        const res = await window.electronAPI.getHourlyBonus();
+        // IPC now returns flat { success, canClaim, amount, timeUntilNext, progress }
+        setHourlyBonus(res);
       }
       if (window.electronAPI.getGameStats) {
-        const gameStats = await window.electronAPI.getGameStats();
-        setStats(gameStats);
+        const res = await window.electronAPI.getGameStats();
+        // IPC returns { success, stats }
+        setStats(res?.stats ?? res);
       }
     } catch (error) {
       console.error('Failed to load home data:', error);

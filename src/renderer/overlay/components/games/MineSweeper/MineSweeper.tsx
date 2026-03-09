@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PixelIcon } from '../../../../components/PixelIcon';
+import { playWin, playLoss, playBet, playReveal } from '../../../utils/sounds';
 
 interface MineSweeperProps {
   onCoinsUpdate: () => void;
@@ -19,6 +20,7 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
       setRevealed(0);
       setResult(null);
       setPlaying(true);
+      playBet();
     } catch (error) {
       console.error('Start failed:', error);
     }
@@ -41,10 +43,12 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
         hit: 'mine' 
       };
       setResult(gameResult);
+      playLoss();
       await window.electronAPI.endGame('mine-sweeper', gameResult);
       onCoinsUpdate();
     } else {
       setRevealed(revealed + 1);
+      playReveal();
     }
   };
 
@@ -60,6 +64,7 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
     };
     setResult(gameResult);
     setPlaying(false);
+    playWin();
     await window.electronAPI.endGame('mine-sweeper', gameResult);
     onCoinsUpdate();
   };

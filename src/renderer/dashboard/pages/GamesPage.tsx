@@ -55,7 +55,7 @@ const GamesPage: React.FC = () => {
         {GAMES.map((game) => {
           const stats = gameStats[game.id];
           return (
-            <div key={game.id} className="game-card" onClick={handleLaunchGame}>
+            <div key={game.id} className="game-card" style={{ cursor: 'default' }}>
               <div className="game-icon">
                 <PixelIcon name={game.icon} size={48} aria-hidden={true} />
               </div>
@@ -77,6 +77,14 @@ const GamesPage: React.FC = () => {
                   </div>
                 </div>
               )}
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', marginTop: '1rem' }}
+                onClick={handleLaunchGame}
+                data-testid={`play-btn-${game.id}`}
+              >
+                ▶ Play
+              </button>
             </div>
           );
         })}

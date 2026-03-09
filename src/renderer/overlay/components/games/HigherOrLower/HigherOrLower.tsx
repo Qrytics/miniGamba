@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PixelIcon } from '../../../../components/PixelIcon';
+import { playWin, playLoss, playBet, playCardDeal, playReveal } from '../../../utils/sounds';
 
 interface HigherOrLowerProps {
   onCoinsUpdate: () => void;
@@ -21,17 +22,20 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       setStreak(0);
       setResult(null);
       setPlaying(true);
+      playBet();
+      playCardDeal();
     } catch (error) {
       console.error('Start failed:', error);
     }
   };
 
-  const handleGuess = async (higher: boolean) => {
+  const handleGuess = async (_higher: boolean) => {
     // Simplified - real implementation would use the engine
     const win = Math.random() > 0.5;
     if (win) {
       setStreak(streak + 1);
       setCurrentCard(['A♥', 'K♦', 'Q♣', '10♠'][Math.floor(Math.random() * 4)]);
+      playReveal();
     } else {
       const payout = 0; // Set payout to 0 for losses
       const gameResult = { 
@@ -44,6 +48,7 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       };
       setResult(gameResult);
       setPlaying(false);
+      playLoss();
       await window.electronAPI.endGame('higher-or-lower', gameResult);
       onCoinsUpdate();
     }
@@ -61,6 +66,7 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
     };
     setResult(gameResult);
     setPlaying(false);
+    playWin();
     await window.electronAPI.endGame('higher-or-lower', gameResult);
     onCoinsUpdate();
   };
