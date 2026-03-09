@@ -69,15 +69,14 @@ export function generateUUID(): string {
 export function generateFriendCode(): string {
   // Omit look-alike characters (0/O, 1/I/l) for readability
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const randomBytes = nodeCrypto.randomBytes(8);
   let code = 'GAMBA-';
 
   for (let i = 0; i < 4; i++) {
-    code += chars.charAt(randomBytes[i] % chars.length);
+    code += chars.charAt(nodeCrypto.randomInt(chars.length));
   }
   code += '-';
-  for (let i = 4; i < 8; i++) {
-    code += chars.charAt(randomBytes[i] % chars.length);
+  for (let i = 0; i < 4; i++) {
+    code += chars.charAt(nodeCrypto.randomInt(chars.length));
   }
 
   return code;
