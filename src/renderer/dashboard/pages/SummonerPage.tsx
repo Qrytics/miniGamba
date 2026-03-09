@@ -150,14 +150,17 @@ const SummonerPage: React.FC = () => {
     <div>
       <h2 style={{ marginBottom: '1.5rem' }}>🔍 Summoner Lookup</h2>
       <p className="text-muted" style={{ marginBottom: '1.5rem' }}>
-        Look up any summoner&apos;s profile, rank, and match history via the League Client. Requires the LoL client to be running.
+        Look up any summoner&apos;s profile, rank, and match history via the League Client.{' '}
+        <strong style={{ color: 'var(--secondary-color)' }}>
+          Enter the Riot ID including the hashtag — e.g. <em>YourName#NA1</em>
+        </strong>. Requires the LoL client to be open and logged in.
       </p>
 
       {/* Search bar */}
       <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem' }}>
         <input
           type="text"
-          placeholder="Enter summoner name..."
+          placeholder="GameName#TAG (e.g. Faker#KR1)"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -172,7 +175,7 @@ const SummonerPage: React.FC = () => {
             fontFamily: 'inherit',
           }}
           maxLength={64}
-          aria-label="Summoner name"
+          aria-label="Riot ID (GameName#TAG)"
         />
         <button
           className="btn btn-primary"
@@ -367,9 +370,13 @@ const SummonerPage: React.FC = () => {
       {loadingState === 'idle' && (
         <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-          <p>Search for a summoner to view their profile.</p>
+          <p>Enter a Riot ID to look up a summoner&apos;s profile.</p>
           <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-            Requires the League of Legends client to be running.
+            Format: <strong style={{ color: 'var(--secondary-color)' }}>GameName#TAG</strong> — e.g.{' '}
+            <em>Faker#KR1</em>
+          </p>
+          <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
+            ⚠️ League of Legends client must be open and logged in.
           </p>
         </div>
       )}

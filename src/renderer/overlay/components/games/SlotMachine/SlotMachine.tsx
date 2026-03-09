@@ -3,6 +3,7 @@ import { SlotMachine as SlotMachineEngine } from '../../../game-logic/slot-machi
 import { PixelIcon } from '../../../../components/PixelIcon';
 import SlotReelColumn from './SlotReelColumn';
 import { ALL_SYMBOLS } from '../../../constants/slot-symbols';
+import { playSpin, playWin, playBigWin, playLoss, playBet } from '../../../utils/sounds';
 import type { SlotSymbolId } from '../../../constants/slot-symbols';
 
 /** 3x3 grid: reels[col][row], row 0=top, 1=middle (payline), 2=bottom */
@@ -62,6 +63,9 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
         };
         setResult(gameResult);
         window.electronAPI.endGame('slot-machine', gameResult);
+        if (endResult.payout >= bet * 5) playBigWin();
+        else if (endResult.result === 'win') playWin();
+        else playLoss();
         onCoinsUpdate();
       }
       setSpinning(false);
@@ -78,6 +82,8 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
 
     try {
       await window.electronAPI.startGame('slot-machine', bet);
+      playBet();
+      playSpin();
       engine.start(bet);
 
       // Generate result immediately for animation

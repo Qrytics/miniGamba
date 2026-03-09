@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SlotSymbol from './SlotSymbol';
 import type { SlotSymbolId } from '../../../constants/slot-symbols';
 
-const SYMBOL_SIZE = 56;
 const REEL_HEIGHT = 70;
 const SPIN_DURATION_MS = 1500;
-const EXTRA_SPINS = 30; // Number of extra symbols to spin through
+const EXTRA_SPINS = 24; // Number of extra symbols to spin through
 
 interface SlotReelColumnProps {
   resultSymbols: [SlotSymbolId, SlotSymbolId, SlotSymbolId];
@@ -20,33 +19,49 @@ const SlotReelColumn: React.FC<SlotReelColumnProps> = ({
   isSpinning,
   onSpinComplete,
 }) => {
-  const [strip, setStrip] = useState<SlotSymbolId[]>(() => resultSymbols ?? []);
+  // Strip layout: [resultSymbols, randomPart, currentVisible]
+  // We animate translateY from -(EXTRA_SPINS+3)*H (showing currentVisible)
+  // back toward 0 (showing resultSymbols) — the strip scrolls DOWNWARD
+  // (translateY increases toward less-negative) so symbols fall from above.
+  const rand = () => allSymbolIds[Math.floor(Math.random() * allSymbolIds.length)];
+
+  const [strip, setStrip] = useState<SlotSymbolId[]>(() => [...resultSymbols]);
   const [translateY, setTranslateY] = useState(0);
   const [useTransition, setUseTransition] = useState(false);
-  const [currentVisibleSymbols, setCurrentVisibleSymbols] = useState<SlotSymbolId[]>(() => resultSymbols ?? []);
-
-  const rand = () => allSymbolIds[Math.floor(Math.random() * allSymbolIds.length)];
+  const currentRef = useRef<SlotSymbolId[]>([...resultSymbols]);
 
   useEffect(() => {
     if (!isSpinning) {
-      // When spin ends, remember what's currently visible
-      setCurrentVisibleSymbols([...resultSymbols]);
+      currentRef.current = [...resultSymbols];
       return;
     }
 
-    // Build strip: [EXTRA_SPINS random, result 3, current 3] - lots of spinning!
-    const randomPart = Array.from({ length: EXTRA_SPINS }, () => rand());
-    const newStrip = [...randomPart, ...(resultSymbols ?? []), ...(currentVisibleSymbols ?? [])];
+    // Build strip: [resultSymbols, randomPart (EXTRA_SPINS), currentVisible]
+    // Visible viewport sits at the TOP of the strip (index 0).
+    // We start showing currentVisible (bottom of strip) and animate up to
+    // resultSymbols (top of strip), passing through all random symbols.
+    const randomPart: SlotSymbolId[] = Array.from({ length: EXTRA_SPINS }, () => rand());
+    const newStrip: SlotSymbolId[] = [
+      ...resultSymbols,
+      ...randomPart,
+      ...currentRef.current,
+    ];
     setStrip(newStrip);
 
-    // Start showing the current symbols at bottom (offset upward)
-    setUseTransition(false);
-    setTranslateY(-(EXTRA_SPINS + 3) * REEL_HEIGHT); // Position to show current symbols
+    // Position strip so currentVisible is in the viewport (bottom of strip).
+    // Total cells = resultSymbols(3) + randomPart(EXTRA_SPINS) + current(3)
+    // currentVisible starts at index (3 + EXTRA_SPINS) → translate = -(3+EXTRA_SPINS)*H
+    const startY = -(3 + EXTRA_SPINS) * REEL_HEIGHT;
 
+    // Disable transition, jump to start position
+    setUseTransition(false);
+    setTranslateY(startY);
+
+    // After a paint, enable transition and move to result (index 0 → translateY = 0)
     const rafId = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setUseTransition(true);
-        setTranslateY(-EXTRA_SPINS * REEL_HEIGHT); // Scroll up through all random symbols to result
+        setTranslateY(0);
       });
     });
 
@@ -58,19 +73,20 @@ const SlotReelColumn: React.FC<SlotReelColumnProps> = ({
       cancelAnimationFrame(rafId);
       clearTimeout(timeout);
     };
-  }, [isSpinning, resultSymbols, allSymbolIds, onSpinComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSpinning]);
 
   const stripStyle: React.CSSProperties = {
     transform: `translateY(${translateY}px)`,
-    transition: useTransition ? 'transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+    transition: useTransition ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.17, 0.67, 0.25, 1)` : 'none',
   };
 
   return (
     <div className="slot-reel-column">
       <div className="slot-reel-strip" style={stripStyle}>
-        {(strip ?? []).map((symbolId, idx) => (
+        {strip.map((symbolId, idx) => (
           <div key={idx} className="slot-reel-cell">
-            <SlotSymbol symbolId={symbolId} size={SYMBOL_SIZE} />
+            <SlotSymbol symbolId={symbolId} size={48} />
           </div>
         ))}
       </div>

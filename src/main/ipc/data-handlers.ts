@@ -10,7 +10,6 @@ import { dailyTasksService } from '../services/games/daily-tasks';
 import { hourlyBonusService } from '../services/games/hourly-bonus';
 import { investmentService } from '../services/games/investment';
 import { RiskLevel } from '../services/games/investment';
-import { UserSettings } from '../../shared/types/user.types';
 
 // User data handlers
 ipcMain.handle('data:getUser', async () => {
@@ -58,7 +57,18 @@ ipcMain.handle('data:getAchievements', async () => {
     const unlocked = achievementService.getUnlockedAchievements(user.id);
     const totalPoints = achievementService.getTotalAchievementPoints(user.id);
     const completion = achievementService.getCompletionPercentage(user.id);
-    return { success: true, unlocked, totalPoints, completion };
+    const unlockedIdStrings = new Set(unlocked.map((u) => u.achievementId as string));
+
+    // Import achievement definitions and merge with unlock status so the
+    // renderer can display all achievements (locked + unlocked) in one list.
+    const { achievements: achievementDefs } = await import('../../shared/constants/achievements');
+    const allAchievements = Object.values(achievementDefs).map((def) => ({
+      ...def,
+      unlocked: unlockedIdStrings.has(def.id),
+      unlockedAt: unlocked.find((u) => (u.achievementId as string) === def.id)?.unlockedAt ?? null,
+    }));
+
+    return { success: true, achievements: allAchievements, totalPoints, completion };
   } catch (error: unknown) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
@@ -93,6 +103,27 @@ ipcMain.handle('data:getHourlyBonusStatus', async () => {
     const user = userDataService.getUser();
     const status = hourlyBonusService.getStatus(user.id);
     return { success: true, status };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+});
+
+// Alias: renderer preload uses 'data:getHourlyBonus' – returns status flattened
+ipcMain.handle('data:getHourlyBonus', async () => {
+  try {
+    const user = userDataService.getUser();
+    const status = hourlyBonusService.getStatus(user.id);
+    const timeUntilNext = status.canClaim ? null : hourlyBonusService.getTimeUntilNextFormatted(user.id);
+    const totalMs = 60 * 60 * 1000;
+    const usedMs = status.lastClaimed ? (Date.now() - status.lastClaimed.getTime()) : totalMs;
+    const progress = Math.min(100, (usedMs / totalMs) * 100);
+    return {
+      success: true,
+      canClaim: status.canClaim,
+      amount: 50,
+      timeUntilNext: timeUntilNext ?? 'Ready!',
+      progress: status.canClaim ? 100 : progress,
+    };
   } catch (error: unknown) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }

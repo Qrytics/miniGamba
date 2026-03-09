@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Blackjack as BlackjackEngine } from '../../../game-logic/blackjack';
 import { PixelIcon } from '../../../../components/PixelIcon';
+import { playCardDeal, playWin, playLoss, playBet, playClick } from '../../../utils/sounds';
 
 interface BlackjackProps {
   onCoinsUpdate: () => void;
@@ -29,8 +30,10 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
 
     try {
       await window.electronAPI.startGame('blackjack', bet);
+      playBet();
       engine.start(bet);
       engine.deal();
+      playCardDeal();
       const state = engine.getState();
       setGameState(state);
       setResult(null);
@@ -44,7 +47,9 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
     const engine = engineRef.current;
     if (!engine || !gameState) return;
 
+    playClick();
     engine.hit();
+    playCardDeal();
     const state = engine.getState();
     setGameState(state);
     
@@ -81,6 +86,7 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
     setResult(gameResult);
     try {
       await window.electronAPI.endGame('blackjack', gameResult);
+      if (endResult.result === 'win') playWin(); else playLoss();
       onCoinsUpdate();
     } catch (error) {
       console.error('Finish game failed:', error);
