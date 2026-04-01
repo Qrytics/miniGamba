@@ -20,7 +20,7 @@ import '../styles/overlay.css';
 
 type OverlayTab = 'games' | 'livestats';
 
-const GAMES: { id: string; name: string; icon: PixelIconName; component: React.ComponentType<{ onCoinsUpdate?: () => void }> }[] = [
+const GAMES: { id: string; name: string; icon: PixelIconName; component: React.ComponentType<{ onCoinsUpdate: () => void }> }[] = [
   { id: 'slot-machine', name: 'Slots', icon: 'slots', component: SlotMachine },
   { id: 'blackjack', name: 'Blackjack', icon: 'card', component: Blackjack },
   { id: 'coin-flip', name: 'Coin Flip', icon: 'coin', component: CoinFlip },
@@ -131,7 +131,14 @@ const OverlayApp: React.FC = () => {
         {activeTab === 'games' && (
           currentGame === null ? (
             <div className="game-selector">
-              <h2>Select a Game</h2>
+              <div className="overlay-selector-hero">
+                <p className="overlay-selector-eyebrow">Mini-Casino Modules</p>
+                <h2>Select a Game</h2>
+                <p className="text-muted">
+                  The Stitch exports were strongest at turning game choice into a command-center catalog.
+                  Pick a module below to open it in the live overlay.
+                </p>
+              </div>
               <div className="game-grid">
                 {GAMES.map((game) => (
                   <button

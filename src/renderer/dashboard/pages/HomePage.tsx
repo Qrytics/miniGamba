@@ -1,36 +1,61 @@
 import React, { useEffect, useState } from 'react';
+import { PixelIcon } from '../../components/PixelIcon';
+import { EmptyState, MetricTile, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface HomePageProps {
-  userData: any;
+  userData: {
+    username?: string;
+    coins?: number;
+    level?: number;
+    totalGamesPlayed?: number;
+  } | null;
   onRefresh: () => void;
 }
 
+interface DailyTask {
+  id?: string;
+  description: string;
+  completed?: boolean;
+  rewardCoins?: number;
+  rewardXp?: number;
+}
+
+interface HourlyBonus {
+  canClaim?: boolean;
+  amount?: number;
+  timeUntilNext?: string;
+  progress?: number;
+}
+
+interface GameStats {
+  totalGames?: number;
+  winRate?: number;
+  totalWagered?: number;
+  biggestWin?: number;
+  currentStreak?: number;
+}
+
 const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
-  const [dailyTasks, setDailyTasks] = useState<any[]>([]);
-  const [hourlyBonus, setHourlyBonus] = useState<any>(null);
-  const [stats, setStats] = useState<any>(null);
+  const [dailyTasks, setDailyTasks] = useState<DailyTask[]>([]);
+  const [hourlyBonus, setHourlyBonus] = useState<HourlyBonus | null>(null);
+  const [stats, setStats] = useState<GameStats | null>(null);
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, []);
 
   const loadData = async () => {
     try {
       if (window.electronAPI.getDailyTasks) {
         const res = await window.electronAPI.getDailyTasks();
-        // IPC returns { success, tasks, progress, allCompleted }
-        setDailyTasks(res?.tasks || res || []);
+        setDailyTasks(res?.tasks ?? []);
       }
       if (window.electronAPI.getHourlyBonus) {
         const res = await window.electronAPI.getHourlyBonus();
-        // IPC now returns flat { success, canClaim, amount, timeUntilNext, progress }
         setHourlyBonus(res);
       }
-      if (window.electronAPI.getGameStats) {
-        const res = await window.electronAPI.getGameStats();
-        // IPC returns { success, stats }
-        setStats(res?.stats ?? res);
-      }
+      const statsRes = await window.electronAPI.getGameStats();
+      setStats(statsRes?.stats ?? statsRes ?? null);
     } catch (error) {
       console.error('Failed to load home data:', error);
     }
@@ -40,7 +65,7 @@ const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
     try {
       if (window.electronAPI.claimHourlyBonus) {
         await window.electronAPI.claimHourlyBonus();
-        loadData();
+        await loadData();
         onRefresh();
       }
     } catch (error) {
@@ -48,97 +73,105 @@ const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
     }
   };
 
-  return (
-    <div>
-      <h2 style={{ marginBottom: '2rem' }}>Welcome back, {userData?.username || 'Player'}!</h2>
-      
-      <div className="grid grid-3">
-        <div className="stat-card">
-          <div className="stat-label">Total Coins</div>
-          <div className="stat-value">💰 {userData?.coins?.toLocaleString() || 0}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Current Level</div>
-          <div className="stat-value">⭐ {userData?.level || 1}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Total Games</div>
-          <div className="stat-value">🎮 {stats?.totalGames || 0}</div>
-        </div>
-      </div>
+  const completedTasks = dailyTasks.filter((task) => task.completed).length;
+  const displayedWinRate = typeof stats?.winRate === 'number' ? `${stats.winRate.toFixed(1)}%` : '0.0%';
 
-      <div className="grid grid-2" style={{ marginTop: '2rem' }}>
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">⏰ Hourly Bonus</h3>
+  return (
+    <div className="dashboard-page">
+      <div className="stitch-hero-grid">
+        <section className="stitch-hero-panel">
+          <SectionHeader
+            eyebrow="Command Center"
+            title={`Welcome back, ${userData?.username || 'Player'}`}
+            description="The Stitch exports were strongest when they behaved like a tactical dashboard. This production version keeps that same command-center hierarchy, but feeds it live user, reward, and game data."
+          />
+
+          <div className="stitch-metric-grid" style={{ marginTop: '1.5rem' }}>
+            <MetricTile
+              label="Available Gold"
+              value={<span style={{ color: 'var(--balatro-yellow)' }}>{(userData?.coins || 0).toLocaleString()}</span>}
+              accent="gold"
+              detail="Current spendable balance across every game."
+            />
+            <MetricTile
+              label="Current Level"
+              value={`Lv. ${userData?.level || 1}`}
+              accent="cyan"
+              detail="Level progression is driven by play volume and wagers."
+            />
+            <MetricTile
+              label="Games Logged"
+              value={stats?.totalGames || userData?.totalGamesPlayed || 0}
+              accent="green"
+              detail="All-time mini-casino sessions recorded in the history log."
+            />
           </div>
+        </section>
+
+        <SurfaceCard
+          title="Hourly Bonus"
+          subtitle={hourlyBonus?.canClaim ? 'Reward is ready to collect' : 'Charge cycle in progress'}
+          action={<StatusPill tone={hourlyBonus?.canClaim ? 'green' : 'gold'}>{hourlyBonus?.canClaim ? 'Ready' : 'Cooling Down'}</StatusPill>}
+        >
           {hourlyBonus?.canClaim ? (
-            <div>
-              <p className="text-muted mb-2">Your hourly bonus is ready!</p>
+            <div className="stitch-stack">
+              <p className="text-muted">Claim your refresh payout and top your balance back up before your next queue pops.</p>
               <button className="btn btn-success" onClick={handleClaimBonus}>
-                Claim {hourlyBonus.amount || 50} Coins
+                <PixelIcon name="money" size={18} aria-hidden={true} /> Claim {hourlyBonus.amount || 50} Coins
               </button>
             </div>
           ) : (
-            <div>
-              <p className="text-muted">Next bonus in: {hourlyBonus?.timeUntilNext || 'Loading...'}</p>
-              <div className="progress-bar mt-2">
-                <div className="progress-fill" style={{ width: `${hourlyBonus?.progress || 0}%` }}></div>
+            <div className="stitch-stack" style={{ flexDirection: 'column' }}>
+              <p className="text-muted">Next bonus window: {hourlyBonus?.timeUntilNext || 'Loading...'}</p>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${hourlyBonus?.progress || 0}%` }} />
               </div>
             </div>
           )}
-        </div>
+        </SurfaceCard>
+      </div>
 
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">📋 Daily Tasks</h3>
-          </div>
+      <div className="stitch-split-grid">
+        <SurfaceCard
+          title="Daily Tasks"
+          subtitle="High-signal goals for quick engagement"
+          action={<StatusPill tone="cyan">{completedTasks}/{dailyTasks.length || 0} Complete</StatusPill>}
+        >
           {dailyTasks.length > 0 ? (
-            <div>
-              <p className="text-muted mb-2">{dailyTasks.filter(t => t.completed).length} of {dailyTasks.length} completed</p>
-              {dailyTasks.slice(0, 3).map((task, idx) => (
-                <div key={idx} style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span>{task.completed ? '✅' : '⬜'}</span>
-                  <span className="text-muted" style={{ fontSize: '0.875rem' }}>{task.description}</span>
+            <div className="stitch-list">
+              {dailyTasks.slice(0, 4).map((task, idx) => (
+                <div key={task.id || idx} className="stitch-list-item">
+                  <div>
+                    <div className="stitch-list-item-title">{task.description}</div>
+                    <div className="stitch-list-item-meta">
+                      {(task.rewardXp || 0) > 0 || (task.rewardCoins || 0) > 0
+                        ? `Rewards: ${task.rewardXp || 0} XP • ${task.rewardCoins || 0} coins`
+                        : 'Reward metadata not provided by the task service'}
+                    </div>
+                  </div>
+                  <StatusPill tone={task.completed ? 'green' : 'neutral'}>
+                    {task.completed ? 'Done' : 'Pending'}
+                  </StatusPill>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-muted">No tasks available</p>
+            <EmptyState
+              icon="📋"
+              title="No daily tasks yet"
+              description="Task data will appear here as soon as the service returns today's rotation."
+            />
           )}
-        </div>
-      </div>
+        </SurfaceCard>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">📈 Quick Stats</h3>
-        </div>
-        <div className="grid grid-4">
-          <div>
-            <div className="text-muted">Win Rate</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem' }}>
-              {stats?.winRate ? `${(stats.winRate * 100).toFixed(1)}%` : 'N/A'}
-            </div>
+        <SurfaceCard title="Snapshot" subtitle="The most reusable Stitch pattern was the compact stat-wall">
+          <div className="stitch-card-grid stats-grid">
+            <MetricTile label="Win Rate" value={displayedWinRate} accent="cyan" />
+            <MetricTile label="Total Wagered" value={(stats?.totalWagered || 0).toLocaleString()} accent="neutral" />
+            <MetricTile label="Biggest Win" value={(stats?.biggestWin || 0).toLocaleString()} accent="green" />
+            <MetricTile label="Current Streak" value={stats?.currentStreak || 0} accent="gold" />
           </div>
-          <div>
-            <div className="text-muted">Total Wagered</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem' }}>
-              {stats?.totalWagered?.toLocaleString() || 0}
-            </div>
-          </div>
-          <div>
-            <div className="text-muted">Biggest Win</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem', color: 'var(--success)' }}>
-              {stats?.biggestWin?.toLocaleString() || 0}
-            </div>
-          </div>
-          <div>
-            <div className="text-muted">Current Streak</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem' }}>
-              {stats?.currentStreak || 0}
-            </div>
-          </div>
-        </div>
+        </SurfaceCard>
       </div>
     </div>
   );

@@ -11,10 +11,18 @@ import {
   playScratch,
   playReveal,
   playClick,
-} from '../../../utils/sounds';
+} from '../../utils/sounds';
 
 interface GameProps {
   onCoinsUpdate: () => void;
+}
+
+interface WheelResult {
+  bet: number;
+  payout: number;
+  result: 'win' | 'loss';
+  win: boolean;
+  seg: { label: string; multiplier: number; color: string };
 }
 
 // ──────────────────────────────────────────────
@@ -188,7 +196,7 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [bet, setBet] = useState(10);
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [result, setResult] = useState<Record<string, unknown> | null>(null);
+  const [result, setResult] = useState<WheelResult | null>(null);
   const spinRef = useRef(0);
 
   const handleSpin = async () => {
@@ -213,8 +221,8 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
         const seg = WHEEL_SEGMENTS[segmentIdx];
         const payout = Math.floor(bet * seg.multiplier);
         const win = payout > 0;
-        const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, segment: seg.label };
-        setResult({ ...gameResult, seg });
+        const gameResult = { bet, payout, result: win ? 'win' as const : 'loss' as const, win, segment: seg.label };
+        setResult({ bet, payout, result: gameResult.result, win, seg });
         setSpinning(false);
         await window.electronAPI.endGame('wheel-of-fortune', gameResult);
         if (payout >= bet * 4) playBigWin();

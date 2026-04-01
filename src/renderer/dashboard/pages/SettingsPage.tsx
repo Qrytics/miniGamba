@@ -1,11 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { EmptyState, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
+
+interface SettingsState {
+  overlay?: {
+    opacity?: number;
+    size?: 'small' | 'medium' | 'large' | 'custom';
+    clickThroughMode?: boolean;
+  };
+  audio?: {
+    masterVolume?: number;
+    uiVolume?: number;
+    gameVolume?: number;
+    musicVolume?: number;
+  };
+}
 
 const SettingsPage: React.FC = () => {
-  const [settings, setSettings] = useState<any>({});
+  const [settings, setSettings] = useState<SettingsState>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadSettings();
+    void loadSettings();
   }, []);
 
   const loadSettings = async () => {
@@ -25,7 +40,7 @@ const SettingsPage: React.FC = () => {
     try {
       if (window.electronAPI.setSetting) {
         await window.electronAPI.setSetting(key, value);
-        setSettings({ ...settings, [key]: value });
+        await loadSettings();
       }
     } catch (error) {
       console.error('Failed to update setting:', error);
@@ -37,7 +52,7 @@ const SettingsPage: React.FC = () => {
       try {
         if (window.electronAPI.resetSettings) {
           await window.electronAPI.resetSettings();
-          loadSettings();
+          await loadSettings();
         }
       } catch (error) {
         console.error('Failed to reset settings:', error);
@@ -66,156 +81,100 @@ const SettingsPage: React.FC = () => {
     return <div>Loading settings...</div>;
   }
 
+  const overlayOpacity = Math.round((settings.overlay?.opacity ?? 0.9) * 100);
+  const overlaySize = settings.overlay?.size || 'medium';
+  const clickThrough = settings.overlay?.clickThroughMode || false;
+  const masterVolume = settings.audio?.masterVolume ?? 70;
+  const soundEffects = (settings.audio?.uiVolume ?? 80) > 0 || (settings.audio?.gameVolume ?? 100) > 0;
+  const backgroundMusic = (settings.audio?.musicVolume ?? 50) > 0;
+
   return (
-    <div>
-      <h2 style={{ marginBottom: '2rem' }}>⚙️ Settings</h2>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Configuration"
+        title="Settings"
+        description="This page now reflects the actual nested settings model used by the app instead of a flat mock shape, which removes a handful of silent update failures."
+        action={<StatusPill tone="gold">Live Config</StatusPill>}
+      />
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">🎮 Overlay Settings</h3>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div className="form-group">
-            <label className="form-label">Overlay Opacity</label>
-            <input 
-              type="range" 
-              min="10" 
-              max="100" 
-              value={settings.overlayOpacity || 90}
-              onChange={(e) => handleSettingChange('overlayOpacity', parseInt(e.target.value))}
-              style={{ width: '100%' }}
-            />
-            <div className="text-muted mt-1">{settings.overlayOpacity || 90}%</div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Overlay Size</label>
-            <select 
-              className="input"
-              value={settings.overlaySize || 'medium'}
-              onChange={(e) => handleSettingChange('overlaySize', e.target.value)}
-            >
-              <option value="small">Small (400x300)</option>
-              <option value="medium">Medium (600x450)</option>
-              <option value="large">Large (800x600)</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox"
-                checked={settings.clickThrough || false}
-                onChange={(e) => handleSettingChange('clickThrough', e.target.checked)}
+      <div className="stitch-split-grid">
+        <SurfaceCard title="Overlay Settings" subtitle="Visibility, footprint, and click behavior">
+          <div className="settings-grid">
+            <div className="settings-control">
+              <div className="settings-control-row">
+                <label className="form-label">Overlay Opacity</label>
+                <span className="text-muted">{overlayOpacity}%</span>
+              </div>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={overlayOpacity}
+                onChange={(e) => handleSettingChange('overlayOpacity', parseInt(e.target.value, 10))}
+                style={{ width: '100%' }}
               />
-              <span>Click-through mode (overlay won't block clicks)</span>
+            </div>
+
+            <div className="settings-control">
+              <label className="form-label">Overlay Size</label>
+              <select className="input" value={overlaySize} onChange={(e) => handleSettingChange('overlaySize', e.target.value)}>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+
+            <label className="settings-control-row">
+              <span>Click-through mode</span>
+              <input type="checkbox" checked={clickThrough} onChange={(e) => handleSettingChange('clickThrough', e.target.checked)} />
             </label>
           </div>
-        </div>
-      </div>
+        </SurfaceCard>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">🔊 Audio Settings</h3>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div className="form-group">
-            <label className="form-label">Master Volume</label>
-            <input 
-              type="range" 
-              min="0" 
-              max="100" 
-              value={settings.masterVolume || 50}
-              onChange={(e) => handleSettingChange('masterVolume', parseInt(e.target.value))}
-              style={{ width: '100%' }}
-            />
-            <div className="text-muted mt-1">{settings.masterVolume || 50}%</div>
-          </div>
-
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox"
-                checked={settings.soundEffects !== false}
-                onChange={(e) => handleSettingChange('soundEffects', e.target.checked)}
+        <SurfaceCard title="Audio Settings" subtitle="Master volume and channel toggles">
+          <div className="settings-grid">
+            <div className="settings-control">
+              <div className="settings-control-row">
+                <label className="form-label">Master Volume</label>
+                <span className="text-muted">{masterVolume}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={masterVolume}
+                onChange={(e) => handleSettingChange('masterVolume', parseInt(e.target.value, 10))}
+                style={{ width: '100%' }}
               />
+            </div>
+
+            <label className="settings-control-row">
               <span>Sound Effects</span>
+              <input type="checkbox" checked={soundEffects} onChange={(e) => handleSettingChange('soundEffects', e.target.checked)} />
             </label>
-          </div>
 
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox"
-                checked={settings.backgroundMusic || false}
-                onChange={(e) => handleSettingChange('backgroundMusic', e.target.checked)}
-              />
+            <label className="settings-control-row">
               <span>Background Music</span>
+              <input type="checkbox" checked={backgroundMusic} onChange={(e) => handleSettingChange('backgroundMusic', e.target.checked)} />
             </label>
           </div>
-        </div>
+        </SurfaceCard>
       </div>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">🎲 Gameplay Settings</h3>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox"
-                checked={settings.autoSpin || false}
-                onChange={(e) => handleSettingChange('autoSpin', e.target.checked)}
-              />
-              <span>Enable Auto-Spin for slots</span>
-            </label>
-          </div>
+      <SurfaceCard title="Gameplay Defaults" subtitle="Stubbed options kept visible until the app stores them centrally">
+        <EmptyState
+          icon="🎲"
+          title="Gameplay preferences are next"
+          description="The old controls here were disconnected from persistent storage. They’re intentionally parked until a real gameplay-settings contract is added."
+        />
+      </SurfaceCard>
 
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-              <input 
-                type="checkbox"
-                checked={settings.fastAnimations || false}
-                onChange={(e) => handleSettingChange('fastAnimations', e.target.checked)}
-              />
-              <span>Fast Animations</span>
-            </label>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Default Bet Amount</label>
-            <input 
-              type="number" 
-              className="input"
-              value={settings.defaultBet || 10}
-              onChange={(e) => handleSettingChange('defaultBet', parseInt(e.target.value))}
-              min="1"
-              max="1000"
-            />
-          </div>
+      <SurfaceCard title="Data Management" subtitle="Backup and reset tools">
+        <div className="stitch-stack">
+          <button className="btn btn-primary" onClick={handleExportData}>Export Data</button>
+          <button className="btn btn-secondary" onClick={handleReset}>Reset Settings</button>
         </div>
-      </div>
-
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">💾 Data Management</h3>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary" onClick={handleExportData}>
-            📤 Export Data
-          </button>
-          <button className="btn btn-secondary">
-            📥 Import Data
-          </button>
-          <button className="btn btn-secondary" onClick={handleReset}>
-            🔄 Reset Settings
-          </button>
-          <button className="btn btn-danger">
-            🗑️ Clear All Data
-          </button>
-        </div>
-      </div>
+      </SurfaceCard>
     </div>
   );
 };

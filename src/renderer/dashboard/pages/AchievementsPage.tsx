@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
+interface AchievementItem {
+  id: string;
+  name: string;
+  description: string;
+  icon?: string;
+  category?: string;
+  unlocked?: boolean;
+  points?: number;
+  progress?: number | null;
+  maxProgress?: number | null;
+}
+
 const AchievementsPage: React.FC = () => {
-  const [achievements, setAchievements] = useState<Record<string, unknown>[]>([]);
+  const [achievements, setAchievements] = useState<AchievementItem[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
@@ -25,12 +37,14 @@ const AchievementsPage: React.FC = () => {
 
   const categories = ['all', 'gambling', 'economy', 'activity', 'social', 'customization', 'meta', 'secret'];
 
-  const filteredAchievements = filter === 'all' 
-    ? achievements 
-    : achievements.filter(a => a.category === filter);
+  const filteredAchievements = filter === 'all'
+    ? achievements
+    : achievements.filter((a) => a.category === filter);
 
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
-  const totalPoints = achievements.filter(a => a.unlocked).reduce((sum, a) => sum + (a.points || 0), 0);
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
+  const totalPoints = achievements
+    .filter((a) => a.unlocked)
+    .reduce((sum, a) => sum + (a.points || 0), 0);
 
   if (loading) {
     return <div>Loading achievements...</div>;
@@ -44,7 +58,7 @@ const AchievementsPage: React.FC = () => {
       </p>
 
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        {categories.map(cat => (
+        {categories.map((cat) => (
           <button
             key={cat}
             className={`btn ${filter === cat ? 'btn-primary' : 'btn-secondary'}`}
@@ -69,7 +83,7 @@ const AchievementsPage: React.FC = () => {
             <div style={{ fontSize: '0.875rem', color: 'var(--gold)' }}>
               {achievement.points || 0} points
             </div>
-            {achievement.progress !== undefined && !achievement.unlocked && (
+            {achievement.progress !== undefined && achievement.progress !== null && !achievement.unlocked && (
               <div style={{ marginTop: '0.5rem', width: '100%' }}>
                 <div className="progress-bar">
                   <div 

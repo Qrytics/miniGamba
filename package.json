@@ -24,7 +24,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "stitch:analyze": "node scripts/analyze-stitch-export.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.0.0",
