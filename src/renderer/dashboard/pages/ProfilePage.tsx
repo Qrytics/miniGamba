@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { PixelIcon } from '../../components/PixelIcon';
+import { MetricTile, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface ProfilePageProps {
   userData: any;
@@ -21,113 +23,100 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onUpdate }) => {
     }
   };
 
-  const levelProgress = userData?.xp 
+  const levelProgress = userData?.xp
     ? (userData.xp / (userData.xpNeeded || 1)) * 100 
     : 0;
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '2rem' }}>👤 Profile</h2>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Operative Profile"
+        title={userData?.username || 'TacticalCommand'}
+        description="Profile customization and progression now follows the Stitch command style while preserving editable account data."
+        action={<StatusPill tone="gold">Level {userData?.level || 1}</StatusPill>}
+      />
 
-      <div className="grid grid-2">
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">User Information</h3>
-            <button 
-              className="btn btn-secondary"
-              onClick={() => editing ? handleSave() : setEditing(true)}
-            >
-              {editing ? '💾 Save' : '✏️ Edit'}
-            </button>
+      <div className="stitch-profile-hero">
+        <div className="stitch-profile-avatar-wrap">
+          <div className="stitch-profile-avatar">{(userData?.username || 'P').slice(0, 1).toUpperCase()}</div>
+          <div className="stitch-profile-rank-tag">ELITE</div>
+        </div>
+        <div className="stitch-profile-meta">
+          <h2>{userData?.username || 'Player'}</h2>
+          <div className="stitch-inline-stats">
+            <StatusPill tone="cyan">{userData?.friendCode || 'No Friend Code'}</StatusPill>
+            <StatusPill tone="neutral">
+              Member since {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
+            </StatusPill>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="form-group">
+        </div>
+      </div>
+
+      <div className="stitch-split-grid">
+        <SurfaceCard
+          title="User Information"
+          subtitle="Editable identity and account profile"
+          action={
+            <button className="btn btn-secondary" onClick={() => (editing ? handleSave() : setEditing(true))}>
+              {editing ? 'Save' : 'Edit'}
+            </button>
+          }
+        >
+          <div className="settings-grid">
+            <div className="settings-control">
               <label className="form-label">Username</label>
               {editing ? (
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="input"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
               ) : (
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                  {userData?.username || 'Player'}
-                </div>
+                <div className="stitch-display-value">{userData?.username || 'Player'}</div>
               )}
             </div>
-            <div>
+            <div className="settings-control">
               <label className="form-label">Friend Code</label>
-              <div style={{ fontSize: '1.25rem', fontWeight: 'bold', fontFamily: 'monospace' }}>
-                {userData?.friendCode || 'N/A'}
-              </div>
-            </div>
-            <div>
-              <label className="form-label">Member Since</label>
-              <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>
-                {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
-              </div>
+              <div className="stitch-display-value">{userData?.friendCode || 'N/A'}</div>
             </div>
           </div>
-        </div>
+        </SurfaceCard>
 
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Level & Progress</h3>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⭐</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              Level {userData?.level || 1}
+        <SurfaceCard title="Tactical Evolution" subtitle="Level progression and XP target tracking">
+          <div className="stitch-stack">
+            <div className="stitch-profile-level">
+              <PixelIcon name="star" size={48} aria-hidden={true} />
+              <h3>Level {userData?.level || 1}</h3>
             </div>
-            <div className="progress-bar" style={{ height: '1rem', marginTop: '1rem' }}>
-              <div 
-                className="progress-fill" 
-                style={{ width: `${levelProgress}%` }}
-              ></div>
-            </div>
-            <div className="text-muted mt-2">
-              {userData?.xp || 0} / {userData?.xpNeeded || 100} XP
+            <div className="stitch-level-progress">
+              <div className="stitch-level-progress-header">
+                <span>Current XP</span>
+                <span>{Math.round(levelProgress)}%</span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${Math.round(levelProgress)}%` }} />
+              </div>
+              <p className="text-muted">{userData?.xp || 0} / {userData?.xpNeeded || 100} XP</p>
             </div>
           </div>
-        </div>
+        </SurfaceCard>
       </div>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">💰 Economy Overview</h3>
+      <SurfaceCard title="Economy Overview" subtitle="Live account economy telemetry">
+        <div className="stitch-card-grid stats-grid">
+          <MetricTile label="Current Balance" value={(userData?.coins || 0).toLocaleString()} accent="gold" />
+          <MetricTile label="Lifetime Earned" value={`+${(userData?.lifetimeEarned || 0).toLocaleString()}`} accent="green" />
+          <MetricTile label="Lifetime Spent" value={`-${(userData?.lifetimeSpent || 0).toLocaleString()}`} accent="red" />
         </div>
-        <div className="grid grid-3">
-          <div>
-            <div className="text-muted">Current Balance</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem' }}>
-              💰 {userData?.coins?.toLocaleString() || 0}
-            </div>
-          </div>
-          <div>
-            <div className="text-muted">Lifetime Earned</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem', color: 'var(--success)' }}>
-              +{userData?.lifetimeEarned?.toLocaleString() || 0}
-            </div>
-          </div>
-          <div>
-            <div className="text-muted">Lifetime Spent</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.5rem', color: 'var(--danger)' }}>
-              -{userData?.lifetimeSpent?.toLocaleString() || 0}
-            </div>
-          </div>
-        </div>
-      </div>
+      </SurfaceCard>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">🎨 Customization</h3>
-        </div>
-        <div>
-          <div className="form-group">
+      <SurfaceCard title="Customization" subtitle="Select profile cosmetics and active title">
+        <div className="stitch-settings-grid-2">
+          <div className="settings-control">
             <label className="form-label">Avatar Border</label>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {['None', 'Bronze', 'Silver', 'Gold', 'Diamond'].map(border => (
+            <div className="stitch-pill-row">
+              {['None', 'Bronze', 'Silver', 'Gold', 'Diamond'].map((border) => (
                 <button
                   key={border}
                   className={`btn ${userData?.avatarBorder === border ? 'btn-primary' : 'btn-secondary'}`}
@@ -137,7 +126,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onUpdate }) => {
               ))}
             </div>
           </div>
-          <div className="form-group">
+          <div className="settings-control">
             <label className="form-label">Title</label>
             <select className="input" value={userData?.title || 'None'}>
               <option>None</option>
@@ -148,7 +137,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onUpdate }) => {
             </select>
           </div>
         </div>
-      </div>
+      </SurfaceCard>
     </div>
   );
 };

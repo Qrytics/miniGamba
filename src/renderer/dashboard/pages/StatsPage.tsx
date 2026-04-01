@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { EmptyState, MetricTile, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
+import { EmptyState, MetricTile, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 const StatsPage: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -32,12 +32,13 @@ const StatsPage: React.FC = () => {
 
   return (
     <div className="dashboard-page">
-      <SectionHeader
-        eyebrow="Performance"
-        title="Statistics"
-        description="The generated comps handled dense telemetry well. This version keeps the same metric-heavy feel but fixes the data plumbing so values come from the real game-history service."
-        action={<StatusPill tone="cyan">{history.length} Recent Logs</StatusPill>}
-      />
+      <header className="stitch-page-header">
+        <p className="stitch-eyebrow">Performance</p>
+        <h2 className="stitch-page-title">Personal Performance</h2>
+        <p className="stitch-section-description">
+          Real-time tactical breakdown of your miniGamba activity and wagering trendline.
+        </p>
+      </header>
 
       <div className="stitch-metric-grid">
         <MetricTile label="Total Games" value={stats?.totalGames || 0} accent="gold" />
@@ -51,7 +52,7 @@ const StatsPage: React.FC = () => {
       </div>
 
       <div className="stitch-split-grid">
-        <SurfaceCard title="Best Performances" subtitle="High-water marks across the casino suite">
+        <SurfaceCard title="Operational Excellence" subtitle="Best performances and record highs">
           <div className="stitch-card-grid stats-grid">
             <MetricTile label="Biggest Win" value={`+${(stats?.biggestWin || 0).toLocaleString()}`} accent="green" />
             <MetricTile label="Best Streak" value={`${stats?.bestStreak || 0} games`} accent="gold" />
@@ -59,7 +60,7 @@ const StatsPage: React.FC = () => {
           </div>
         </SurfaceCard>
 
-        <SurfaceCard title="Risk Profile" subtitle="Downside and recovery telemetry">
+        <SurfaceCard title="Risk Report" subtitle="Downside and recovery telemetry">
           <div className="stitch-card-grid stats-grid">
             <MetricTile label="Biggest Loss" value={`${stats?.biggestLoss || 0}`} accent="red" />
             <MetricTile label="Losses" value={stats?.losses || 0} accent="neutral" />
@@ -68,15 +69,20 @@ const StatsPage: React.FC = () => {
         </SurfaceCard>
       </div>
 
-      <SurfaceCard title="Recent Games" subtitle="Resolved from the actual history table">
+      <SurfaceCard
+        title="Live Operations Log"
+        subtitle="Resolved from the game history table"
+        action={<StatusPill tone="cyan">{history.length} Recent Logs</StatusPill>}
+      >
         {history.length > 0 ? (
           <div className="table-shell">
             <table>
               <thead>
                 <tr>
+                  <th>Status</th>
                   <th>Game</th>
                   <th>Bet</th>
-                  <th>Payout</th>
+                  <th>Multiplier</th>
                   <th>Result</th>
                   <th>Played</th>
                 </tr>
@@ -84,14 +90,15 @@ const StatsPage: React.FC = () => {
               <tbody>
                 {history.map((game: any) => (
                   <tr key={game.id}>
-                    <td>{game.gameType}</td>
-                    <td>{game.betAmount}</td>
-                    <td>{game.payout}</td>
                     <td>
                       <StatusPill tone={game.result === 'win' ? 'green' : game.result === 'push' ? 'gold' : 'red'}>
-                        {game.result}
+                        {game.result === 'win' ? 'Win' : game.result === 'push' ? 'Push' : 'Loss'}
                       </StatusPill>
                     </td>
+                    <td>{game.gameType}</td>
+                    <td>{game.betAmount}</td>
+                    <td>{game.betAmount > 0 ? `${(game.payout / game.betAmount).toFixed(2)}x` : '0.00x'}</td>
+                    <td>{(game.payout - game.betAmount) > 0 ? '+' : ''}{game.payout - game.betAmount}</td>
                     <td>{new Date(game.playedAt).toLocaleString()}</td>
                   </tr>
                 ))}

@@ -48,13 +48,26 @@ const GamesPage: React.FC = () => {
       <SectionHeader
         eyebrow="Games Directory"
         title="Choose your module"
-        description="The Stitch concepts had the clearest value here: featured game cards, concise telemetry, and stronger category framing. This page turns those ideas into reusable cards backed by real stats."
+        description="High-performance technical gambling modules ready to launch in the overlay."
         action={
           <button className="btn btn-primary" onClick={handleLaunchGame}>
             <PixelIcon name="rocket" size={18} aria-hidden={true} /> Launch Overlay
           </button>
         }
       />
+
+      <section className="stitch-featured-game">
+        <div className="stitch-featured-copy">
+          <p className="stitch-eyebrow">Trending Module</p>
+          <h2>Gilded Fortune Slots</h2>
+          <p>
+            Experience the highest-volume module in the casino suite and push your net gains with rapid play rounds.
+          </p>
+          <button className="btn btn-primary" onClick={handleLaunchGame}>
+            <PixelIcon name="slots" size={18} aria-hidden={true} /> Play in Overlay
+          </button>
+        </div>
+      </section>
 
       <div className="stitch-card-grid games-grid">
         {GAMES.map((game) => {

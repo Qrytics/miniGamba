@@ -131,6 +131,67 @@ body {
   background: var(--balatro-bg-secondary);
 }
 
+.overlay-shell-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(40, 42, 46, 0.95), rgba(26, 28, 32, 0.95));
+  padding: 0.55rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.overlay-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Space Grotesk', var(--balatro-font-display), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--balatro-yellow);
+}
+
+.overlay-mini-tab-row {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.overlay-mini-tab {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+
+.overlay-mini-tab.active {
+  color: var(--balatro-yellow);
+  border-color: rgba(255, 216, 75, 0.55);
+  background: rgba(255, 216, 75, 0.14);
+}
+
+.overlay-shell-dashboard {
+  border: 1px solid rgba(0, 162, 253, 0.25);
+  border-radius: 0.45rem;
+  color: var(--secondary-color);
+  background: rgba(0, 162, 253, 0.08);
+  width: 1.95rem;
+  height: 1.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.overlay-shell-dashboard:hover {
+  background: rgba(0, 162, 253, 0.16);
+}
+
 .game-selector {
   text-align: center;
 }
@@ -210,6 +271,162 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.overlay-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.overlay-game-title {
+  font-family: 'Space Grotesk', var(--balatro-font-display), sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+
+.overlay-back-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  border-radius: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+}
+
+.overlay-back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.overlay-live-panel {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.overlay-live-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.overlay-live-kpi {
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.4rem 0.55rem;
+}
+
+.overlay-live-kpi-label {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.52rem;
+  font-weight: 700;
+}
+
+.overlay-live-kpi-value {
+  margin-top: 0.2rem;
+  font-family: 'Space Grotesk', var(--balatro-font-display), sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.overlay-live-active-player {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.overlay-live-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.28rem 0.5rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.overlay-live-teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.overlay-live-team {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.55rem;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.45rem;
+}
+
+.overlay-live-team h3 {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.25rem;
+}
+
+.overlay-live-team ul {
+  list-style: none;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.overlay-live-team li {
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.28rem 0.38rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.overlay-live-champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  min-width: 0;
+}
+
+.overlay-live-champ strong {
+  font-size: 0.68rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overlay-live-champ span {
+  color: var(--text-secondary);
+  font-size: 0.54rem;
+}
+
+.overlay-live-score {
+  font-size: 0.57rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.overlay-live-empty {
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
 }
 
 .game-container {

@@ -7,6 +7,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { StatusPill } from '../../../dashboard/components/StitchPrimitives';
 
 interface LivePlayer {
   summonerName: string;
@@ -72,18 +73,18 @@ const LiveStatsPanel: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-        Loading...
+      <div className="overlay-live-loading">
+        Loading live stats...
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-        <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎮</div>
+      <div className="overlay-live-empty">
+        <div className="overlay-live-empty-icon">🎮</div>
         <p>Not in a game</p>
-        <p style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>Start a League match to see live stats.</p>
+        <p>Start a League match to see live stats.</p>
       </div>
     );
   }
@@ -92,67 +93,37 @@ const LiveStatsPanel: React.FC = () => {
   const redTeam = data.players.filter((p) => p.team === 'CHAOS');
 
   const renderTeam = (players: LivePlayer[], color: string, label: string) => (
-    <div style={{ marginBottom: '0.75rem' }}>
-      <div style={{ fontSize: '0.7rem', color, fontWeight: 700, marginBottom: '0.3rem', textTransform: 'uppercase' }}>
+    <section className="overlay-live-team">
+      <div className="overlay-live-team-title" style={{ color }}>
         {label}
       </div>
       {players.map((p, i) => (
-        <div
-          key={i}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.2rem 0',
-            borderBottom: i < players.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-            fontSize: '0.75rem',
-          }}
-        >
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '8rem' }}>
-            {p.championName || p.summonerName}
-          </span>
-          <span style={{ color: 'rgba(255,255,255,0.7)', flexShrink: 0 }}>
+        <div key={i} className={`overlay-live-row ${i < players.length - 1 ? 'with-divider' : ''}`}>
+          <span className="overlay-live-row-name">{p.championName || p.summonerName}</span>
+          <span className="overlay-live-row-score">
             {p.kills}/{p.deaths}/{p.assists}
           </span>
         </div>
       ))}
-    </div>
+    </section>
   );
 
   return (
-    <div style={{ padding: '0.75rem' }}>
-      {/* Header row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-        <span style={{ fontWeight: 700, color: 'var(--secondary-color)', fontSize: '0.875rem' }}>
-          ⏱ {formatTime(data.gameTime)}
-        </span>
+    <div className="overlay-live-panel">
+      <div className="overlay-live-header">
+        <span className="overlay-live-clock">⏱ {formatTime(data.gameTime)}</span>
         {data.events && (
-          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
-            🐉 {data.events.dragonKills} · 👁️ {data.events.baronKills}
-          </span>
+          <StatusPill tone="cyan">🐉 {data.events.dragonKills} • 👁️ {data.events.baronKills}</StatusPill>
         )}
       </div>
 
-      {/* Your stats */}
       {data.activePlayer && (
-        <div
-          style={{
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: 4,
-            padding: '0.4rem 0.6rem',
-            marginBottom: '0.75rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '0.75rem',
-          }}
-        >
-          <span>Lv{data.activePlayer.level}</span>
-          <span style={{ color: 'var(--gold)' }}>
-            {Math.round(data.activePlayer.currentGold)}g
-          </span>
-          <span>
+        <div className="overlay-live-player-stats">
+          <StatusPill tone="neutral">Lv{data.activePlayer.level}</StatusPill>
+          <StatusPill tone="gold">{Math.round(data.activePlayer.currentGold)}g</StatusPill>
+          <StatusPill tone="green">
             HP {Math.round(data.activePlayer.championStats.health)}/{Math.round(data.activePlayer.championStats.maxHealth)}
-          </span>
+          </StatusPill>
         </div>
       )}
 

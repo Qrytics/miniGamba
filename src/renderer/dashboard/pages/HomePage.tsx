@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PixelIcon } from '../../components/PixelIcon';
-import { EmptyState, MetricTile, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
+import { EmptyState, MetricTile, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface HomePageProps {
   userData: {
@@ -8,6 +8,8 @@ interface HomePageProps {
     coins?: number;
     level?: number;
     totalGamesPlayed?: number;
+    xp?: number;
+    xpNeeded?: number;
   } | null;
   onRefresh: () => void;
 }
@@ -75,66 +77,88 @@ const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
 
   const completedTasks = dailyTasks.filter((task) => task.completed).length;
   const displayedWinRate = typeof stats?.winRate === 'number' ? `${stats.winRate.toFixed(1)}%` : '0.0%';
+  const levelProgress = Math.min(100, Math.round(((userData?.xp || 0) / Math.max(1, userData?.xpNeeded || 100)) * 100));
+  const nextLevelXp = userData?.xpNeeded || 100;
 
   return (
     <div className="dashboard-page">
-      <div className="stitch-hero-grid">
-        <section className="stitch-hero-panel">
-          <SectionHeader
-            eyebrow="Command Center"
-            title={`Welcome back, ${userData?.username || 'Player'}`}
-            description="The Stitch exports were strongest when they behaved like a tactical dashboard. This production version keeps that same command-center hierarchy, but feeds it live user, reward, and game data."
-          />
-
-          <div className="stitch-metric-grid" style={{ marginTop: '1.5rem' }}>
-            <MetricTile
-              label="Available Gold"
-              value={<span style={{ color: 'var(--balatro-yellow)' }}>{(userData?.coins || 0).toLocaleString()}</span>}
-              accent="gold"
-              detail="Current spendable balance across every game."
-            />
-            <MetricTile
-              label="Current Level"
-              value={`Lv. ${userData?.level || 1}`}
-              accent="cyan"
-              detail="Level progression is driven by play volume and wagers."
-            />
-            <MetricTile
-              label="Games Logged"
-              value={stats?.totalGames || userData?.totalGamesPlayed || 0}
-              accent="green"
-              detail="All-time mini-casino sessions recorded in the history log."
-            />
+      <div className="stitch-home-hero">
+        <section className="stitch-hero-panel stitch-home-welcome">
+          <div className="stitch-hero-watermark">⚔</div>
+          <p className="stitch-eyebrow">Command Center</p>
+          <h1 className="stitch-page-hero-title">
+            Welcome back, <span>{userData?.username || 'Summoner'}</span>
+          </h1>
+          <p className="stitch-section-description">
+            Tactical display is active. Track your economy, daily objectives, and module performance from one live control surface.
+          </p>
+          <div className="stitch-level-progress">
+            <div className="stitch-level-progress-header">
+              <span>Level {userData?.level || 1} progress</span>
+              <span>{levelProgress}%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${levelProgress}%` }} />
+            </div>
+            <p className="text-muted">
+              {(userData?.xp || 0).toLocaleString()} / {nextLevelXp.toLocaleString()} XP
+            </p>
           </div>
         </section>
 
         <SurfaceCard
-          title="Hourly Bonus"
-          subtitle={hourlyBonus?.canClaim ? 'Reward is ready to collect' : 'Charge cycle in progress'}
-          action={<StatusPill tone={hourlyBonus?.canClaim ? 'green' : 'gold'}>{hourlyBonus?.canClaim ? 'Ready' : 'Cooling Down'}</StatusPill>}
+          className="stitch-bonus-card"
+          title={hourlyBonus?.canClaim ? 'Claim Hourly Bonus' : 'Bonus Charging'}
+          subtitle={hourlyBonus?.canClaim ? 'Reward ready to collect' : `Next window: ${hourlyBonus?.timeUntilNext || 'Loading...'}`}
+          action={<StatusPill tone={hourlyBonus?.canClaim ? 'green' : 'gold'}>{hourlyBonus?.canClaim ? 'Ready' : 'Standby'}</StatusPill>}
         >
-          {hourlyBonus?.canClaim ? (
-            <div className="stitch-stack">
-              <p className="text-muted">Claim your refresh payout and top your balance back up before your next queue pops.</p>
+          <div className="stitch-stack">
+            <div className="stitch-bonus-icon">
+              <PixelIcon name="money" size={34} aria-hidden={true} />
+            </div>
+            {hourlyBonus?.canClaim ? (
               <button className="btn btn-success" onClick={handleClaimBonus}>
-                <PixelIcon name="money" size={18} aria-hidden={true} /> Claim {hourlyBonus.amount || 50} Coins
+                Claim {hourlyBonus.amount || 50} Coins
               </button>
-            </div>
-          ) : (
-            <div className="stitch-stack" style={{ flexDirection: 'column' }}>
-              <p className="text-muted">Next bonus window: {hourlyBonus?.timeUntilNext || 'Loading...'}</p>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${hourlyBonus?.progress || 0}%` }} />
+            ) : (
+              <div className="stitch-stack">
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${hourlyBonus?.progress || 0}%` }} />
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </SurfaceCard>
+      </div>
+
+      <div className="stitch-snapshot-grid">
+        <div className="stitch-snapshot-card">
+          <div className="stitch-snapshot-icon"><PixelIcon name="money" size={22} aria-hidden={true} /></div>
+          <div>
+            <p>Available Gold</p>
+            <h3>{(userData?.coins || 0).toLocaleString()}</h3>
+          </div>
+        </div>
+        <div className="stitch-snapshot-card">
+          <div className="stitch-snapshot-icon"><PixelIcon name="star" size={22} aria-hidden={true} /></div>
+          <div>
+            <p>Current Level</p>
+            <h3>Lv. {userData?.level || 1}</h3>
+          </div>
+        </div>
+        <div className="stitch-snapshot-card">
+          <div className="stitch-snapshot-icon"><PixelIcon name="game" size={22} aria-hidden={true} /></div>
+          <div>
+            <p>Total Games</p>
+            <h3>{stats?.totalGames || userData?.totalGamesPlayed || 0}</h3>
+          </div>
+        </div>
       </div>
 
       <div className="stitch-split-grid">
         <SurfaceCard
           title="Daily Tasks"
-          subtitle="High-signal goals for quick engagement"
+          subtitle="High-signal goals for this cycle"
           action={<StatusPill tone="cyan">{completedTasks}/{dailyTasks.length || 0} Complete</StatusPill>}
         >
           {dailyTasks.length > 0 ? (
@@ -158,13 +182,13 @@ const HomePage: React.FC<HomePageProps> = ({ userData, onRefresh }) => {
           ) : (
             <EmptyState
               icon="📋"
-              title="No daily tasks yet"
-              description="Task data will appear here as soon as the service returns today's rotation."
+              title="No daily tasks"
+              description="Task service did not return objectives yet."
             />
           )}
         </SurfaceCard>
 
-        <SurfaceCard title="Snapshot" subtitle="The most reusable Stitch pattern was the compact stat-wall">
+        <SurfaceCard title="Quick Stats" subtitle="Live tactical metrics">
           <div className="stitch-card-grid stats-grid">
             <MetricTile label="Win Rate" value={displayedWinRate} accent="cyan" />
             <MetricTile label="Total Wagered" value={(stats?.totalWagered || 0).toLocaleString()} accent="neutral" />
