@@ -1,0 +1,31 @@
+{
+  "repo_url": "https://github.com/FunkinCrew/Funkin.git",
+  "repo_name": "FunkinCrew/Funkin",
+  "description": "A rhythm game made with HaxeFlixel",
+  "default_branch": "main",
+  "stars": 3527,
+  "forks": 2477,
+  "languages": {
+    "Haxe": 3629949,
+    "Python": 10229,
+    "Shell": 6086,
+    "Dockerfile": 4943,
+    "JavaScript": 3483,
+    "Batchfile": 2381,
+    "PowerShell": 700,
+    "Java": 7,
+    "C++": 1
+  },
+  "package_managers": [],
+  "frameworks": [],
+  "databases": [],
+  "auth": [],
+  "messaging": [],
+  "cicd": [
+    "GitHub Actions"
+  ],
+  "containers": [],
+  "iac": [],
+  "cloud": [],
+  "infra": []
+}

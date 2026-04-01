@@ -1,0 +1,33 @@
+{
+  "repo_url": "https://github.com/Qrytics/miniGamba",
+  "repo_name": "Qrytics/miniGamba",
+  "description": "miniGamba: The Ultimate In-Game Companion miniGamba is a lightweight, customizable overlay designed to keep the hype alive during downtime. Originally inspired by League of Legends death timers, this multi-purpose tool features a fake-credit slot machine and progression system.",
+  "default_branch": "main",
+  "stars": 1,
+  "forks": 0,
+  "languages": {
+    "TypeScript": 516912,
+    "JavaScript": 32689,
+    "CSS": 30317,
+    "HTML": 744,
+    "TypeScript (React)": 33
+  },
+  "package_managers": [
+    "Node.js / npm"
+  ],
+  "frameworks": [
+    "React"
+  ],
+  "databases": [
+    "SQLite"
+  ],
+  "auth": [],
+  "messaging": [],
+  "cicd": [],
+  "containers": [],
+  "iac": [],
+  "cloud": [
+    "Vercel"
+  ],
+  "infra": []
+}

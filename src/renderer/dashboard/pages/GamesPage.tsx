@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PixelIcon, type PixelIconName } from '../../components/PixelIcon';
+import { FeatureCard, SectionHeader, StatusPill } from '../components/StitchPrimitives';
 
 const GAMES: { id: string; name: string; icon: PixelIconName; description: string }[] = [
   { id: 'slot-machine', name: 'Slot Machine', icon: 'slots', description: '3-reel slots with hold & respin' },
@@ -43,49 +44,38 @@ const GamesPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} data-testid="games-page-header">
-        <PixelIcon name="game" size={28} aria-hidden={true} /> Games
-      </h2>
-      <p className="text-muted" style={{ marginBottom: '2rem' }}>
-        Choose from 10 unique mini-casino games. Launch the overlay to start playing!
-      </p>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Games Directory"
+        title="Choose your module"
+        description="The Stitch concepts had the clearest value here: featured game cards, concise telemetry, and stronger category framing. This page turns those ideas into reusable cards backed by real stats."
+        action={
+          <button className="btn btn-primary" onClick={handleLaunchGame}>
+            <PixelIcon name="rocket" size={18} aria-hidden={true} /> Launch Overlay
+          </button>
+        }
+      />
 
-      <div className="grid grid-3">
+      <div className="stitch-card-grid games-grid">
         {GAMES.map((game) => {
           const stats = gameStats[game.id];
           return (
-            <div key={game.id} className="game-card" style={{ cursor: 'default' }}>
-              <div className="game-icon">
-                <PixelIcon name={game.icon} size={48} aria-hidden={true} />
-              </div>
-              <div className="game-name">{game.name}</div>
-              <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-                {game.description}
-              </p>
-              {stats && (
-                <div className="game-stats">
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>{stats.gamesPlayed || 0}</div>
-                    <div>Played</div>
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 'bold', color: stats.netProfit > 0 ? 'var(--success)' : 'var(--danger)' }}>
-                      {stats.netProfit > 0 ? '+' : ''}{stats.netProfit || 0}
-                    </div>
-                    <div>Net</div>
-                  </div>
-                </div>
-              )}
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', marginTop: '1rem' }}
-                onClick={handleLaunchGame}
-                data-testid={`play-btn-${game.id}`}
-              >
-                ▶ Play
-              </button>
-            </div>
+            <FeatureCard
+              key={game.id}
+              icon={<PixelIcon name={game.icon} size={42} aria-hidden={true} />}
+              title={game.name}
+              description={game.description}
+              accent={game.id === 'slot-machine' ? 'gold' : game.id === 'blackjack' ? 'cyan' : 'neutral'}
+              footer={
+                <>
+                  <StatusPill tone="neutral">{stats?.totalGames || 0} Played</StatusPill>
+                  <StatusPill tone={(stats?.netProfit || 0) >= 0 ? 'green' : 'red'}>
+                    {(stats?.netProfit || 0) >= 0 ? '+' : ''}{stats?.netProfit || 0} Net
+                  </StatusPill>
+                </>
+              }
+              onClick={handleLaunchGame}
+            />
           );
         })}
       </div>

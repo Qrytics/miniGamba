@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { EmptyState, MetricTile, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 const StatsPage: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -6,18 +7,17 @@ const StatsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadStats();
+    void loadStats();
   }, []);
 
   const loadStats = async () => {
     try {
-      if (window.electronAPI.getGameStats) {
-        const gameStats = await window.electronAPI.getGameStats();
-        setStats(gameStats);
-      }
+      const gameStats = await window.electronAPI.getGameStats();
+      setStats(gameStats?.stats ?? gameStats ?? null);
+
       if (window.electronAPI.getGameHistory) {
         const gameHistory = await window.electronAPI.getGameHistory(10, 0);
-        setHistory(gameHistory || []);
+        setHistory(gameHistory?.history ?? gameHistory ?? []);
       }
     } catch (error) {
       console.error('Failed to load stats:', error);
@@ -31,133 +31,81 @@ const StatsPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '2rem' }} data-testid="stats-page-header">📊 Statistics</h2>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Performance"
+        title="Statistics"
+        description="The generated comps handled dense telemetry well. This version keeps the same metric-heavy feel but fixes the data plumbing so values come from the real game-history service."
+        action={<StatusPill tone="cyan">{history.length} Recent Logs</StatusPill>}
+      />
 
-      <div className="grid grid-4" style={{ marginBottom: '2rem' }}>
-        <div className="stat-card">
-          <div className="stat-label">Total Games</div>
-          <div className="stat-value">{stats?.totalGames || 0}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Win Rate</div>
-          <div className="stat-value" style={{ color: 'var(--success)' }}>
-            {stats?.winRate ? `${(stats.winRate * 100).toFixed(1)}%` : 'N/A'}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Total Wagered</div>
-          <div className="stat-value">💰 {stats?.totalWagered?.toLocaleString() || 0}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Net Profit</div>
-          <div 
-            className="stat-value" 
-            style={{ color: (stats?.netProfit || 0) >= 0 ? 'var(--success)' : 'var(--danger)' }}
-          >
-            {(stats?.netProfit || 0) >= 0 ? '+' : ''}{stats?.netProfit?.toLocaleString() || 0}
-          </div>
-        </div>
+      <div className="stitch-metric-grid">
+        <MetricTile label="Total Games" value={stats?.totalGames || 0} accent="gold" />
+        <MetricTile label="Win Rate" value={`${(stats?.winRate || 0).toFixed(1)}%`} accent="green" />
+        <MetricTile label="Total Wagered" value={(stats?.totalWagered || 0).toLocaleString()} accent="neutral" />
+        <MetricTile
+          label="Net Profit"
+          value={`${(stats?.netProfit || 0) >= 0 ? '+' : ''}${(stats?.netProfit || 0).toLocaleString()}`}
+          accent={(stats?.netProfit || 0) >= 0 ? 'green' : 'red'}
+        />
       </div>
 
-      <div className="grid grid-2">
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">🎯 Best Performances</h3>
+      <div className="stitch-split-grid">
+        <SurfaceCard title="Best Performances" subtitle="High-water marks across the casino suite">
+          <div className="stitch-card-grid stats-grid">
+            <MetricTile label="Biggest Win" value={`+${(stats?.biggestWin || 0).toLocaleString()}`} accent="green" />
+            <MetricTile label="Best Streak" value={`${stats?.bestStreak || 0} games`} accent="gold" />
+            <MetricTile label="Wins" value={stats?.wins || 0} accent="cyan" />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div>
-              <div className="text-muted">Biggest Win</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--success)', marginTop: '0.25rem' }}>
-                +{stats?.biggestWin?.toLocaleString() || 0}
-              </div>
-            </div>
-            <div>
-              <div className="text-muted">Longest Win Streak</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.25rem' }}>
-                {stats?.longestWinStreak || 0} games
-              </div>
-            </div>
-            <div>
-              <div className="text-muted">Most Profitable Game</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.25rem' }}>
-                {stats?.mostProfitableGame || 'N/A'}
-              </div>
-            </div>
-          </div>
-        </div>
+        </SurfaceCard>
 
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">📉 Records</h3>
+        <SurfaceCard title="Risk Profile" subtitle="Downside and recovery telemetry">
+          <div className="stitch-card-grid stats-grid">
+            <MetricTile label="Biggest Loss" value={`${stats?.biggestLoss || 0}`} accent="red" />
+            <MetricTile label="Losses" value={stats?.losses || 0} accent="neutral" />
+            <MetricTile label="Current Streak" value={stats?.currentStreak || 0} accent="gold" />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div>
-              <div className="text-muted">Biggest Loss</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--danger)', marginTop: '0.25rem' }}>
-                -{stats?.biggestLoss?.toLocaleString() || 0}
-              </div>
-            </div>
-            <div>
-              <div className="text-muted">Longest Loss Streak</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.25rem' }}>
-                {stats?.longestLossStreak || 0} games
-              </div>
-            </div>
-            <div>
-              <div className="text-muted">Total Losses</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginTop: '0.25rem' }}>
-                {stats?.totalLosses || 0}
-              </div>
-            </div>
-          </div>
-        </div>
+        </SurfaceCard>
       </div>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <h3 className="card-title">🕐 Recent Games</h3>
-        </div>
+      <SurfaceCard title="Recent Games" subtitle="Resolved from the actual history table">
         {history.length > 0 ? (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Game</th>
-                <th style={{ padding: '0.75rem', textAlign: 'right' }}>Bet</th>
-                <th style={{ padding: '0.75rem', textAlign: 'right' }}>Payout</th>
-                <th style={{ padding: '0.75rem', textAlign: 'right' }}>Result</th>
-                <th style={{ padding: '0.75rem', textAlign: 'right' }}>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((game: any, idx: number) => (
-                <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '0.75rem' }}>{game.gameType}</td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right' }}>{game.bet}</td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right' }}>{game.payout}</td>
-                  <td 
-                    style={{ 
-                      padding: '0.75rem', 
-                      textAlign: 'right',
-                      color: game.payout > game.bet ? 'var(--success)' : 'var(--danger)',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {game.payout > game.bet ? 'Win' : 'Loss'}
-                  </td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    {new Date(game.timestamp).toLocaleTimeString()}
-                  </td>
+          <div className="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game</th>
+                  <th>Bet</th>
+                  <th>Payout</th>
+                  <th>Result</th>
+                  <th>Played</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="text-center text-muted" style={{ padding: '2rem' }}>
-            No game history yet. Start playing to see your stats!
+              </thead>
+              <tbody>
+                {history.map((game: any) => (
+                  <tr key={game.id}>
+                    <td>{game.gameType}</td>
+                    <td>{game.betAmount}</td>
+                    <td>{game.payout}</td>
+                    <td>
+                      <StatusPill tone={game.result === 'win' ? 'green' : game.result === 'push' ? 'gold' : 'red'}>
+                        {game.result}
+                      </StatusPill>
+                    </td>
+                    <td>{new Date(game.playedAt).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        ) : (
+          <EmptyState
+            icon="📈"
+            title="No history yet"
+            description="Start a few games in the overlay and this table will fill with real wagering records."
+          />
         )}
-      </div>
+      </SurfaceCard>
     </div>
   );
 };
