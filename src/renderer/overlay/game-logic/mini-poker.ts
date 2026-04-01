@@ -271,7 +271,7 @@ export class MiniPoker extends GameEngine {
     
     let pair: number | null = null;
     let threeOfKind: number | null = null;
-    let highCard = Math.max(...ranks);
+    const highCard = Math.max(...ranks);
     
     for (const [rank, count] of Object.entries(counts)) {
       const rankNum = parseInt(rank);

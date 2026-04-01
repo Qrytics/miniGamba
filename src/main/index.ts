@@ -1,5 +1,4 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'path';
 
 // Import window controllers
 import { createDashboardWindow } from './windows/dashboard';
@@ -20,7 +19,7 @@ import { liveClientService } from './services/lol/live-client-service';
 import { logger } from './utils/logger';
 
 let dashboardWindow: BrowserWindow | null = null;
-let overlayWindow: BrowserWindow | null = null;
+const overlayWindow: BrowserWindow | null = null;
 
 /**
  * Initialize the application

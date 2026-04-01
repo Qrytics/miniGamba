@@ -11,6 +11,18 @@ export function validateBet(bet: number, min: number, max: number, balance: numb
   valid: boolean;
   error?: string;
 } {
+  if (!Number.isFinite(bet)) {
+    return { valid: false, error: 'Bet must be a valid number' };
+  }
+
+  if (!Number.isInteger(bet)) {
+    return { valid: false, error: 'Bet must be a whole number' };
+  }
+
+  if (bet <= 0) {
+    return { valid: false, error: 'Bet must be greater than zero' };
+  }
+
   if (bet < min) {
     return { valid: false, error: `Minimum bet is ${min} coins` };
   }
@@ -28,32 +40,51 @@ export function validateBet(bet: number, min: number, max: number, balance: numb
 
 /**
  * Validate user input
- * TODO: Implement input validation
  */
-export function validateInput(value: any, type: string): boolean {
-  // TODO: Implement validation based on type
-  return true;
+export function validateInput(value: unknown, type: string): boolean {
+  switch (type) {
+    case 'string':
+      return typeof value === 'string' && value.trim().length > 0;
+    case 'number':
+      return typeof value === 'number' && Number.isFinite(value);
+    case 'integer':
+      return typeof value === 'number' && Number.isInteger(value);
+    case 'boolean':
+      return typeof value === 'boolean';
+    case 'array':
+      return Array.isArray(value);
+    case 'object':
+      return value !== null && typeof value === 'object' && !Array.isArray(value);
+    default:
+      return false;
+  }
 }
 
 /**
  * Validate JSON data
- * TODO: Implement JSON validation for import/export
  */
 export function validateJSON(jsonString: string): { valid: boolean; error?: string } {
+  if (jsonString.trim().length === 0) {
+    return { valid: false, error: 'JSON payload cannot be empty' };
+  }
+
   try {
-    JSON.parse(jsonString);
+    const parsed = JSON.parse(jsonString);
+    if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return { valid: false, error: 'Expected a JSON object payload' };
+    }
     return { valid: true };
-  } catch (error) {
+  } catch {
     return { valid: false, error: 'Invalid JSON format' };
   }
 }
 
 /**
  * Validate friend code format
- * TODO: Implement friend code validation
  */
 export function validateFriendCode(code: string): boolean {
   // Format: GAMBA-XXXX-XXXX
+  const normalizedCode = code.trim().toUpperCase();
   const regex = /^GAMBA-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
-  return regex.test(code);
+  return regex.test(normalizedCode);
 }

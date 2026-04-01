@@ -17,6 +17,10 @@ export function calculateXPForLevel(level: number): number {
  * TODO: Implement reverse XP calculation
  */
 export function calculateLevelFromXP(xp: number): number {
+  if (!Number.isFinite(xp) || xp <= 0) {
+    return 1;
+  }
+
   let level = 1;
   let totalXP = 0;
   
@@ -41,6 +45,11 @@ export function calculateWinRate(wins: number, total: number): number {
  * TODO: Implement streak-based multipliers
  */
 export function calculateStreakMultiplier(streak: number): number {
+  if (!Number.isFinite(streak) || streak <= 0) {
+    return 1;
+  }
+
+  const normalizedStreak = Math.floor(streak);
   const multipliers: Record<number, number> = {
     1: 1.2,
     2: 1.5,
@@ -54,7 +63,7 @@ export function calculateStreakMultiplier(streak: number): number {
     10: 50,
   };
   
-  return multipliers[streak] || 50;
+  return multipliers[normalizedStreak] ?? 50;
 }
 
 /**
