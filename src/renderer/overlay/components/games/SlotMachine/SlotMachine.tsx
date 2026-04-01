@@ -63,9 +63,12 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
           win: endResult.result === 'win',
           sessionId: sessionIdRef.current,
         };
+        const finalizedSessionId = gameResult.sessionId;
         setResult(gameResult);
         void window.electronAPI.endGame('slot-machine', gameResult).finally(() => {
-          sessionIdRef.current = null;
+          if (sessionIdRef.current === finalizedSessionId) {
+            sessionIdRef.current = null;
+          }
         });
         if (endResult.payout >= bet * 5) playBigWin();
         else if (endResult.result === 'win') playWin();

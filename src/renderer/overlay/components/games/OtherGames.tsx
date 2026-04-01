@@ -510,7 +510,7 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
 
       // Animate dice
       let frames = 0;
-      const anim = setInterval(() => {
+      const anim = setInterval(async () => {
         setRollingDice([
           Math.floor(Math.random() * 6),
           Math.floor(Math.random() * 6),
