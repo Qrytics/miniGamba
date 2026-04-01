@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>miniGamba | Summoner Lookup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#ffe16d",
+              "primary-container": "#ffd700",
+              "surface-tint": "#e9c400",
+              "outline-variant": "#4d4732",
+              "error-container": "#93000a",
+              "on-secondary-fixed-variant": "#004a77",
+              "on-primary-fixed-variant": "#544600",
+              "on-surface-variant": "#d0c6ab",
+              "surface-variant": "#333539",
+              "surface-container-high": "#282a2e",
+              "secondary-fixed-dim": "#98cbff",
+              "surface-container-lowest": "#0c0e12",
+              "tertiary-fixed": "#61ff97",
+              "surface-bright": "#37393e",
+              "on-tertiary": "#003919",
+              "secondary-container": "#00a2fd",
+              "surface-container-low": "#1a1c20",
+              "on-primary-container": "#705e00",
+              "background": "#111317",
+              "on-secondary": "#003354",
+              "on-error": "#690005",
+              "on-secondary-container": "#003558",
+              "tertiary": "#deffe0",
+              "on-primary": "#3a3000",
+              "primary": "#fff6df",
+              "inverse-primary": "#705d00",
+              "surface-container": "#1e2024",
+              "surface": "#111317",
+              "on-primary-fixed": "#221b00",
+              "error": "#ffb4ab",
+              "secondary-fixed": "#cfe5ff",
+              "on-tertiary-fixed-variant": "#005227",
+              "on-background": "#e2e2e8",
+              "surface-container-highest": "#333539",
+              "tertiary-fixed-dim": "#00e476",
+              "inverse-surface": "#e2e2e8",
+              "on-secondary-fixed": "#001d33",
+              "on-tertiary-fixed": "#00210c",
+              "tertiary-container": "#00fa82",
+              "on-surface": "#e2e2e8",
+              "on-tertiary-container": "#006e36",
+              "outline": "#999077",
+              "inverse-on-surface": "#2f3035",
+              "primary-fixed-dim": "#e9c400",
+              "surface-dim": "#111317",
+              "on-error-container": "#ffdad6",
+              "secondary": "#98cbff"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #111317;
+            color: #e2e2e8;
+            font-family: 'Inter', sans-serif;
+        }
+        .space-grotesk { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+<!-- Shell Wrapper -->
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-screen sticky top-0 bg-slate-900/95 dark:bg-[#111317] h-full w-64 border-r border-transparent font-['Space_Grotesk'] text-sm tracking-tight z-[60]">
+<!-- Header/Profile Info -->
+<div class="p-6 flex items-center gap-3">
+<div class="relative w-12 h-12 rounded-lg overflow-hidden border border-primary-container/20">
+<img alt="User Rank Icon" class="w-full h-full object-cover" data-alt="High quality professional esports profile avatar featuring a stylized futuristic challenger rank icon with gold and blue highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbGjJcfY7c2vBImSjnx5kT5CFy-ejFXq1OLMtGIh9GmLiJShROIcRf17TvdfvhYPyGl9ChQt9whBp0PDuSVZ9EIgn05yizKXzV2YdYKGoCc6eiTD8v_xHu46vMOJHihNY3IDStRfVYd97NNmChb0HtiRi2uLXyp6gzg5LmpzktuL--ZWPlF8XJ3m3qxpYHI38DOF0PYP3lzk4FexAiA413jLC4gMxkbKtnBa8jB22Cw84DcXpHFROWhVgQxwzY5katWbpYv4N7fAVN"/>
+</div>
+<div>
+<h2 class="font-black text-[#FFD700] text-sm leading-tight">Summoner Name</h2>
+<p class="text-slate-400 dark:text-[#E2E2E8]/60 text-xs">Level 42 Command Center</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#FFD700] font-bold border-r-2 border-[#FFD700] bg-[#FFD700]/5 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span>Summoner</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+<span>Live Game</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="casino">casino</span>
+<span>Casino</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span>Achievements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span>Stats</span>
+</a>
+</nav>
+<div class="p-4 mt-auto border-t border-white/5 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-slate-900/80 dark:bg-[#111317]/80 backdrop-blur-xl docked full-width top-0 z-50 border-b border-white/5 shadow-[0_4px_24px_rgba(233,196,0,0.06)] sticky top-0">
+<div class="flex items-center gap-8">
+<div class="text-2xl font-black text-[#FFD700] italic font-['Space_Grotesk'] tracking-widest">miniGamba</div>
+<!-- Riot ID Search Input -->
+<div class="relative w-80">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="bg-surface-container-highest border-none rounded-lg py-2 pl-10 pr-4 text-sm w-full focus:ring-2 focus:ring-primary-fixed outline-none text-on-surface font-body" placeholder="Search Riot ID..." type="text" value="Faker#T1"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-white/5">
+<span class="material-symbols-outlined text-[#FFD700] text-lg" data-icon="monetization_on">monetization_on</span>
+<span class="text-sm font-bold font-['Space_Grotesk']">4,250</span>
+</div>
+<button class="bg-primary-container text-on-primary px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all">
+                        Launch Overlay
+                    </button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary-container">
+<img alt="User Rank Avatar" class="w-full h-full object-cover" data-alt="Close-up avatar of a pro gamer with neon lighting highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOlI2wi_KW8IM5-KFJywPy-GpNwdHw1uQIAWKQ9MN7O1TZzYYAGkDhhoOdSzBDAHjR3xpnjDoDAwX8-Ej6Mz4pn231l72DeHt3YJQ5mh8jn3OBZWk1qIJAqYLPQoZE9FkgXcGlWtyuQv32SFA5m63XeS28NkI0_pwN0LhDQr732llYR8O8xEk4gzk2_fvSm765TxrqOROdYWV4AXK7tNeyCgFnQoshlWxRHlOReTslIoBsG4EMj6jUBdarjVVJNgkK33YixKKeghpD"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 space-y-8 max-w-7xl mx-auto w-full">
+<!-- Summoner Profile Header (HUD style) -->
+<section class="relative bg-surface-container-low p-8 rounded-xl overflow-hidden">
+<!-- Background Splash Gradient -->
+<div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-secondary-container/10 to-transparent pointer-events-none"></div>
+<div class="relative flex flex-col md:flex-row items-center md:items-end gap-8">
+<div class="relative group">
+<div class="w-32 h-32 rounded-xl overflow-hidden border-4 border-primary-container/20 shadow-xl">
+<img alt="Faker Avatar" class="w-full h-full" data-alt="League of Legends summoner icon featuring a high-tier mastery frame and a legendary champion portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwYDV-ZlozVeIA8iYLrDNgFGYugSZv4uujBLE_jUeOn3W04vHican3wEnVpcV24NcQLZSECvZe2Ke0ISIW_HQREgFAb_B6HVYLMfPzjFREjMxCXFLMpPTlMu0_lJStLi7SeT0SaOK0JeitlDZVYq3D1HMGgDcfsne2y_n0kpK4amVmDQ74REKtjzZIZyXnubrCiq2Kve04eGr0wc6hj3pA_UCWCMNyzL9VzoPEzQ_wEz9oRT_320FRHEQoZB7S1P1buACJGMQ4gQK4"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary-container text-on-primary text-[10px] font-black px-2 py-1 rounded border border-on-primary/20">LVL 500</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="flex flex-col md:flex-row items-center gap-4 mb-2">
+<h1 class="text-5xl font-black font-['Space_Grotesk'] text-on-surface tracking-tighter uppercase">T1 Faker</h1>
+<span class="bg-secondary-container/20 text-secondary-fixed-dim border border-secondary-container/30 px-3 py-1 rounded text-xs font-bold tracking-widest uppercase">KR #T1</span>
+</div>
+<div class="flex flex-wrap justify-center md:justify-start gap-4">
+<div class="flex items-center gap-2 text-slate-400 text-sm font-medium">
+<span class="material-symbols-outlined text-primary-container text-lg" data-icon="military_tech">military_tech</span>
+                                    Ranked Kingpin
+                                </div>
+<div class="flex items-center gap-2 text-slate-400 text-sm font-medium">
+<span class="material-symbols-outlined text-secondary-container text-lg" data-icon="language">language</span>
+                                    Korea Region
+                                </div>
+</div>
+</div>
+<!-- Tier Icon (Challenger) -->
+<div class="flex flex-col items-center gap-1">
+<div class="w-24 h-24 relative">
+<span class="material-symbols-outlined text-7xl text-primary-container" data-icon="diamond" style="font-variation-settings: 'FILL' 1;">diamond</span>
+</div>
+<span class="text-primary-container font-black text-sm tracking-widest uppercase">Challenger</span>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Ranked Cards (Span 4) -->
+<div class="md:col-span-4 flex flex-col gap-4">
+<div class="bg-surface-container p-5 rounded-xl border border-white/5 space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Solo/Duo</span>
+<span class="text-[10px] bg-primary-container/10 text-primary-container px-2 py-0.5 rounded border border-primary-container/20">S2024</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="trophy" style="font-variation-settings: 'FILL' 1;">trophy</span>
+</div>
+<div>
+<div class="text-2xl font-black font-['Space_Grotesk'] text-on-surface">Challenger 1</div>
+<div class="text-sm font-bold text-primary-container">1,200 LP <span class="text-slate-500 font-normal ml-2">/ 64% WR</span></div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-5 rounded-xl border border-white/5 space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Ranked Flex</span>
+<span class="text-[10px] bg-secondary-container/10 text-secondary-container px-2 py-0.5 rounded border border-secondary-container/20">S2024</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-3xl" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div>
+<div class="text-2xl font-black font-['Space_Grotesk'] text-on-surface">Grandmaster</div>
+<div class="text-sm font-bold text-secondary-container">500 LP <span class="text-slate-500 font-normal ml-2">/ 58% WR</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Masteries (Span 8) -->
+<div class="md:col-span-8 bg-surface-container rounded-xl border border-white/5 flex flex-col">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h3 class="font-bold text-sm uppercase tracking-widest text-slate-300">Champion Masteries</h3>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-0 divide-x divide-white/5">
+<!-- Mastery 1 -->
+<div class="p-6 flex flex-col items-center text-center space-y-3 group hover:bg-white/[0.02] transition-colors">
+<div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-container relative">
+<img alt="Leblanc Mastery" class="w-full h-full object-cover" data-alt="Square champion portrait of Leblanc from League of Legends with detailed facial features and arcane energy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdqrgACIym86PkTrrYBUPgAXQeDtvGkIYpyfsG2YAJeqL1G8nMF_7eyKSJ4QRFf8RFmX0WpqPq4o5aN8F739bOZ9jsYPeY8kG7-FGYDBUJz8AeLo337S9rLc05UAt9CRJRj7NRwDPkdyrPdLQH5sXLmOu8Jn79_HkHpZ-Q2KTN2nRyRcrmIkQmm9ioJOl5RygHeIjXm_eUNwC7apCLvelnBL2RKrUIWWTUmitNn7zvbNHHhQhbApRkmGFyFT6ulLHiUlON1VQ0VhcH"/>
+<div class="absolute bottom-0 left-0 right-0 bg-primary-container text-on-primary text-[10px] font-black py-0.5">M7</div>
+</div>
+<div>
+<div class="font-black text-lg font-['Space_Grotesk'] uppercase tracking-tight">Leblanc</div>
+<div class="text-primary-container font-bold text-xs uppercase tracking-widest">1,024,500 PTS</div>
+</div>
+</div>
+<!-- Mastery 2 -->
+<div class="p-6 flex flex-col items-center text-center space-y-3 group hover:bg-white/[0.02] transition-colors">
+<div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-container/60 relative">
+<img alt="Ryze Mastery" class="w-full h-full object-cover" data-alt="Square champion portrait of Ryze from League of Legends showing his blue skin and magical scrolls" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcRrPvBFsFkLYxItb15K0w4XhedB79nuH6krN3QeFpwIbfkgeoEt13i9fBDHdWg-kfD4EkxbPYyG9yEGYR6F6cdJBL-gIKcXnnZF_nQLPmrvwQTNwtVmO3soZdHZnGvh8ztSr37Wo0nySzVuJ9ND9U0Lt-4a07Ei0x1-HagymQ-DHo3_M4V31BfHfpJ3kgewFZSaFE6oIpODJSTOCNnT3lQqfq1gnJFmE813NpEKv8FxPdmpec1Dbb5r7KseZsBGYojhnzvw8XCGTM"/>
+<div class="absolute bottom-0 left-0 right-0 bg-primary-container/80 text-on-primary text-[10px] font-black py-0.5">M7</div>
+</div>
+<div>
+<div class="font-black text-lg font-['Space_Grotesk'] uppercase tracking-tight">Ryze</div>
+<div class="text-slate-400 font-bold text-xs uppercase tracking-widest">912,200 PTS</div>
+</div>
+</div>
+<!-- Mastery 3 -->
+<div class="p-6 flex flex-col items-center text-center space-y-3 group hover:bg-white/[0.02] transition-colors">
+<div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-container/40 relative">
+<img alt="Azir Mastery" class="w-full h-full object-cover" data-alt="Square champion portrait of Azir from League of Legends featuring his golden shuriman hawk armor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0tSD8t_u_tKilWGlCPgoHc_fT8mpOYN9VM5-ATEd4W4GLiwNbnZ5UpUoUh3abxZXwRSQWNlPCJHjJdpaquu53dDoLeIJ2gOb3c5E2PUcbqO1nDpg9bByNr4ezen-_p7-z3Nqz9aq0A62PfXkyT-iNDe50YnvDu7FimlNqmsQYdDd0I0z-5HzlajYlfQupoWJnuODfraW6xL0XpTKy8_fA_PRlcecEfgz6XDo7eeJYkF_z1tFhCd-BVTewbOrAV45wL21jz4iXSm8u"/>
+<div class="absolute bottom-0 left-0 right-0 bg-primary-container/60 text-on-primary text-[10px] font-black py-0.5">M7</div>
+</div>
+<div>
+<div class="font-black text-lg font-['Space_Grotesk'] uppercase tracking-tight">Azir</div>
+<div class="text-slate-400 font-bold text-xs uppercase tracking-widest">845,900 PTS</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Matches -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-lg font-['Space_Grotesk'] uppercase tracking-widest text-on-surface">Recent Matches</h3>
+<div class="flex gap-2">
+<button class="bg-surface-container-high px-3 py-1 rounded text-xs font-bold text-primary-container border border-primary-container/20">All Games</button>
+<button class="bg-surface-container-low px-3 py-1 rounded text-xs font-bold text-slate-500 border border-transparent hover:border-white/10">Ranked Solo</button>
+</div>
+</div>
+<!-- Match Cards -->
+<div class="space-y-2">
+<!-- Match 1: Win -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-4 rounded-lg flex items-center gap-6 border-l-4 border-tertiary-container">
+<div class="w-16 flex flex-col items-center">
+<span class="text-tertiary-fixed-dim text-xs font-black uppercase tracking-widest">Win</span>
+<span class="text-slate-500 text-[10px] uppercase">28:45</span>
+</div>
+<div class="flex items-center gap-4 min-w-[140px]">
+<div class="w-12 h-12 rounded overflow-hidden">
+<img alt="Orianna" class="w-full h-full object-cover" data-alt="Small champion portrait of Orianna with technical robotic features" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf8PmfBJXxPZH7DgTd9UBOMGlBfLz3nIaylP0lyZoWpsfmYURb5kAoB9yAZGU1rpRS_ovTVU3ffRgOL8_rTSnItaBLUE9Pjs2cevHpLwOBNrMRs8Oyy5SculrAPl3aqk1mvtYcIG7yMzZuf-puU27mrl2QCSXBvEoihyO_VbqVOqBtATGe2Fg8GgESBR3wi8fR5jFBIWA3jkVdPHPpt77JRTzMm4ZkMxwysPsZStt0UMRbhUDMBGXgHzj2KERDH8-fSpkWQUzao6FF"/>
+</div>
+<div>
+<div class="font-bold text-sm">Ranked Solo</div>
+<div class="text-[10px] text-slate-500 uppercase">2 hours ago</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-3 items-center gap-4">
+<div class="text-center">
+<div class="text-lg font-black text-on-surface">12 <span class="text-slate-600 font-normal">/</span> 2 <span class="text-slate-600 font-normal">/</span> 8</div>
+<div class="text-[10px] text-tertiary-fixed-dim font-bold uppercase tracking-widest">10.00 KDA</div>
+</div>
+<div class="flex justify-center gap-1">
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+</div>
+<div class="text-right">
+<div class="text-sm font-bold text-slate-300">284 CS</div>
+<div class="text-[10px] text-slate-500">9.4 CS/min</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Match 2: Loss -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-4 rounded-lg flex items-center gap-6 border-l-4 border-error-container">
+<div class="w-16 flex flex-col items-center">
+<span class="text-error text-xs font-black uppercase tracking-widest">Loss</span>
+<span class="text-slate-500 text-[10px] uppercase">32:12</span>
+</div>
+<div class="flex items-center gap-4 min-w-[140px]">
+<div class="w-12 h-12 rounded overflow-hidden">
+<img alt="Ahri" class="w-full h-full object-cover" data-alt="Small champion portrait of Ahri with mystical nine-tailed fox aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvp-svEfcAgUU_iIggd1zp39Y0DST5Jscmol6x8oUm594rtDesajkPlH5jqGZ9NkvS3kn2b3v7M2eqlNSnLdB1STnAJZNZx0td_vsQQvb5s9aGX4YrMq5QeKWfqmYGDHwJ2UxxxQs_BuzHWtNcxtT2ck8s1glIofyRa1rNXTJI5m2O9x0mD4yPnwbNXNESDN_VWj8JOyh8DsZCvUw6Z02gj_6-Ul36jZkHTtV0vxIv9OIo0-5nLycaCEEi8xEg3qCjh2UY85S5DAAN"/>
+</div>
+<div>
+<div class="font-bold text-sm">Ranked Solo</div>
+<div class="text-[10px] text-slate-500 uppercase">4 hours ago</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-3 items-center gap-4">
+<div class="text-center">
+<div class="text-lg font-black text-on-surface">4 <span class="text-slate-600 font-normal">/</span> 5 <span class="text-slate-600 font-normal">/</span> 12</div>
+<div class="text-[10px] text-error font-bold uppercase tracking-widest">3.20 KDA</div>
+</div>
+<div class="flex justify-center gap-1">
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+</div>
+<div class="text-right">
+<div class="text-sm font-bold text-slate-300">312 CS</div>
+<div class="text-[10px] text-slate-500">9.7 CS/min</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Match 3: Win -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-4 rounded-lg flex items-center gap-6 border-l-4 border-tertiary-container">
+<div class="w-16 flex flex-col items-center">
+<span class="text-tertiary-fixed-dim text-xs font-black uppercase tracking-widest">Win</span>
+<span class="text-slate-500 text-[10px] uppercase">24:10</span>
+</div>
+<div class="flex items-center gap-4 min-w-[140px]">
+<div class="w-12 h-12 rounded overflow-hidden">
+<img alt="Azir" class="w-full h-full object-cover" data-alt="Small champion portrait of Azir from League of Legends" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsGf29RujTwsGmzwGt1Vo7bX8hrezbXXXRk0n8eU8mfhnesMbrbGTcB9_FLSyL7uJ7UL2vjlWDDNbZkSBIBL0GW-xpA_EbKiok9hzdlCDFkE_2FyWZxwxW2JBfUIEMik2d_hug-wH6vtHfEFRuSfh7PqjIP9R5CqoPcZwJLLyO0p5HE2DPpTK99aP8Pkwxy7LZC6eoHfdO2p4k7yNHrCxx4DETML4GgTPSEJDoL6-rnRZn_bv_SXjFbDnDDhJ-H-oGrGRrb5tVr4ov"/>
+</div>
+<div>
+<div class="font-bold text-sm">Ranked Solo</div>
+<div class="text-[10px] text-slate-500 uppercase">1 day ago</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-3 items-center gap-4">
+<div class="text-center">
+<div class="text-lg font-black text-on-surface">8 <span class="text-slate-600 font-normal">/</span> 0 <span class="text-slate-600 font-normal">/</span> 4</div>
+<div class="text-[10px] text-tertiary-fixed-dim font-bold uppercase tracking-widest">Perfect KDA</div>
+</div>
+<div class="flex justify-center gap-1">
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+</div>
+<div class="text-right">
+<div class="text-sm font-bold text-slate-300">256 CS</div>
+<div class="text-[10px] text-slate-500">10.6 CS/min</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Match 4: Win -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-4 rounded-lg flex items-center gap-6 border-l-4 border-tertiary-container">
+<div class="w-16 flex flex-col items-center">
+<span class="text-tertiary-fixed-dim text-xs font-black uppercase tracking-widest">Win</span>
+<span class="text-slate-500 text-[10px] uppercase">18:15</span>
+</div>
+<div class="flex items-center gap-4 min-w-[140px]">
+<div class="w-12 h-12 rounded overflow-hidden">
+<img alt="Ryze" class="w-full h-full object-cover" data-alt="Small champion portrait of Ryze from League of Legends" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4ZZIpxFUxfSsICtwCNIRvCQSpaPMeZX55D6WSKC9lJ6Eo_XXXZyklyt2CXW8yu5KdD-HpPPX4O7sC3xcJWe7at9Mj_ixRAaMXwOjHSXbOKmz1Yi4Fli1TjjZAOG9m-5op6CHdrKRyqkeN0Dwd-Xe05JUcT2xOxMHbrsZZuoRNwsAnq_sTDGrGMeXzIAo3wA70GveAfMnXfIcz2byExDuPS-88FsaMUca4TBLPveJyXVdrz0YeGdQJ326uSUpJa84W1FZ9klU6go6z"/>
+</div>
+<div>
+<div class="font-bold text-sm">ARAM</div>
+<div class="text-[10px] text-slate-500 uppercase">2 days ago</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-3 items-center gap-4">
+<div class="text-center">
+<div class="text-lg font-black text-on-surface">15 <span class="text-slate-600 font-normal">/</span> 4 <span class="text-slate-600 font-normal">/</span> 18</div>
+<div class="text-[10px] text-tertiary-fixed-dim font-bold uppercase tracking-widest">8.25 KDA</div>
+</div>
+<div class="flex justify-center gap-1">
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+<div class="w-8 h-8 bg-surface-container-highest rounded border border-white/5"></div>
+</div>
+<div class="text-right">
+<div class="text-sm font-bold text-slate-300">114 CS</div>
+<div class="text-[10px] text-slate-500">6.2 CS/min</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
