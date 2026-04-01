@@ -32,9 +32,9 @@ ipcMain.handle('settings:update', async (_event: IpcMainInvokeEvent, settings: U
       } else {
         // Set preset sizes
         const sizes = {
-          small: { width: 300, height: 400 },
-          medium: { width: 400, height: 500 },
-          large: { width: 500, height: 600 }
+          small: { width: 360, height: 460 },
+          medium: { width: 420, height: 540 },
+          large: { width: 520, height: 660 }
         };
         const size = sizes[settings.overlay.size as keyof typeof sizes];
         if (size) {
@@ -71,9 +71,9 @@ ipcMain.handle('settings:updateOverlay', async (_event: IpcMainInvokeEvent, opac
     
     if (size) {
       const sizes = {
-        small: { width: 300, height: 400 },
-        medium: { width: 400, height: 500 },
-        large: { width: 500, height: 600 }
+        small: { width: 360, height: 460 },
+        medium: { width: 420, height: 540 },
+        large: { width: 520, height: 660 }
       };
       const sizeConfig = sizes[size as keyof typeof sizes];
       if (sizeConfig) {

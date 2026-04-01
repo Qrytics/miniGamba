@@ -2,7 +2,7 @@
  * Main Overlay Application Component
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SlotMachine from './games/SlotMachine';
 import Blackjack from './games/Blackjack';
 import CoinFlip from './games/CoinFlip';
@@ -16,6 +16,7 @@ import MiniPoker from './games/MiniPoker';
 import LiveStatsPanel from './lol/LiveStatsPanel';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { PixelIcon, type PixelIconName } from '../../components/PixelIcon';
+import { playClick, playReveal } from '../utils/sounds';
 import '../styles/overlay.css';
 
 type OverlayTab = 'games' | 'livestats';
@@ -37,10 +38,71 @@ const OverlayApp: React.FC = () => {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OverlayTab>('games');
   const [userData, setUserData] = useState<any>(null);
+  const [contentScale, setContentScale] = useState(1);
+  const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const fitContentRef = useRef<HTMLDivElement | null>(null);
+  const lastUiSoundRef = useRef(0);
 
   useEffect(() => {
     loadUserData();
   }, []);
+
+  useEffect(() => {
+    // Add lightweight click SFX for almost all UI controls in the overlay.
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      const isActionable = target.closest('button, [role="button"], input[type="range"], input[type="checkbox"], select');
+      if (!isActionable) return;
+      const now = performance.now();
+      if (now - lastUiSoundRef.current < 50) return;
+      lastUiSoundRef.current = now;
+      playClick();
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, []);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const fitContent = fitContentRef.current;
+    if (!viewport || !fitContent) return;
+
+    let frameId = 0;
+    const recalculateScale = () => {
+      const viewportWidth = Math.max(viewport.clientWidth, 1);
+      const viewportHeight = Math.max(viewport.clientHeight, 1);
+      const naturalWidth = Math.max(fitContent.scrollWidth, fitContent.offsetWidth, 1);
+      const naturalHeight = Math.max(fitContent.scrollHeight, fitContent.offsetHeight, 1);
+      const nextScale = Math.min(viewportWidth / naturalWidth, viewportHeight / naturalHeight, 1);
+
+      setContentScale((prev) => (Math.abs(prev - nextScale) < 0.01 ? prev : nextScale));
+      setContentSize((prev) =>
+        prev.width === naturalWidth && prev.height === naturalHeight
+          ? prev
+          : { width: naturalWidth, height: naturalHeight },
+      );
+    };
+
+    const scheduleRecalculate = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(recalculateScale);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleRecalculate);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(fitContent);
+    window.addEventListener('resize', scheduleRecalculate);
+    scheduleRecalculate();
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', scheduleRecalculate);
+    };
+  }, [activeTab, currentGame, userData?.coins]);
 
   const loadUserData = async () => {
     try {
@@ -53,18 +115,21 @@ const OverlayApp: React.FC = () => {
   };
 
   const handleClose = () => {
+    playReveal();
     if (window.electronAPI.closeOverlay) {
       window.electronAPI.closeOverlay();
     }
   };
 
   const handleMinimize = () => {
+    playReveal();
     if (window.electronAPI.minimizeOverlay) {
       window.electronAPI.minimizeOverlay();
     }
   };
 
   const handleOpenDashboard = () => {
+    playClick();
     if (window.electronAPI.openDashboard) {
       window.electronAPI.openDashboard();
     }
@@ -84,7 +149,7 @@ const OverlayApp: React.FC = () => {
             <span>{userData?.coins?.toLocaleString() || 0}</span>
           </div>
           {activeTab === 'games' && currentGame && (
-            <button className="control-btn" onClick={() => setCurrentGame(null)} data-testid="overlay-back-btn">
+            <button className="control-btn" onClick={() => { playClick(); setCurrentGame(null); }} data-testid="overlay-back-btn">
               ← Back
             </button>
           )}
@@ -92,7 +157,7 @@ const OverlayApp: React.FC = () => {
         <div className="header-controls">
           <button
             className={`control-btn${activeTab === 'games' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('games'); setCurrentGame(null); }}
+            onClick={() => { playClick(); setActiveTab('games'); setCurrentGame(null); }}
             title="Mini-Games"
             data-testid="overlay-tab-games"
           >
@@ -100,7 +165,7 @@ const OverlayApp: React.FC = () => {
           </button>
           <button
             className={`control-btn${activeTab === 'livestats' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('livestats'); setCurrentGame(null); }}
+            onClick={() => { playClick(); setActiveTab('livestats'); setCurrentGame(null); }}
             title="Live Game Stats"
             data-testid="overlay-tab-livestats"
           >
@@ -109,6 +174,8 @@ const OverlayApp: React.FC = () => {
           <button className="control-btn" onClick={handleOpenDashboard} title="Dashboard" data-testid="overlay-nav-dashboard">
             <PixelIcon name="chart" size={18} aria-hidden={true} />
           </button>
+        </div>
+        <div className="window-controls">
           <button className="control-btn" onClick={handleMinimize} data-testid="overlay-minimize-btn">
             −
           </button>
@@ -119,54 +186,76 @@ const OverlayApp: React.FC = () => {
       </div>
 
       <div className="overlay-content">
-        {/* Live Stats Tab */}
-        {activeTab === 'livestats' && (
-          <ErrorBoundary>
-            <LiveStatsPanel />
-          </ErrorBoundary>
-        )}
+        <div className="overlay-fit-viewport" ref={viewportRef}>
+          <div
+            className="overlay-fit-shell"
+            style={{
+              width: contentSize.width > 0 ? `${contentSize.width * contentScale}px` : '100%',
+              height: contentSize.height > 0 ? `${contentSize.height * contentScale}px` : '100%',
+            }}
+          >
+            <div
+              className="overlay-fit-content"
+              ref={fitContentRef}
+              style={{
+                transform: `scale(${contentScale})`,
+                width: contentSize.width > 0 ? `${contentSize.width}px` : '100%',
+              }}
+            >
+              {/* Live Stats Tab */}
+              {activeTab === 'livestats' && (
+                <ErrorBoundary>
+                  <LiveStatsPanel />
+                </ErrorBoundary>
+              )}
 
-        {/* Games Tab */}
-        {activeTab === 'games' && (
-          currentGame === null ? (
-            <div className="game-selector">
-              <div className="overlay-selector-hero">
-                <p className="overlay-selector-eyebrow">Mini-Casino Modules</p>
-                <h2>Game Picker</h2>
-                <p className="text-muted">
-                  Pick a module below to open it in the live overlay shell.
-                </p>
-              </div>
-              <div className="game-grid">
-                {GAMES.map((game) => (
-                  <button
-                    key={game.id}
-                    className="game-btn"
-                    onClick={() => setCurrentGame(game.id)}
-                    data-testid={`game-btn-${game.id}`}
-                  >
-                    <span className="game-btn-icon">
-                      <PixelIcon name={game.icon} size={32} aria-hidden={true} />
-                    </span>
-                    <span>{game.name}</span>
-                  </button>
-                ))}
-              </div>
-              <footer className="overlay-footer-meta">
-                <span>Command Center / Games</span>
-                <span className="overlay-online-pill">Online</span>
-              </footer>
+              {/* Games Tab */}
+              {activeTab === 'games' && (
+                currentGame === null ? (
+                  <div className="game-selector">
+                    <div className="overlay-selector-hero">
+                      <p className="overlay-selector-eyebrow">Mini-Casino Modules</p>
+                      <h2>Game Picker</h2>
+                      <p className="text-muted">
+                        Pick a module below to open it in the live overlay shell.
+                      </p>
+                    </div>
+                    <div className="game-grid">
+                      {GAMES.map((game) => (
+                        <button
+                          key={game.id}
+                          className="game-btn"
+                          onClick={() => {
+                            playClick();
+                            setCurrentGame(game.id);
+                          }}
+                          data-testid={`game-btn-${game.id}`}
+                        >
+                          <span className="game-btn-icon">
+                            <PixelIcon name={game.icon} size={32} aria-hidden={true} />
+                          </span>
+                          <span>{game.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <footer className="overlay-footer-meta">
+                      <span>Command Center / Games</span>
+                      <span className="overlay-online-pill">Online</span>
+                    </footer>
+                  </div>
+                ) : CurrentGameComponent ? (
+                  <ErrorBoundary key={currentGame}>
+                    <CurrentGameComponent onCoinsUpdate={loadUserData} />
+                  </ErrorBoundary>
+                ) : (
+                  <div className="text-center">
+                    <p>Game not found</p>
+                  </div>
+                )
+              )}
             </div>
-          ) : CurrentGameComponent ? (
-            <ErrorBoundary key={currentGame}>
-              <CurrentGameComponent onCoinsUpdate={loadUserData} />
-            </ErrorBoundary>
-          ) : (
-            <div className="text-center">
-              <p>Game not found</p>
-            </div>
-          )
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );
