@@ -28,7 +28,7 @@ const GamesPage: React.FC = () => {
       for (const game of GAMES) {
         if (window.electronAPI.getGameStats) {
           const gameStat = await window.electronAPI.getGameStats(game.id);
-          stats[game.id] = gameStat;
+          stats[game.id] = gameStat?.stats ?? gameStat ?? null;
         }
       }
       setGameStats(stats);

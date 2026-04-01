@@ -28,6 +28,9 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   const handleStart = async () => {
     try {
       const startResult = await window.electronAPI.startGame('higher-or-lower', bet);
+      if (!startResult?.success) {
+        return;
+      }
       setSessionId(startResult?.sessionId || null);
       setCurrentCard(randomCard());
       setNextCard(null);

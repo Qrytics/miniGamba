@@ -143,7 +143,7 @@ const api: ElectronAPI = {
   // Investment operations
   getInvestments: () => ipcRenderer.invoke('data:getInvestments'),
   createInvestment: (amount, riskLevel) => ipcRenderer.invoke('data:createInvestment', amount, riskLevel),
-  cashOutInvestment: (investmentId) => ipcRenderer.invoke('data:cashOutInvestment', investmentId),
+  cashOutInvestment: (investmentId) => ipcRenderer.invoke('data:collectInvestment', investmentId),
 
   // League of Legends operations
   lolGetStatus: () => ipcRenderer.invoke('lol:getStatus'),

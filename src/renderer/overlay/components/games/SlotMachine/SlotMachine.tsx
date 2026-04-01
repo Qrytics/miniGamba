@@ -28,6 +28,7 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
 
   const engineRef = useRef<SlotMachineEngine | null>(null);
   const completedReelsRef = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const engine = new SlotMachineEngine();
@@ -60,9 +61,12 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
           reels: grid,
           result: endResult.result,
           win: endResult.result === 'win',
+          sessionId: sessionIdRef.current,
         };
         setResult(gameResult);
-        window.electronAPI.endGame('slot-machine', gameResult);
+        void window.electronAPI.endGame('slot-machine', gameResult).finally(() => {
+          sessionIdRef.current = null;
+        });
         if (endResult.payout >= bet * 5) playBigWin();
         else if (endResult.result === 'win') playWin();
         else playLoss();
@@ -81,7 +85,13 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ onCoinsUpdate }) => {
     completedReelsRef.current = 0;
 
     try {
-      await window.electronAPI.startGame('slot-machine', bet);
+      const startResult = await window.electronAPI.startGame('slot-machine', bet);
+      if (!startResult?.success) {
+        console.error('Start game failed:', startResult?.error || 'Unknown error');
+        setSpinning(false);
+        return;
+      }
+      sessionIdRef.current = startResult?.sessionId ?? null;
       playBet();
       playSpin();
       engine.start(bet);
