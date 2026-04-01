@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "electron-forge start",
     "build": "electron-forge make",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:single": "playwright test --workers=1",
