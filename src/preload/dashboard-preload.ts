@@ -89,17 +89,17 @@ const api: ElectronAPI = {
         }
         break;
       case 'clickThrough':
-        nextSettings.overlay.clickThroughMode = Boolean(value);
+        nextSettings.overlay.clickThroughMode = !!value;
         break;
       case 'masterVolume':
         nextSettings.audio.masterVolume = Number(value);
         break;
       case 'soundEffects':
-        nextSettings.audio.uiVolume = Boolean(value) ? 80 : 0;
-        nextSettings.audio.gameVolume = Boolean(value) ? 100 : 0;
+        nextSettings.audio.uiVolume = value ? 80 : 0;
+        nextSettings.audio.gameVolume = value ? 100 : 0;
         break;
       case 'backgroundMusic':
-        nextSettings.audio.musicVolume = Boolean(value) ? 50 : 0;
+        nextSettings.audio.musicVolume = value ? 50 : 0;
         break;
       case 'autoSpin':
       case 'fastAnimations':

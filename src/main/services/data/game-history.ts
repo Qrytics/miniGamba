@@ -88,7 +88,7 @@ export class GameHistoryService {
       const isWin = result === 'win';
       const profit = payout - betAmount;
       
-      let newStreak = isWin ? currentStats.current_streak + 1 : 0;
+      const newStreak = isWin ? currentStats.current_streak + 1 : 0;
       const newBestStreak = Math.max(newStreak, currentStats.best_streak);
       const newBiggestWin = Math.max(profit, currentStats.biggest_win);
       const newBiggestLoss = Math.min(profit, currentStats.biggest_loss);

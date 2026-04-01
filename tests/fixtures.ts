@@ -4,11 +4,11 @@
  */
 
 import { test as base } from '@playwright/test';
-import { launchApp, TestContext, cleanupTestData } from './setup';
+import { launchApp, TestContext } from './setup';
 
 // Extend base test with Electron app fixture
 export const test = base.extend<{ testContext: TestContext }>({
-  testContext: async ({ }, use, testInfo) => {
+  testContext: async (_unused, use, testInfo) => {
     // Use worker index for isolation
     const workerIndex = testInfo.workerIndex;
     const context = await launchApp(workerIndex);

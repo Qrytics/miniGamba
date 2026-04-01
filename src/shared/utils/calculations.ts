@@ -24,7 +24,7 @@ export function calculateLevelFromXP(xp: number): number {
   let level = 1;
   let totalXP = 0;
   
-  while (totalXP < xp) {
+  while (totalXP <= xp) {
     totalXP += calculateXPForLevel(level);
     level++;
   }

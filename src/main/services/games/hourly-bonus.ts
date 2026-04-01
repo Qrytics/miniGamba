@@ -25,7 +25,7 @@ export class HourlyBonusService {
   public getStatus(userId: number): HourlyBonusStatus {
     const db = databaseService.getDb();
     
-    let status = db.prepare(`
+    const status = db.prepare(`
       SELECT last_claimed, unclaimed_hours 
       FROM hourly_bonus 
       WHERE user_id = ?
