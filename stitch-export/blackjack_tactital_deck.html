@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#003919",
+              "surface-container-high": "#282a2e",
+              "primary-fixed": "#ffe16d",
+              "on-secondary-fixed": "#001d33",
+              "inverse-on-surface": "#2f3035",
+              "on-secondary": "#003354",
+              "tertiary-fixed": "#61ff97",
+              "inverse-primary": "#705d00",
+              "on-tertiary-container": "#006e36",
+              "tertiary-container": "#00fa82",
+              "on-primary-fixed-variant": "#544600",
+              "on-error": "#690005",
+              "inverse-surface": "#e2e2e8",
+              "primary-fixed-dim": "#e9c400",
+              "on-secondary-container": "#003558",
+              "on-primary-container": "#705e00",
+              "primary": "#fff6df",
+              "surface-dim": "#111317",
+              "on-background": "#e2e2e8",
+              "on-surface": "#e2e2e8",
+              "surface-tint": "#e9c400",
+              "surface-bright": "#37393e",
+              "secondary-fixed": "#cfe5ff",
+              "surface": "#111317",
+              "secondary": "#98cbff",
+              "on-primary-fixed": "#221b00",
+              "on-secondary-fixed-variant": "#004a77",
+              "secondary-container": "#00a2fd",
+              "outline": "#999077",
+              "surface-container": "#1e2024",
+              "on-primary": "#3a3000",
+              "on-error-container": "#ffdad6",
+              "background": "#111317",
+              "error": "#ffb4ab",
+              "surface-container-lowest": "#0c0e12",
+              "surface-container-highest": "#333539",
+              "outline-variant": "#4d4732",
+              "secondary-fixed-dim": "#98cbff",
+              "on-tertiary-fixed-variant": "#005227",
+              "surface-container-low": "#1a1c20",
+              "surface-variant": "#333539",
+              "primary-container": "#ffd700",
+              "on-surface-variant": "#d0c6ab",
+              "error-container": "#93000a",
+              "tertiary-fixed-dim": "#00e476",
+              "on-tertiary-fixed": "#00210c",
+              "tertiary": "#deffe0"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#111317] border-b border-[#4D4732]/15 shadow-[0_0_24px_rgba(233,196,0,0.06)] h-16 flex justify-between items-center px-6">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#FFD700] uppercase tracking-tighter font-headline">miniGamba</span>
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="text-slate-400 font-medium hover:bg-slate-800/50 transition-colors duration-150 py-2 px-3 rounded" href="#">Dashboard</a>
+<a class="text-[#FFD700] font-bold border-b-2 border-[#FFD700] py-2 px-3 h-16 flex items-center" href="#">Blackjack</a>
+<a class="text-slate-400 font-medium hover:bg-slate-800/50 transition-colors duration-150 py-2 px-3 rounded" href="#">Esports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-headline font-bold text-primary-container">$2,450.00</span>
+</div>
+<div class="hidden sm:flex flex-col items-end">
+<span class="text-[10px] uppercase font-black tracking-widest text-primary-fixed/50">Elite Tier</span>
+<span class="text-xs font-bold text-on-surface">LVL 42</span>
+</div>
+<button class="material-symbols-outlined text-slate-400 hover:text-white transition-colors">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="minimalist 2d avatar of a tactical gaming profile with sleek tech gear and neon accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASxLT6FF8d_s4ukrW5Y8W07o9UvJxUY6bQcT9YDCu2eTq7fv4pUPkBH7uxRzsPb4xZqIeKZFj-gzR8vLbVhZ__vWTGmZxPQWyZuPMJFwV7iF4v-EctooXDu3og8oSvNO-q0X_W4Atae2QZV2MvgLHOifj7qc2mofNNmm5rB41KbA3K9JZex4-iTbD0CRK_4ABz9JGlYnOWmLR6JzkKhp6y7YZD1Q6zqBRkoQb5CxpeaPuA1KtPh_fmg17beH2jK5Nc_XMq5kjlL69k"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#111317] border-r border-[#4D4732]/15 flex flex-col py-8 px-4 hidden md:flex">
+<div class="mb-8 px-2">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
+<div class="w-10 h-10 bg-primary-container/10 rounded flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">military_tech</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-tighter text-slate-500">Command Center</p>
+<p class="text-sm font-headline font-black text-on-surface uppercase">Elite Tier</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-800/30 hover:text-slate-200 transition-all duration-150 font-headline text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-800/40 text-[#FFD700] border-r-4 border-[#FFD700] transition-all duration-150 font-headline text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">casino</span>
+<span>Blackjack</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-800/30 hover:text-slate-200 transition-all duration-150 font-headline text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">sports_esports</span>
+<span>Esports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-800/30 hover:text-slate-200 transition-all duration-150 font-headline text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">military_tech</span>
+<span>Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-800/30 hover:text-slate-200 transition-all duration-150 font-headline text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<button class="w-full py-3 bg-primary-container text-on-primary font-black text-xs tracking-widest uppercase rounded active:scale-95 transition-transform shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+                PRO UPGRADE
+            </button>
+<div class="border-t border-outline-variant/10 pt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-slate-200 transition-colors text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-error transition-colors text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-sm">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 pt-24 px-6 pb-12 min-h-screen">
+<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Game Canvas -->
+<div class="lg:col-span-9 space-y-6">
+<!-- Blackjack Table Section -->
+<div class="relative bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden shadow-2xl aspect-[16/10] flex flex-col justify-between p-8">
+<!-- Subtle Table Texture Background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, #4D4732 0%, transparent 70%);"></div>
+<!-- Dealer Section -->
+<div class="flex flex-col items-center gap-6 z-10">
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container-highest/80 backdrop-blur rounded border border-outline-variant/30">
+<span class="text-[10px] font-black tracking-widest text-slate-500 uppercase">Dealer Hand</span>
+<span class="text-sm font-headline font-bold text-primary-container">10 + ?</span>
+</div>
+<div class="flex gap-4">
+<!-- Face Down Card -->
+<div class="w-24 h-36 bg-surface-container-highest rounded-lg border-2 border-outline-variant/50 relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-1 border border-primary-container/20 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container/30 text-4xl">casino</span>
+</div>
+</div>
+<!-- King of Spades -->
+<div class="w-24 h-36 bg-white rounded-lg shadow-lg relative flex flex-col justify-between p-2">
+<div class="flex flex-col items-start leading-none">
+<span class="text-xl font-bold text-black font-headline">K</span>
+<span class="material-symbols-outlined text-black !text-lg">playing_cards</span>
+</div>
+<div class="self-center">
+<span class="material-symbols-outlined text-black !text-4xl">king_bed</span>
+</div>
+<div class="flex flex-col items-end leading-none rotate-180">
+<span class="text-xl font-bold text-black font-headline">K</span>
+<span class="material-symbols-outlined text-black !text-lg">playing_cards</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Game Controls (Tactical HUD) -->
+<div class="flex justify-center items-center gap-4 z-20">
+<button class="px-8 py-4 bg-surface-container-highest border border-outline-variant text-on-surface font-black tracking-tighter text-lg rounded-lg hover:bg-surface-bright transition-all active:scale-95 flex flex-col items-center group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-white mb-1">front_hand</span>
+<span class="font-headline uppercase">STAND</span>
+</button>
+<button class="px-12 py-6 bg-primary-container text-on-primary font-black tracking-tighter text-2xl rounded-lg hover:brightness-110 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,215,0,0.25)] flex flex-col items-center">
+<span class="material-symbols-outlined mb-1">add_circle</span>
+<span class="font-headline uppercase">HIT</span>
+</button>
+<button class="px-8 py-4 bg-secondary-container text-on-secondary font-black tracking-tighter text-lg rounded-lg hover:brightness-110 transition-all active:scale-95 shadow-[0_0_20px_rgba(0,162,253,0.2)] flex flex-col items-center">
+<span class="material-symbols-outlined mb-1">keyboard_double_arrow_up</span>
+<span class="font-headline uppercase">DOUBLE</span>
+</button>
+</div>
+<!-- Player Section -->
+<div class="flex flex-col items-center gap-6 z-10">
+<div class="flex gap-4 relative">
+<!-- Ace of Diamonds -->
+<div class="w-24 h-36 bg-white rounded-lg shadow-lg relative flex flex-col justify-between p-2">
+<div class="flex flex-col items-start leading-none">
+<span class="text-xl font-bold text-error font-headline">A</span>
+<span class="material-symbols-outlined text-error !text-lg">diamond</span>
+</div>
+<div class="self-center">
+<span class="material-symbols-outlined text-error !text-4xl">diamond</span>
+</div>
+<div class="flex flex-col items-end leading-none rotate-180">
+<span class="text-xl font-bold text-error font-headline">A</span>
+<span class="material-symbols-outlined text-error !text-lg">diamond</span>
+</div>
+</div>
+<!-- 8 of Clubs -->
+<div class="w-24 h-36 bg-white rounded-lg shadow-lg relative flex flex-col justify-between p-2">
+<div class="flex flex-col items-start leading-none">
+<span class="text-xl font-bold text-black font-headline">8</span>
+<span class="material-symbols-outlined text-black !text-lg">groups</span>
+</div>
+<div class="self-center flex flex-wrap gap-1 px-2 justify-center">
+<span class="material-symbols-outlined text-black !text-xs">groups</span>
+<span class="material-symbols-outlined text-black !text-xs">groups</span>
+<span class="material-symbols-outlined text-black !text-xs">groups</span>
+<span class="material-symbols-outlined text-black !text-xs">groups</span>
+</div>
+<div class="flex flex-col items-end leading-none rotate-180">
+<span class="text-xl font-bold text-black font-headline">8</span>
+<span class="material-symbols-outlined text-black !text-lg">groups</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-primary-container text-on-primary rounded border border-on-primary/20 shadow-lg animate-pulse">
+<span class="text-[10px] font-black tracking-widest uppercase">Your Hand</span>
+<span class="text-sm font-headline font-black">19/9</span>
+</div>
+</div>
+<!-- Table Detail: Brand Watermark -->
+<div class="absolute bottom-4 right-6 opacity-5 font-headline font-black text-6xl italic pointer-events-none">MINIGAMBA</div>
+</div>
+<!-- Game Feed / Logs -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/15">
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-xs font-black uppercase tracking-widest text-slate-500">Live Statistics</h3>
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-ping"></span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center py-2 px-3 bg-surface-container-lowest rounded">
+<span class="text-xs font-medium text-slate-400">SESSION PROFIT</span>
+<span class="text-sm font-headline font-bold text-tertiary-fixed-dim">+$1,420.00</span>
+</div>
+<div class="flex justify-between items-center py-2 px-3 bg-surface-container-low rounded">
+<span class="text-xs font-medium text-slate-400">WIN RATE</span>
+<span class="text-sm font-headline font-bold text-on-surface">58.4%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/15">
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-xs font-black uppercase tracking-widest text-slate-500">Global Activity</h3>
+<span class="material-symbols-outlined text-xs text-slate-500">public</span>
+</div>
+<div class="space-y-1.5">
+<div class="flex items-center justify-between text-[11px]">
+<span class="text-slate-400">User_042 won <strong class="text-primary-container">$45.00</strong></span>
+<span class="text-slate-600">2s ago</span>
+</div>
+<div class="flex items-center justify-between text-[11px]">
+<span class="text-slate-400">GambaMaster won <strong class="text-primary-container">$200.00</strong></span>
+<span class="text-slate-600">5s ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Betting Controls Side Panel -->
+<div class="lg:col-span-3 space-y-4">
+<div class="bg-surface-container-high rounded-xl p-6 border border-outline-variant/30 flex flex-col gap-6 sticky top-24">
+<!-- Financial Summary -->
+<div>
+<p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">TOTAL POT</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-headline font-black text-primary-container">$10,000.00</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-2/3 shadow-[0_0_8px_rgba(255,215,0,0.5)]"></div>
+</div>
+</div>
+<!-- Bet Input -->
+<div class="space-y-3">
+<label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Wager Amount</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-lg py-4 px-4 font-headline font-bold text-xl text-on-surface focus:outline-none focus:border-primary-fixed focus:ring-4 focus:ring-primary-container/10 transition-all" type="text" value="5,000"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-primary-fixed/40">COINS</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2 bg-surface-container-low border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors text-[10px] font-bold uppercase tracking-widest">1/2 Bet</button>
+<button class="py-2 bg-surface-container-low border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors text-[10px] font-bold uppercase tracking-widest">2x Bet</button>
+</div>
+<button class="w-full py-4 bg-surface-container-highest border border-outline-variant text-on-surface font-black uppercase tracking-widest text-sm rounded-lg hover:bg-slate-700 transition-colors">
+                            MAX BET
+                        </button>
+</div>
+<!-- Transaction List -->
+<div class="pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Previous Results</p>
+<div class="space-y-2">
+<div class="flex items-center justify-between bg-surface-container-low p-2 rounded">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-tertiary-container rounded-sm"></div>
+<span class="text-[11px] font-bold">WINNER</span>
+</div>
+<span class="text-[11px] font-headline font-bold text-tertiary-fixed-dim">+$250.00</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low p-2 rounded">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-error rounded-sm"></div>
+<span class="text-[11px] font-bold">LOSS</span>
+</div>
+<span class="text-[11px] font-headline font-bold text-error">-$100.00</span>
+</div>
+</div>
+</div>
+<!-- Action Button (Re-bet / Start) -->
+<button class="w-full py-5 bg-tertiary-container text-on-tertiary font-black tracking-[0.2em] text-sm rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,250,130,0.15)] mt-auto">
+                        START ROUND
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#111317] border-t border-[#4D4732]/15 flex justify-around items-center h-16 px-4 z-50">
+<button class="flex flex-col items-center text-slate-500">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">HOME</span>
+</button>
+<button class="flex flex-col items-center text-[#FFD700]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">casino</span>
+<span class="text-[10px] font-bold">BLACKJACK</span>
+</button>
+<button class="flex flex-col items-center text-slate-500">
+<span class="material-symbols-outlined">sports_esports</span>
+<span class="text-[10px] font-bold">ESPORTS</span>
+</button>
+<button class="flex flex-col items-center text-slate-500">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold">WALLET</span>
+</button>
+</nav>
+</body></html>

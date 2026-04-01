@@ -145,6 +145,376 @@ body {
   background: var(--balatro-bg-secondary);
 }
 
+.dashboard-page {
+  display: grid;
+  gap: var(--balatro-space-3);
+}
+
+.stitch-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--balatro-space-3);
+  flex-wrap: wrap;
+}
+
+.stitch-eyebrow,
+.stitch-metric-label,
+.stitch-card-subtitle,
+.stitch-status-pill {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.stitch-eyebrow {
+  color: var(--balatro-yellow);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-section-title {
+  font-size: clamp(1.9rem, 3vw, 2.8rem);
+  line-height: 0.95;
+  font-family: var(--balatro-font-display);
+  color: #fff6df;
+}
+
+.stitch-section-description {
+  margin-top: 0.75rem;
+  max-width: 50rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.stitch-hero-panel,
+.stitch-surface-card,
+.stitch-metric-tile,
+.stitch-feature-card,
+.table-shell {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(40, 42, 46, 0.95), rgba(26, 28, 32, 0.95));
+  box-shadow: 0 22px 40px rgba(0, 0, 0, 0.28);
+}
+
+.stitch-hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.stitch-hero-panel::after {
+  content: '';
+  position: absolute;
+  inset: auto -4rem -5rem auto;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 216, 75, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+.stitch-hero-grid,
+.stitch-card-grid,
+.stitch-metric-grid,
+.stitch-split-grid {
+  display: grid;
+  gap: var(--balatro-space-3);
+}
+
+.stitch-hero-grid {
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+}
+
+.stitch-card-grid.games-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stitch-card-grid.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.stitch-metric-grid {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.stitch-split-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stitch-surface-card {
+  border-radius: 18px;
+  padding: 1.25rem;
+}
+
+.stitch-card-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stitch-card-title {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.stitch-card-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 0.45rem;
+}
+
+.stitch-metric-tile {
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  min-height: 132px;
+}
+
+.stitch-metric-tile.accent-gold {
+  border-color: rgba(255, 216, 75, 0.25);
+}
+
+.stitch-metric-tile.accent-cyan {
+  border-color: rgba(60, 243, 255, 0.25);
+}
+
+.stitch-metric-tile.accent-green {
+  border-color: rgba(72, 255, 154, 0.22);
+}
+
+.stitch-metric-tile.accent-red {
+  border-color: rgba(255, 75, 75, 0.22);
+}
+
+.stitch-metric-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.stitch-metric-value {
+  margin-top: 0.8rem;
+  font-size: clamp(1.4rem, 2vw, 2.25rem);
+  font-weight: 700;
+  color: #fff;
+}
+
+.stitch-metric-detail {
+  margin-top: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.stitch-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.2rem;
+  border-radius: 18px;
+  color: inherit;
+}
+
+.stitch-feature-card.is-interactive {
+  cursor: pointer;
+  transition: transform var(--balatro-duration-fast) var(--balatro-ease), border-color var(--balatro-duration-fast) ease;
+}
+
+.stitch-feature-card.is-interactive:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 216, 75, 0.3);
+}
+
+.stitch-feature-card.accent-gold .stitch-feature-icon {
+  color: var(--balatro-yellow);
+}
+
+.stitch-feature-card.accent-cyan .stitch-feature-icon {
+  color: var(--balatro-cyan);
+}
+
+.stitch-feature-card.accent-green .stitch-feature-icon {
+  color: var(--balatro-green);
+}
+
+.stitch-feature-card.accent-red .stitch-feature-icon {
+  color: var(--balatro-red);
+}
+
+.stitch-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stitch-feature-copy h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-feature-copy p,
+.stitch-list,
+.stitch-empty-state p {
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.stitch-feature-footer,
+.stitch-stack,
+.stitch-inline-stats {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stitch-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 28px;
+  padding: 0 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stitch-status-pill::before {
+  content: '';
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.stitch-status-pill.tone-gold {
+  color: var(--balatro-yellow);
+}
+
+.stitch-status-pill.tone-cyan {
+  color: var(--balatro-cyan);
+}
+
+.stitch-status-pill.tone-green {
+  color: var(--balatro-green);
+}
+
+.stitch-status-pill.tone-red {
+  color: var(--balatro-red);
+}
+
+.stitch-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.stitch-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: rgba(12, 14, 18, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stitch-list-item-title {
+  font-weight: 700;
+}
+
+.stitch-list-item-meta {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+}
+
+.stitch-empty-state {
+  text-align: center;
+  padding: 2.6rem 1.5rem;
+}
+
+.stitch-empty-icon {
+  font-size: 2.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.settings-control {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.settings-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.table-shell {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.table-shell table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-shell th,
+.table-shell td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.table-shell th {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: left;
+}
+
+.table-shell td:last-child,
+.table-shell th:last-child {
+  text-align: right;
+}
+
+@media (max-width: 960px) {
+  .stitch-hero-grid,
+  .stitch-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-content {
+    padding: var(--balatro-space-3);
+  }
+
+  .table-shell {
+    overflow-x: auto;
+  }
+}
+
 /* Cards - flat panel, subtle depth */
 .card {
   background: var(--surface);

@@ -135,6 +135,37 @@ body {
   text-align: center;
 }
 
+.overlay-selector-hero {
+  margin-bottom: var(--balatro-space-3);
+  padding: var(--balatro-space-3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(40, 42, 46, 0.95), rgba(26, 28, 32, 0.95));
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-selector-hero::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  bottom: -80px;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 216, 75, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+.overlay-selector-eyebrow {
+  color: var(--balatro-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
 .game-selector h2 {
   margin-bottom: var(--balatro-space-3);
   font-size: var(--balatro-font-size-section);
@@ -149,8 +180,8 @@ body {
 }
 
 .game-btn {
-  background: var(--surface);
-  border: var(--balatro-border);
+  background: linear-gradient(180deg, rgba(40, 42, 46, 0.95), rgba(26, 28, 32, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: var(--balatro-space-2) var(--balatro-space-3);
   border-radius: var(--balatro-radius-card);
   cursor: pointer;
@@ -167,8 +198,8 @@ body {
 
 .game-btn:hover {
   transform: translateY(-6px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: var(--balatro-shadow-card-hover);
+  border-color: rgba(255, 216, 75, 0.3);
+  box-shadow: var(--balatro-shadow-card-hover), 0 0 18px rgba(255, 216, 75, 0.12);
 }
 
 .game-btn:active {
@@ -345,6 +376,10 @@ body {
   position: relative;
   margin: var(--balatro-space-4) 0;
   width: 100%;
+  padding: var(--balatro-space-2);
+  background: linear-gradient(180deg, rgba(12, 14, 18, 0.95), rgba(30, 30, 36, 0.95));
+  border: 1px solid rgba(255, 216, 75, 0.16);
+  box-shadow: 0 0 24px rgba(255, 216, 75, 0.08);
 }
 
 .slot-reels-grid {
@@ -367,6 +402,14 @@ body {
   border-bottom: 2px solid rgba(255, 216, 75, 0.6);
   pointer-events: none;
   box-sizing: border-box;
+}
+
+.slot-reels-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
 }
 
 /* Each column - viewport showing 3 rows */

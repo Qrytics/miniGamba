@@ -275,7 +275,10 @@ export class UserDataService {
         const currentUser = this.getUser();
         // Merge with defaults so any missing keys are filled in safely.
         const defaults = this.getDefaultSettings();
-        const merged = this.deepMerge(defaults, settings as Record<string, unknown>);
+        const merged = this.deepMerge(
+          defaults as unknown as Record<string, unknown>,
+          settings as Record<string, unknown>
+        );
         this.updateUserSettings(currentUser.id, merged);
       }
 
@@ -334,7 +337,7 @@ export class UserDataService {
       }
     }
 
-    return result as import('../../../shared/types/user.types').UserSettings;
+    return result as unknown as import('../../../shared/types/user.types').UserSettings;
   }
 }
 

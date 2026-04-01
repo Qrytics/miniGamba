@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>miniGamba - Live Game</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#61ff97",
+              "inverse-on-surface": "#2f3035",
+              "on-secondary-fixed-variant": "#004a77",
+              "primary": "#fff6df",
+              "on-primary": "#3a3000",
+              "primary-container": "#ffd700",
+              "outline-variant": "#4d4732",
+              "on-primary-fixed": "#221b00",
+              "surface": "#111317",
+              "error-container": "#93000a",
+              "error": "#ffb4ab",
+              "surface-container-high": "#282a2e",
+              "on-tertiary-fixed-variant": "#005227",
+              "surface-container-highest": "#333539",
+              "on-primary-fixed-variant": "#544600",
+              "outline": "#999077",
+              "inverse-primary": "#705d00",
+              "on-tertiary-fixed": "#00210c",
+              "surface-container": "#1e2024",
+              "surface-dim": "#111317",
+              "on-secondary-fixed": "#001d33",
+              "surface-bright": "#37393e",
+              "secondary-container": "#00a2fd",
+              "on-background": "#e2e2e8",
+              "tertiary-container": "#00fa82",
+              "surface-container-lowest": "#0c0e12",
+              "surface-variant": "#333539",
+              "primary-fixed": "#ffe16d",
+              "tertiary": "#deffe0",
+              "on-tertiary-container": "#006e36",
+              "inverse-surface": "#e2e2e8",
+              "primary-fixed-dim": "#e9c400",
+              "on-error": "#690005",
+              "on-error-container": "#ffdad6",
+              "on-secondary-container": "#003558",
+              "on-surface-variant": "#d0c6ab",
+              "on-secondary": "#003354",
+              "surface-container-low": "#1a1c20",
+              "secondary-fixed-dim": "#98cbff",
+              "secondary-fixed": "#cfe5ff",
+              "on-primary-container": "#705e00",
+              "tertiary-fixed-dim": "#00e476",
+              "surface-tint": "#e9c400",
+              "on-tertiary": "#003919",
+              "secondary": "#98cbff",
+              "on-surface": "#e2e2e8",
+              "background": "#111317"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111317;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4d4732;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-screen sticky top-0 bg-slate-900/95 dark:bg-[#111317] h-full w-64 border-r border-transparent font-['Space_Grotesk'] text-sm tracking-tight z-50">
+<div class="p-6">
+<span class="text-xl font-black text-[#FFD700] tracking-tighter">miniGamba</span>
+</div>
+<div class="flex items-center px-6 py-4 mb-4 gap-3 bg-slate-800/50 dark:bg-[#1c1f26]">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-primary-container/20">
+<img alt="User Rank Icon" data-alt="high-quality esports rank icon with gold and obsidian details and glowing energy effect" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDskgJmkFx7mWXektFZKWyqCxYGHBEIlxheseeftc8Go6rr2urdve3US4NGiKaRhPCbOeYkDqk7t7zkFY0fLzO75vrjOEvOe99O-tsRmfs4Mhd7sqEKJzOz74B98wlAlNS1yxxw1SnzNuG2lbo41ugNQVj7gqqIM_QOJTakaKyg1tyvcT-7-_Ecrs2d7e2Waths_QE3mkGEyhnu78XxtwcvHlSe24eFjLwKIwP1DLNvjUs0BkEXs_1O8_Ys4YL8HIAmhwY5-jsfQwZH"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="font-bold text-on-surface truncate">Summoner Name</span>
+<span class="text-[10px] text-slate-400 uppercase tracking-widest">Level 42 Command Center</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span>Summoner</span>
+</a>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#FFD700] font-bold border-r-2 border-[#FFD700] bg-[#FFD700]/5 scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+<span>Live Game</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="casino">casino</span>
+<span>Casino</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+<span>Achievements</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span>Stats</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 dark:text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 hover:text-[#FFD700] transition-colors scale-95 duration-150 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background overflow-y-auto custom-scrollbar">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-slate-900/80 dark:bg-[#111317]/80 backdrop-blur-xl docked full-width top-0 z-50 border-b border-white/5 shadow-[0_4px_24px_rgba(233,196,0,0.06)] sticky">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#FFD700] italic font-headline uppercase tracking-widest">miniGamba</span>
+<div class="hidden md:flex items-center bg-surface-container-highest px-4 py-2 rounded-lg border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline mr-2 text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface placeholder:text-outline/50" placeholder="Global Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-full border border-primary-container/10">
+<span class="material-symbols-outlined text-primary-container text-lg" data-icon="monetization_on">monetization_on</span>
+<span class="font-headline font-bold text-on-surface tracking-tighter">4,250</span>
+</div>
+<button class="bg-primary-container text-on-primary font-headline font-bold px-5 py-2 rounded-md hover:opacity-80 transition-opacity active:scale-[0.98]">
+                        Launch Overlay
+                    </button>
+<div class="w-10 h-10 rounded-full border-2 border-primary-container p-0.5">
+<img alt="User Rank Avatar" class="rounded-full bg-surface-container" data-alt="professional esports player avatar silhouette with neon gold highlights on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKEqn5KZAPan48zfCSNTF3X6-5Um4TknLxy3Yt0Iy25Fhca-ffw4eYnwWornTFEGh7WLnwvwFKvjIlEJdEcs0-19UR2WK6OIufQvnt_PfJL-OfCy2Vm4Pk7D_S0jGtUHo2jQlG0eBTuqUm-jL2xKLGAqKAhVesRe8BsBeriaJWGzhgkFi1E92z5HwfJiyK-3Wn0OyWQHX6RRKh8fmtOIumZsuUGQsvtCXy5rytDk2kwPmS9WOXIhl3WQ6ObRsBKUNy_mbNF2UUnqXC"/>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-6">
+<!-- Game Info Bar -->
+<div class="bg-surface-container-low rounded-xl p-1 grid grid-cols-3 items-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-secondary-container/5 via-transparent to-error/5"></div>
+<!-- Blue Stats -->
+<div class="flex items-center justify-start gap-6 px-6 py-4 z-10">
+<div class="flex flex-col items-center">
+<span class="text-xs font-bold text-secondary tracking-widest uppercase">Blue Team</span>
+<span class="text-3xl font-black text-on-surface font-headline italic">14</span>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary-fixed-dim" data-icon="tower">cell_tower</span>
+<span class="text-sm font-bold">5</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary-fixed-dim" data-icon="pet_supplies">pet_supplies</span>
+<span class="text-sm font-bold">2</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary-fixed-dim" data-icon="water_drop">water_drop</span>
+<span class="text-sm font-bold">1</span>
+</div>
+</div>
+</div>
+<!-- Match Time -->
+<div class="flex flex-col items-center justify-center z-10">
+<div class="px-6 py-2 bg-surface-container-highest border border-primary-container/20 rounded-xl">
+<span class="text-3xl font-black font-headline text-primary-container tracking-tighter tabular-nums">24:15</span>
+</div>
+<span class="text-[10px] font-bold text-outline-variant mt-1 uppercase tracking-[0.3em]">LIVE SESSION</span>
+</div>
+<!-- Red Stats -->
+<div class="flex items-center justify-end gap-6 px-6 py-4 z-10 text-right">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-error" data-icon="water_drop">water_drop</span>
+<span class="text-sm font-bold">0</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-error" data-icon="pet_supplies">pet_supplies</span>
+<span class="text-sm font-bold">1</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-error" data-icon="tower">cell_tower</span>
+<span class="text-sm font-bold">3</span>
+</div>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-xs font-bold text-error tracking-widest uppercase">Red Team</span>
+<span class="text-3xl font-black text-on-surface font-headline italic">11</span>
+</div>
+</div>
+</div>
+<!-- Scoreboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Team Columns -->
+<div class="lg:col-span-8 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Blue Team -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-4 py-2 bg-secondary-container/10 border-l-4 border-secondary-container rounded-r-lg">
+<span class="font-headline font-bold text-secondary uppercase tracking-widest text-sm">Blue Team</span>
+<span class="text-xs font-bold text-outline">Gold: 42.4k</span>
+</div>
+<div class="space-y-1">
+<!-- Player Row Template -->
+<div class="flex items-center gap-3 p-2 bg-surface-container-low rounded hover:bg-surface-container-high transition-colors">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="close up stylized fantasy warrior portrait with glowing blue armor details in a circular frame" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuttEPtjF09IQWZs8A5OtIWleSXfgA9fFKLIRKkSSI0og-DY8cEQImeakMdYGyHjKrhnLeZoc_e0QMBOtf26nxkHG1f2SWKayHVJM1J9_tTV-wQHhrWGy8vTvn7W6bx1YIY73ffN7ejMM1ezq7tzyf_l1sj2zhNmsAfzIXQUF23yxvyACRVBfKOJ7V53iHQXFHlHbixiK9yeIgQlegVFjvzwPs6ziwZe-3HVcGHvVu5kdczuFKr8jzAxtDdWksGlriYCzckMrZFUcH"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-surface-container-highest text-[10px] font-bold px-1 rounded border border-outline-variant text-secondary">13</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="text-sm font-bold truncate">SummonerA</span>
+<span class="text-xs font-bold font-headline text-on-surface">5/1/12</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">Top • 192 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-fixed-dim" style="width: 75%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Repeat for team -->
+<div class="flex items-center gap-3 p-2 bg-surface-container-low/50 rounded hover:bg-surface-container-high transition-colors">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="agile fantasy rogue champion icon with neon daggers and dark hood illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKNSpAV3Ey9mR9JPD5n7WbRjOY3b5XytIUg5pkXZJhQ1I04DjkhpZjofUrAqTWNaAPeTbqzUTg2f3EvRy2eR2WPHV-POk5ish83Ve71w-3qoh7T165L-RqSClgbo8H21ODmIm6G45eMuhwO-ZgEx0ejRgFUkGkNip1nXLjPBYba6yb3q2qcnA5MjH99pO7q23uwPplbLKs2CqaajAtU_2yI8or7YdQTNl2kEbGYHiZGiNJgCMl0yJ0Dn2oeIVyUq-CpdYk14CdiHew"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-surface-container-highest text-[10px] font-bold px-1 rounded border border-outline-variant text-secondary">14</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="text-sm font-bold truncate">EliteGamba</span>
+<span class="text-xs font-bold font-headline text-on-surface">3/2/4</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">Jungle • 142 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error" style="width: 30%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-2 bg-surface-container-low rounded hover:bg-surface-container-high transition-colors">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="powerful mage champion icon with fiery eyes and arcane energy effects in cinematic style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6YyX07JSzqxKAa9y_i0fkByXJvw_xbTMgQ_UPASWGaIrGGvvHCY5VzqMYuq9iYh5PybW5VVeUWgNh52aSCveT5mnk7fPRXpoQaBTNUkp89hblG7FrKJZw_ybfMuUQJCuHR_WK-Bo95ZEl88CpBMwkfs9SFMIftkjDYOQDlfc-3Qg6NxrzSKYkYwKS51LVXvD8uywFhAetAx7IgeRG22als6WyjRSR01dY6eMUZSh3g9Y0l93mDaQu2zuVyg4Mncdd5LL6AA7d1E-I"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-surface-container-highest text-[10px] font-bold px-1 rounded border border-outline-variant text-secondary">15</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="text-sm font-bold truncate">MidDiffOnly</span>
+<span class="text-xs font-bold font-headline text-on-surface">4/4/6</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">Mid • 210 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 50%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-2 bg-surface-container-low/50 rounded hover:bg-surface-container-high transition-colors border border-primary-container/20">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border-2 border-primary-container">
+<img alt="Champion Icon" data-alt="cyberpunk archer champion portrait with golden glowing arrows and precision scope eye-piece" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZMV7wE7FYkak9GV0wQ3BAyO-kXe91OtfCV29FlRJ2csGCYbezpAd_nSgEOYQHCJiO0Yu-bKCQtUdhHAqurJb34zVdPdOozUdNzi1PBKS2HiehILkEV1gYuEHIjeTx7m5wDMMn3JVURBQlu2xaao5DhG_fxl7uqC_JH38TZQcBanHXt3WkLfaru-tL-MgYcTnyR7WfqEEfNNeCjm0CfBehVnLIupLPl-PToy_QhvApufKw80vyNS6QkSM28a28APeJX3kI2UscvQ3h"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-primary-container text-on-primary text-[10px] font-black px-1 rounded">16</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="text-sm font-bold truncate text-primary-container">YOU (ADCarry)</span>
+<span class="text-xs font-bold font-headline text-on-surface">5/2/8</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">ADC • 245 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-fixed-dim" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-2 bg-surface-container-low rounded hover:bg-surface-container-high transition-colors">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="mystical support champion icon with soft glowing ethereal energy and celestial robes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIZPqAmaw01WUaLY0XYRIs-0-dQrMqFkd1gNt-_0IqymiN65gjSzMaCY6OkgnmWgzXmCok-9h54VHzn5WhZkygmZw4DqwC_Kvr44Z5QR5Xs8LvoYz96dIDEy84YW2x21nFEyRTd_TlXFDaJGJ8naa-vqb_R96ELZgyHZZ0B-AKxL4HRBCPa2d2fIv0Y0iyi0UXPyktudW5WVOKwu_oCa6gE0470ikjxa40waPgaL6Sc7j5cy8R30PpqV4h5dtR36Wrs4S_CItulGOA"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-surface-container-highest text-[10px] font-bold px-1 rounded border border-outline-variant text-secondary">13</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center">
+<span class="text-sm font-bold truncate">HealBot9000</span>
+<span class="text-xs font-bold font-headline text-on-surface">0/3/18</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">Support • 35 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-fixed-dim" style="width: 90%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Red Team -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-4 py-2 bg-error-container/10 border-r-4 border-error-container rounded-l-lg text-right">
+<span class="text-xs font-bold text-outline">Gold: 39.1k</span>
+<span class="font-headline font-bold text-error uppercase tracking-widest text-sm">Red Team</span>
+</div>
+<div class="space-y-1">
+<div class="flex flex-row-reverse items-center gap-3 p-2 bg-surface-container-low rounded hover:bg-surface-container-high transition-colors">
+<div class="relative">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="brutal barbarian champion with heavy axe and blood red war paint in dark comic style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFTYltgztMhoRrRJqfF2_pzXrW_23kcut2Vp7zabRDQVKAMh9Ng4FG8m838KP_hm-r9wV026ZzfdwRlXYtpwCEt90vl_GcyQ17P4paP-6lxhEDKj-rlgWMHM93RKIgt_-IzEVT-C2w6NKqsemEe7motRbMBN7BivR5qm2EZslZw8-F6VMF7D68Pk70orMM1TyMA0YUmYqVJyUOpid6QMeCUS50IbhF4d7hfvL-aVAznuR-RLf3OZFRbJHHoObU0mmQ90ar4hwgNAeF"/>
+</div>
+<span class="absolute -bottom-1 -left-1 bg-surface-container-highest text-[10px] font-bold px-1 rounded border border-outline-variant text-error">15</span>
+</div>
+<div class="flex-1 min-w-0 text-right">
+<div class="flex flex-row-reverse justify-between items-center">
+<span class="text-sm font-bold truncate">OpponentA</span>
+<span class="text-xs font-bold font-headline text-on-surface">6/3/2</span>
+</div>
+<div class="flex flex-row-reverse justify-between items-center">
+<span class="text-[10px] text-outline uppercase tracking-wider">Top • 205 CS</span>
+<div class="h-1 w-16 bg-surface-container-highest rounded-full overflow-hidden flex flex-row-reverse">
+<div class="h-full bg-primary-container" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Simplified additional rows for layout -->
+<div class="flex flex-row-reverse items-center gap-3 p-2 bg-surface-container-low/50 rounded">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="menacing shadow wolf champion icon with glowing crimson eyes in dark mystical forest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuAmpyG8xzyw3zg2QGHi21xhwifs1kkYSKp5jbdDf3rcBTnhxqszE4U1RVVAXMFU6pw7yP91tkxA3MRSRPjGBfoujHuclBHsJorJ5nzkUgEgagfjOHvXPVPX5V7Ntn6cNT9MdxN3j-W4pHbA0EyWr5vg1GS2qHyckaT3Raimni3pd8UhBeQtBEZAkO_MlRMkAe9s6jdzyrBcb9rkLpmSWh5vrQx8k7ItRxYsr9rwqplQEu_virGKeVdZ6fg5eiA9IhwtRbsxMgLp_Z"/>
+</div>
+<div class="flex-1 text-right">
+<span class="text-sm font-bold block">JunglerX</span>
+<span class="text-[10px] text-outline">1/4/5 • 110 CS</span>
+</div>
+</div>
+<div class="flex flex-row-reverse items-center gap-3 p-2 bg-surface-container-low rounded">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="arcane void mage champion icon with purple energy and dark crystal robes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrK8mNmzJMin2jCtoMgEP7cIqQlLACnN5OfatvgYiOw6qRoBy8CG3zuG30xHj1wafGVoRcmio2zR-z_xPI5H6pCos1uvJHB2ydE9QWRPLV0k5L0K5R3K1W1DQ47aO7eekjKvQorum_X524_LrHMTRGik1LYhb3Gr1ZNs_ut5uYwKJ9Ucy33iv1Bll1fs5KET5MA3NywzumIgQvIJlwzsJoYEG_mWD3wMGgkBlBlGNDy_Pxxy73S2hVMrcNAUk4zsar0fdWJxRTpljw"/>
+</div>
+<div class="flex-1 text-right">
+<span class="text-sm font-bold block">MidDestroyer</span>
+<span class="text-[10px] text-outline">3/3/3 • 195 CS</span>
+</div>
+</div>
+<div class="flex flex-row-reverse items-center gap-3 p-2 bg-surface-container-low/50 rounded">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="dual wielding gunner champion portrait with explosive red energy and high speed action aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv8bSwGmbxtJhEuOBQUMktVYyKoXkbT7Y08vC9aKvvPpWmBviEgjyDXttWIvm-UFuCDpPalEK-S8Y9JsDPmwZYWw76gepM6AIQzeUzPefN9zSOudlY4AU_3QrGsXoD1lHTNI_nqmMJPYKr0-NXvfxYCJv4Sst-ENKUG5-AA0GfPRujXnuYMlFQXM8U4GYVV3zQzZjZMSRXQAsmHHfM9qtLOYznqsxCA6JTCnOV2cC00oORCXZxIksA7XVhkvr3CGJ4JflIigS3tuWz"/>
+</div>
+<div class="flex-1 text-right">
+<span class="text-sm font-bold block">BotLander</span>
+<span class="text-[10px] text-outline">1/2/4 • 220 CS</span>
+</div>
+</div>
+<div class="flex flex-row-reverse items-center gap-3 p-2 bg-surface-container-low rounded">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="Champion Icon" data-alt="sturdy tank support champion with massive glowing shield and defensive runes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqGcpteAXOa56pBUIUOIGi4GSBrNz3UW7zY4OKFqcAdaK0Tjoa8W1kRhY8I-XRAgN6fxE84j9m_Eo4LtJZnigepNfVolIy0bjuYtZyfjdEr1J9rgASwbT0iegyRhD4iZfDJ05IinwoxzmmTwPrYbCwL8mV0JX7nnZ1Jo6LQ7SGRV3v0KvKNDgqQxIB94r7ydu-PZ0-cJrkySrfoo5OXUOHKF9R5FM34ATtavia-3xXetTbfKb8-gK31H3t0cjOy4UAIdD1G4KlcPs3"/>
+</div>
+<div class="flex-1 text-right">
+<span class="text-sm font-bold block">ShieldMate</span>
+<span class="text-[10px] text-outline">0/2/7 • 40 CS</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Mini Performance Graph Area -->
+<div class="bg-surface-container rounded-xl p-4 border border-outline-variant/10">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline font-bold uppercase text-xs tracking-widest">Team Gold Delta</h3>
+<span class="text-tertiary-fixed-dim font-bold text-xs">+3,300g (Advantage)</span>
+</div>
+<div class="h-32 w-full flex items-end gap-1 px-2">
+<!-- Mock bar graph for delta -->
+<div class="flex-1 bg-error-container/20 h-4 rounded-t-sm"></div>
+<div class="flex-1 bg-error-container/30 h-8 rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container/20 h-6 rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container/40 h-12 rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container/60 h-20 rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container/50 h-16 rounded-t-sm"></div>
+<div class="flex-1 bg-secondary-container/80 h-28 rounded-t-sm"></div>
+<div class="flex-1 bg-primary-container h-24 rounded-t-sm shadow-[0_0_12px_rgba(255,215,0,0.3)]"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] font-bold text-outline uppercase">
+<span>Start</span>
+<span>10m</span>
+<span>20m</span>
+<span>Current</span>
+</div>
+</div>
+</div>
+<!-- Sidebar: Active Player Focus -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container-high rounded-xl p-6 border border-primary-container/20 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 blur-3xl -mr-16 -mt-16 rounded-full"></div>
+<div class="relative z-10 flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-xl border-2 border-primary-container p-1 bg-surface-container-highest">
+<img alt="Player Focus Avatar" class="rounded-lg h-full w-full object-cover" data-alt="hyper-detailed cinematic close up of a cybernetic marksman eye with golden reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYG3HivuUxnaoJhKw4J6uegdCLkCAIBqEFYeHWxRMwNrh1Wa0lQzNGrx7RrSK85IJ03P2x2KPsAuuzZCTRFdUPU8jSiKDre27IV_wFqZTrOjz0K9h4J9DM4gvUoWaAXGE64cvNlpeuiwRM35nBdgMZC2kD5Y3SO5YOfxDGa9wUquydX3R_I7QPFLhRra4Mv8J_I_P8BG_jyyGVCM0omB0LaEYNBo_lMZhds71jKy0jh3257Udkf5YpYWa2lMBpshicW7dfGDYlKXLW"/>
+</div>
+<div>
+<h2 class="font-headline font-black text-xl tracking-tight text-on-surface">Caitlyn</h2>
+<div class="flex items-center gap-2">
+<span class="text-primary-container font-black">LVL 16</span>
+<span class="text-outline">•</span>
+<span class="text-xs font-bold text-on-surface">5 / 2 / 8</span>
+</div>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<div>
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface">HEALTH</span>
+<span class="text-tertiary-fixed-dim">1,840 / 2,100</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/10">
+<div class="h-full bg-tertiary-container shadow-[0_0_8px_rgba(0,250,130,0.4)]" style="width: 87%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-on-surface">MANA</span>
+<span class="text-secondary-fixed-dim">420 / 950</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/10">
+<div class="h-full bg-secondary-container" style="width: 44%"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container p-3 rounded-lg border border-outline-variant/10">
+<span class="block text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Gold at 10m</span>
+<span class="font-headline font-bold text-primary-container">3,450</span>
+</div>
+<div class="bg-surface-container p-3 rounded-lg border border-outline-variant/10">
+<span class="block text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Gold at 20m</span>
+<span class="font-headline font-bold text-primary-container">11,200</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-xs uppercase tracking-[0.2em] mb-3 text-outline">Current Build</h3>
+<div class="grid grid-cols-3 gap-2">
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/30 flex items-center justify-center p-1">
+<img alt="Item" data-alt="icon of a legendary glowing golden sword with mystical energy radiating from the blade" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjMvNyPpkAsp-lIuEHMmyceBqq7Yb_szPsO4je4e3FA_i6bvL8PBueWCWzew2taGeMEfZehdKiYPNnCsA79NdHiNe9ATq7RKdZrPMj2zH2jQEmo8N6pqR4J-Ge7qvAwgn4Bnp2Kig3tvoLFw5cvXrlq9xjXBdBJ4sKoXuvA3Gpo_6K2KXyO9q35oYDyZoGUoWCYesv4XwFez4n-um8hLCmBTl2E6FBTK6tt7rgR9nevDAyxUySRa8FnZVMy6xzoT7XwF_Zy5sk6ffP"/>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/30 flex items-center justify-center p-1">
+<img alt="Item" data-alt="icon of a high-tech bow made of obsidian and gold with laser sights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPeELrJqOlIKhKrRIOZF7BgEv1AplbC7uTbqxIwdBzGg4A47hd-8AujgsLORjhjxnYnJr4JOH3WGnbhQ_YxczUjWRld6VxscCS841qSgczJtOHWAAK_Hy_Iff1blU6iVeBzRVaUVWOZ2iHPVXkCAVH7SrmJ8rNnEwL4uaDKpdBJImlePYJz1YF_FVP9jblJF1pg0Z3lbpMl2GjPg2muYt-mJYFqaDVuVcyPWxLc72jjVAA39KQkO8YrJxk1cFUwV5Uy7V4IaQks2a9"/>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/30 flex items-center justify-center p-1">
+<img alt="Item" data-alt="enchanted leather boots with small glowing wings attached to the ankles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwI_XfNqGwy0ttalzt1Jkkn4aGIcRwIRZPSHrN6rdO2OhXmdN5LGQJae6UQtDnZIRJuuqP4STRzOQWS8uMrK-rzf-JqnUp15k_UjVj4gET7rMDYT7J0qG7eYHxSV9Zoytbt6hvkpPgdUGwD0CQ6AZgCApusNeOJNWXfhvLOm71017R25LdQeyTNS-l6oswk6VDcVCUqZa7DZ-Ed2DAGQIBufvkgAqxzQZebzCRfaV5q1VgAEAf_nps70ZjPuhfcs60miXGMoYR-dUq"/>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/30 flex items-center justify-center p-1">
+<img alt="Item" data-alt="powerful mythical armor chestplate with complex gold filigree and glowing blue core" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZW061ldJhO7LP2asrOfiaGotQOFa7ZV4s2AUxEdftd8xXpHnTxtuMrlzUwR_4ty0TVSGTH8Dpzhanj3aHQ-yrXvG2U4yry3YysmPzNZmgQqA5t8C3RpfhQ8tLIsCkpYpX8F0Ydpm7cQOKxvA8tf67pst9p6n2UYta0-O6tzADseRk8i22-VUWe0pGbhhcDOzM7vMnn_ncj_92G_CjV042fSHxSHltkIwb6n0HPOYR9IW2W92007dwr_AB8t1KrtluVZwl1NpdLFEp"/>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/10 border-dashed"></div>
+<div class="aspect-square bg-surface-container-highest rounded border border-outline-variant/10 border-dashed"></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-surface-container-low rounded-xl p-4 space-y-3">
+<button class="w-full py-3 bg-secondary-container text-on-secondary font-headline font-bold rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span>
+                                Watch Live Stream
+                            </button>
+<button class="w-full py-3 bg-surface-container-highest text-on-surface font-headline font-bold rounded-lg border border-outline-variant/20 flex items-center justify-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="share">share</span>
+                                Share Stats
+                            </button>
+</div>
+</div>
+</div>
+<!-- Footer / Refresh Status -->
+<footer class="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-4 text-xs font-bold text-outline">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span>LIVE DATA FEED ACTIVE</span>
+</div>
+<span class="text-outline-variant">|</span>
+<span>Last Refreshed: Today at 14:24:58</span>
+</div>
+<button class="flex items-center gap-2 px-6 py-2 bg-surface-container-highest text-on-surface hover:text-primary-container font-headline font-bold text-xs uppercase tracking-widest transition-colors rounded-lg border border-outline-variant/20">
+<span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span>
+                        Manual Refresh
+                    </button>
+</footer>
+</div>
+</main>
+</div>
+</body></html>

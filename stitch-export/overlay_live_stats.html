@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Inter:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#fff6df",
+            "on-secondary-fixed-variant": "#004a77",
+            "tertiary-fixed": "#61ff97",
+            "inverse-on-surface": "#2f3035",
+            "primary-container": "#ffd700",
+            "outline-variant": "#4d4732",
+            "on-primary-fixed": "#221b00",
+            "on-primary": "#3a3000",
+            "surface-container-highest": "#333539",
+            "on-primary-fixed-variant": "#544600",
+            "surface-container-high": "#282a2e",
+            "on-tertiary-fixed-variant": "#005227",
+            "error-container": "#93000a",
+            "error": "#ffb4ab",
+            "surface": "#111317",
+            "on-tertiary-fixed": "#00210c",
+            "outline": "#999077",
+            "inverse-primary": "#705d00",
+            "surface-container": "#1e2024",
+            "on-secondary-fixed": "#001d33",
+            "surface-dim": "#111317",
+            "tertiary-container": "#00fa82",
+            "surface-container-lowest": "#0c0e12",
+            "on-background": "#e2e2e8",
+            "secondary-container": "#00a2fd",
+            "surface-bright": "#37393e",
+            "tertiary": "#deffe0",
+            "primary-fixed": "#ffe16d",
+            "surface-variant": "#333539",
+            "inverse-surface": "#e2e2e8",
+            "on-tertiary-container": "#006e36",
+            "on-secondary-container": "#003558",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#e9c400",
+            "on-error": "#690005",
+            "on-secondary": "#003354",
+            "on-surface-variant": "#d0c6ab",
+            "surface-container-low": "#1a1c20",
+            "secondary-fixed-dim": "#98cbff",
+            "secondary-fixed": "#cfe5ff",
+            "on-tertiary": "#003919",
+            "tertiary-fixed-dim": "#00e476",
+            "surface-tint": "#e9c400",
+            "on-primary-container": "#705e00",
+            "background": "#111317",
+            "secondary": "#98cbff",
+            "on-surface": "#e2e2e8"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #333539; border-radius: 10px; }
+    .tonal-shift { background-color: rgba(26, 28, 32, 0.8); }
+  </style>
+</head>
+<body class="bg-slate-900 text-on-background font-body h-screen flex overflow-hidden">
+<!-- Shared SideNavBar -->
+<aside class="h-full w-16 bg-slate-950/80 flex flex-col items-center py-4 space-y-6 border-r border-white/5">
+<div class="text-yellow-500 font-black mb-4">
+<span class="material-symbols-outlined text-2xl">control_point</span>
+</div>
+<button class="flex flex-col items-center text-slate-500 hover:text-slate-200 hover:bg-white/5 p-2 rounded scale-95 active:scale-90 transition-all">
+<span class="material-symbols-outlined" data-icon="sports_esports">sports_esports</span>
+<span class="font-['Inter'] text-[10px] font-semibold mt-1">Games</span>
+</button>
+<button class="flex flex-col items-center text-yellow-400 bg-yellow-500/10 border-r-2 border-yellow-500 p-2 rounded scale-95 active:scale-90 transition-all">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-['Inter'] text-[10px] font-semibold mt-1">Live Stats</span>
+</button>
+<div class="mt-auto flex flex-col items-center space-y-4">
+<span class="text-[10px] text-slate-600 font-bold rotate-180 mb-2" style="writing-mode: vertical-rl;">v1.0.4</span>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 relative flex items-center justify-center bg-cover bg-center" data-alt="Dark high-contrast esports arena background with neon lights and atmospheric haze" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQmjSG5Gu3CLtnhG7DExoTn2hHM-tsPNtgoiqM4Uq1Vflu-ykxWi5w8-7vhaTGevF5-LI4lGzxuj4iQbXwysXMKuOA0plqWUwC6ylu7SkhmaaEGa_ZyoLIGPbbFk4QQDuygtm0o0jlfGYNKwE-8HfMXqjiusLPU7XOQUMBFNwm0byZ6yKpt7a1t2hRV4bxbIJmanipfTu2OYE2-M7oXKhL99zaww_aedu2iNGNYPCWmGm9IbUiHoASbu_bH0-UC9NbEMNTgd4CJgWD');">
+<!-- Overlay Content Window -->
+<div class="w-full max-w-lg bg-slate-900/90 backdrop-blur-xl rounded-xl shadow-2xl shadow-yellow-500/10 border border-white/10 overflow-hidden">
+<!-- Shared TopAppBar -->
+<header class="flex justify-between items-center px-3 py-2 w-full border-b border-white/5 bg-slate-900/90">
+<div class="flex items-center gap-2">
+<span class="text-lg font-black text-yellow-500">miniGamba</span>
+<span class="font-['Space_Grotesk'] font-bold text-sm uppercase tracking-wider text-yellow-400">Live Stats</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 hover:bg-white/10 transition-colors cursor-grab p-1 rounded" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="material-symbols-outlined text-slate-400 hover:bg-white/10 transition-colors cursor-grab p-1 rounded" data-icon="remove">remove</span>
+<span class="material-symbols-outlined text-slate-400 hover:bg-white/10 transition-colors cursor-grab p-1 rounded" data-icon="close">close</span>
+</div>
+</header>
+<!-- Scoreboard Summary -->
+<section class="p-6">
+<div class="flex justify-between items-center mb-6">
+<!-- Blue Team -->
+<div class="text-center">
+<h3 class="font-headline text-secondary text-3xl font-bold">24</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-secondary/60 font-bold">Blue Kills</p>
+</div>
+<!-- Timer & Live Badge -->
+<div class="flex flex-col items-center">
+<div class="bg-tertiary-container/10 border border-tertiary-container/30 px-3 py-1 rounded-full mb-2 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container shadow-[0_0_8px_#00fa82]"></span>
+<span class="text-[10px] font-bold text-tertiary-fixed-dim uppercase tracking-tighter">Live</span>
+</div>
+<div class="font-headline text-4xl font-black text-primary tracking-tighter">24:15</div>
+</div>
+<!-- Red Team -->
+<div class="text-center">
+<h3 class="font-headline text-error text-3xl font-bold">18</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-error/60 font-bold">Red Kills</p>
+</div>
+</div>
+<!-- Objective HUD -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-low p-3 rounded-lg border-l-2 border-secondary flex justify-between items-center">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="pentagon" style="font-variation-settings: 'FILL' 1;">pentagon</span>
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="castle" style="font-variation-settings: 'FILL' 1;">castle</span>
+</div>
+<div class="text-right">
+<span class="block text-[10px] text-on-surface-variant font-bold uppercase">Objectives</span>
+<span class="text-sm font-headline text-on-surface">3D / 5T</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border-r-2 border-error flex justify-between items-center">
+<div class="text-left">
+<span class="block text-[10px] text-on-surface-variant font-bold uppercase">Objectives</span>
+<span class="text-sm font-headline text-on-surface">1D / 2T</span>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-error text-lg" data-icon="castle" style="font-variation-settings: 'FILL' 1;">castle</span>
+<span class="material-symbols-outlined text-error/30 text-lg" data-icon="pentagon">pentagon</span>
+</div>
+</div>
+</div>
+<!-- Team Lists -->
+<div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[320px] pr-1">
+<!-- Blue Team List -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="h-[1px] flex-1 bg-secondary/20"></div>
+<span class="text-[9px] font-bold text-secondary uppercase tracking-widest">Order - Blue Side</span>
+<div class="h-[1px] flex-1 bg-secondary/20"></div>
+</div>
+<div class="space-y-1">
+<!-- Player Row (Self) -->
+<div class="flex items-center justify-between p-2 bg-primary-container/10 border border-primary-container/30 rounded shadow-lg shadow-primary-container/5">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-8 h-8 rounded border border-primary-container" data-alt="Sleek digital portrait of a cybernetic warrior with glowing yellow accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSfTzYNp1XgHSQaqt2hDnKPq4dGxqslCDGXeQ_rXGignbb3jnyAoIl6gxnVF0H7Rpaoi9xxoAYJoDkDWw-8F0n46O2CLsugvkZTA6pB0z8mZbwpZce-RHhdzLvskmBVcqbD7uZFtwA8BKiKzb963XwUJcRWY1KmVqtoVf0c18gawJWsxRCQ7PZnLLnTBvAF1SYic1Wi0w0SB5LDWJZINBG8Lwu1oytSaNZBoY1ilN5T91vDojoE91z1pD8SNVvN-B2_AXKjClWjE6P"/>
+<span class="absolute -bottom-1 -right-1 bg-primary-container text-on-primary text-[8px] px-1 font-black rounded">14</span>
+</div>
+<div>
+<span class="block text-xs font-bold text-primary">GambaKing_99</span>
+<span class="text-[9px] text-primary-fixed-dim/80 font-semibold uppercase">Mid Laner</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-xs font-headline font-bold text-primary tracking-widest">12 / 2 / 8</span>
+<span class="text-[8px] font-bold text-tertiary-fixed-dim uppercase">7.4 KDA</span>
+</div>
+</div>
+<!-- Other Blue Players -->
+<div class="flex items-center justify-between p-2 bg-surface-container-low/50 hover:bg-surface-container-highest transition-colors rounded">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-8 h-8 rounded border border-white/5 grayscale" data-alt="Portrait of an ice-themed wizard character with cold blue glowing eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbrrFNmyif8AX_IyV37YL-qfM9aOl5iqD-6aAh8WWKy2uOjQQclqM6QsLFI4NJQsGTuQIBri8uNM_mY0PpK_Frt97-XrgpYXIISaGOqfkbkjTPA25NrRl7ITiKjw91z_CjVLPNEXlT3T0np6e7hGiqwBcK7COeXyPGpcU6Vx2KoGiU2o9lI8RY3zSIPic2GItG6Hi9xnxKJrQTxECsaG6slSzORNNMHMRE2YqaT19dRN8qw7b9q1e_otIgB3KibcoC96umpLNsjVxc"/>
+<span class="absolute -bottom-1 -right-1 bg-surface-container-highest text-on-surface text-[8px] px-1 font-black rounded">13</span>
+</div>
+<div>
+<span class="block text-xs font-bold text-on-surface">FrostByte</span>
+<span class="text-[9px] text-on-surface-variant/60 font-semibold uppercase">Jungler</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-xs font-headline font-bold text-on-surface tracking-widest">4 / 5 / 11</span>
+<span class="text-[8px] font-bold text-on-surface-variant/40 uppercase">3.0 KDA</span>
+</div>
+</div>
+<!-- Repeat for other 3 blue players... -->
+<div class="flex items-center justify-between p-2 bg-surface-container-lowest/50 rounded opacity-60">
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-surface-container-high rounded border border-white/5"></div><span class="text-[10px] text-on-surface-variant">Top - ShadowStalker</span></div>
+<span class="text-xs font-headline font-bold text-on-surface">3 / 4 / 6</span>
+</div>
+</div>
+</div>
+<!-- Red Team List -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="h-[1px] flex-1 bg-error/20"></div>
+<span class="text-[9px] font-bold text-error uppercase tracking-widest">Chaos - Red Side</span>
+<div class="h-[1px] flex-1 bg-error/20"></div>
+</div>
+<div class="space-y-1">
+<div class="flex items-center justify-between p-2 bg-surface-container-low/50 hover:bg-surface-container-highest transition-colors rounded">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-8 h-8 rounded border border-error/20" data-alt="Dark portrait of a fire-themed dragon knight with burning red embers around the helmet" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6dilTpUfdQC2Ni1TT9wqBYwMdAmh9PPyLIyp2QpC4-1whw6HghQ-xDMDdrvCFakgEn0kP-Dvt9oaiJgwd0O9WKtOm8XIVBT0lEMpPuNUnctShKq9cB8wa0m94S7CK46YWdYygccUoqJVwAQPLBZvfDyqnmZiqRM0sxdaynQLxSC-weNL9DS8L_ViMzAEAG5gEGe5zbi_Z1E37KD72qtjpSNqG_jDSchWb9OMhBeue9YvsOnK3ZdGOAu8fqmX1QQ-ccpl79v6zsA44"/>
+<span class="absolute -bottom-1 -right-1 bg-error-container text-on-error-container text-[8px] px-1 font-black rounded">15</span>
+</div>
+<div>
+<span class="block text-xs font-bold text-on-surface">DragonBane</span>
+<span class="text-[9px] text-error/60 font-semibold uppercase">Carry</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-xs font-headline font-bold text-on-surface tracking-widest">10 / 6 / 2</span>
+<span class="text-[8px] font-bold text-error uppercase">2.0 KDA</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 bg-surface-container-lowest/50 rounded opacity-80">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-high rounded border border-white/5 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up of mechanical robotic eye glowing red in a dark metallic environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcZIfw8kN0bYJ-wrRVo4dhrjRQzCLv1s8tpZN1xX7MzV1j0_w5iFoa9BR7Bm5hlRNDwxd1tBnaXVJQ8Ew3TRamQoGvJjK6fRQce85QMDUTB4uJAQE4n_8EInEMX1B5daddPf4XR7PVSJiRGgH89L9IZZdl_s9IrqmJOY85ZnqjeQtE24YKvbAn0JTflfWg75b_-uCMa8HK6Ew2tZvdeV8Bv2K4-xMc2srLLcD5bg4ExVVlGm5qZsYrBzBFVu9jBdmDL06-Bc4mdYNz"/>
+</div>
+<div>
+<span class="block text-xs font-bold text-on-surface">IronMech</span>
+<span class="text-[9px] text-on-surface-variant/60 font-semibold uppercase">Support</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-xs font-headline font-bold text-on-surface tracking-widest">1 / 5 / 14</span>
+<span class="text-[8px] font-bold text-on-surface-variant/40 uppercase">3.0 KDA</span>
+</div>
+</div>
+<!-- Placeholder for other 3 red players -->
+<div class="flex items-center justify-between p-2 bg-surface-container-lowest/30 rounded opacity-40">
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-surface-container-high rounded border border-white/5"></div><span class="text-[10px] text-on-surface-variant">Mid - VoidStep</span></div>
+<span class="text-xs font-headline font-bold text-on-surface">4 / 8 / 3</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Action -->
+<footer class="p-3 bg-surface-container-low border-t border-white/5 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary shadow-sm"></span>
+<span class="text-[10px] font-semibold text-on-surface-variant">Syncing Live Data...</span>
+</div>
+<button class="bg-primary-container text-on-primary px-4 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all">
+          View Detail Draft
+        </button>
+</footer>
+</div>
+</main>
+<!-- Contextual Floating Info -->
+<div class="fixed bottom-6 right-6 p-4 bg-slate-900/80 backdrop-blur-md rounded-lg border border-white/10 max-w-[240px] shadow-2xl">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-200 p-0.5">
+<div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+<span class="material-symbols-outlined text-yellow-500" data-icon="rocket_launch">rocket_launch</span>
+</div>
+</div>
+<div>
+<h4 class="text-xs font-bold text-primary">Win Probability</h4>
+<div class="w-24 h-1.5 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-yellow-500 w-[68%]"></div>
+</div>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Blue team currently holds a <span class="text-tertiary-fixed-dim font-bold">12.4k gold lead</span>. Baron Nashor spawning in 0:45.</p>
+</div>
+</body></html>

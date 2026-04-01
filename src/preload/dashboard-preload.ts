@@ -4,6 +4,7 @@
  */
 
 import { contextBridge, ipcRenderer } from 'electron';
+import type { UserSettings } from '../shared/types/user.types';
 
 interface ElectronAPI {
   // Game operations
@@ -66,16 +67,58 @@ const api: ElectronAPI = {
   startGame: (gameType, bet) => ipcRenderer.invoke('game:start', gameType, bet),
   endGame: (gameType, result) => ipcRenderer.invoke('game:end', gameType, result),
   getGameStats: (gameType) => ipcRenderer.invoke('game:getStats', gameType),
-  getGameHistory: (limit, offset) => ipcRenderer.invoke('game:getHistory', limit, offset),
+  getGameHistory: (limit, offset) => ipcRenderer.invoke('game:getHistory', { limit, offset }),
 
   // Settings operations
-  getSettings: (key) => ipcRenderer.invoke('settings:get', key),
-  setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
+  getSettings: async () => {
+    const res = await ipcRenderer.invoke('settings:get');
+    return res?.settings ?? {};
+  },
+  setSetting: async (key, value) => {
+    const res = await ipcRenderer.invoke('settings:get');
+    const currentSettings = (res?.settings ?? {}) as UserSettings;
+    const nextSettings: UserSettings = structuredClone(currentSettings);
+
+    switch (key) {
+      case 'overlayOpacity':
+        nextSettings.overlay.opacity = Math.max(0.1, Math.min(1, Number(value) / 100));
+        break;
+      case 'overlaySize':
+        if (value === 'small' || value === 'medium' || value === 'large' || value === 'custom') {
+          nextSettings.overlay.size = value;
+        }
+        break;
+      case 'clickThrough':
+        nextSettings.overlay.clickThroughMode = Boolean(value);
+        break;
+      case 'masterVolume':
+        nextSettings.audio.masterVolume = Number(value);
+        break;
+      case 'soundEffects':
+        nextSettings.audio.uiVolume = Boolean(value) ? 80 : 0;
+        nextSettings.audio.gameVolume = Boolean(value) ? 100 : 0;
+        break;
+      case 'backgroundMusic':
+        nextSettings.audio.musicVolume = Boolean(value) ? 50 : 0;
+        break;
+      case 'autoSpin':
+      case 'fastAnimations':
+      case 'defaultBet':
+        return { success: true };
+      default:
+        return { success: false, error: `Unsupported setting key: ${key}` };
+    }
+
+    return ipcRenderer.invoke('settings:update', nextSettings);
+  },
   resetSettings: () => ipcRenderer.invoke('settings:reset'),
 
   // Data operations
   getUserData: () => ipcRenderer.invoke('data:getUser'),
-  exportData: () => ipcRenderer.invoke('data:export'),
+  exportData: async () => {
+    const res = await ipcRenderer.invoke('data:export');
+    return res?.data ?? '';
+  },
   importData: (jsonData) => ipcRenderer.invoke('data:import', jsonData),
   resetData: () => ipcRenderer.invoke('data:reset'),
   backupData: () => ipcRenderer.invoke('data:backup'),

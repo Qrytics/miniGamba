@@ -48,6 +48,16 @@ export interface ElectronAPI {
   resetData?: () => Promise<any>;
   backupData?: () => Promise<any>;
   restoreData?: (backupPath: string) => Promise<any>;
+
+  // League of Legends operations
+  lolGetStatus: () => Promise<any>;
+  lolGetCurrentSummoner: () => Promise<any>;
+  lolGetSummonerByName: (name: string) => Promise<any>;
+  lolGetRankedStats: (summonerId: number) => Promise<any>;
+  lolGetChampionMasteries: (puuid: string) => Promise<any>;
+  lolGetMatchHistory: (puuid: string, begIndex?: number, endIndex?: number) => Promise<any>;
+  lolGetChampSelectSession: () => Promise<any>;
+  lolGetLiveGameData: () => Promise<any>;
   
   // Window operations
   launchOverlay?: () => void;
