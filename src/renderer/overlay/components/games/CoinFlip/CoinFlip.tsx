@@ -36,6 +36,10 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
 
     try {
       const startResult = await window.electronAPI.startGame('coin-flip', bet);
+      if (!startResult?.success) {
+        console.error('Start game failed:', startResult?.error || 'Unknown error');
+        return;
+      }
       const sessionId = startResult?.sessionId;
       playBet();
       playCoinFlip();

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.cursor.com/schemas/environment.schema.json",
+  "name": "miniGamba Cloud Agent Environment",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "install": "npm ci && npx playwright install chromium",
+  "start": "bash .cursor/start-cloud.sh"
+}

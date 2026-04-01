@@ -56,8 +56,8 @@ export function createDashboardWindow(): BrowserWindow {
     dashboardWindow?.show();
   });
 
-  // Open dev tools in development (but not during testing)
-  if ((process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) && !process.env.PLAYWRIGHT_TEST) {
+  // Open dev tools only for explicit development mode (never by default)
+  if (process.env.NODE_ENV === 'development' && !process.env.PLAYWRIGHT_TEST) {
     dashboardWindow.webContents.openDevTools();
   }
 

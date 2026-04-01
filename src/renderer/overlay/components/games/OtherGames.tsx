@@ -50,6 +50,7 @@ export const ScratchCards: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [scratched, setScratched] = useState<boolean[]>(Array(9).fill(false));
   const [won, setWon] = useState<boolean | null>(null);
   const [payout, setPayout] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const checkWin = (symbols: string[], revealed: boolean[]) => {
     const rows = [
@@ -70,6 +71,7 @@ export const ScratchCards: React.FC<GameProps> = ({ onCoinsUpdate }) => {
     try {
       const startRes = await window.electronAPI.startGame('scratch-cards', bet);
       if (!startRes?.success) return;
+      setSessionId(startRes.sessionId ?? null);
       playBet();
       const willWin = Math.random() < 0.35;
       setGrid(genScratchGrid(willWin));
@@ -97,8 +99,9 @@ export const ScratchCards: React.FC<GameProps> = ({ onCoinsUpdate }) => {
       setPayout(winAmount);
       setWon(isWin);
       setPlaying(false);
-      const result = { bet, payout: winAmount, result: isWin ? 'win' : 'loss', win: isWin };
+      const result = { bet, payout: winAmount, result: isWin ? 'win' : 'loss', win: isWin, sessionId };
       await window.electronAPI.endGame('scratch-cards', result);
+      setSessionId(null);
       if (isWin) playWin(); else playLoss();
       onCoinsUpdate();
     }
@@ -198,12 +201,14 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<WheelResult | null>(null);
   const spinRef = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
 
   const handleSpin = async () => {
     if (spinning) return;
     try {
       const startRes = await window.electronAPI.startGame('wheel-of-fortune', bet);
       if (!startRes?.success) return;
+      sessionIdRef.current = startRes.sessionId ?? null;
       playBet();
       playWheelSpin();
       setSpinning(true);
@@ -221,10 +226,11 @@ export const WheelOfFortune: React.FC<GameProps> = ({ onCoinsUpdate }) => {
         const seg = WHEEL_SEGMENTS[segmentIdx];
         const payout = Math.floor(bet * seg.multiplier);
         const win = payout > 0;
-        const gameResult = { bet, payout, result: win ? 'win' as const : 'loss' as const, win, segment: seg.label };
+        const gameResult = { bet, payout, result: win ? 'win' as const : 'loss' as const, win, segment: seg.label, sessionId: sessionIdRef.current };
         setResult({ bet, payout, result: gameResult.result, win, seg });
         setSpinning(false);
         await window.electronAPI.endGame('wheel-of-fortune', gameResult);
+        sessionIdRef.current = null;
         if (payout >= bet * 4) playBigWin();
         else if (win) playWin();
         else playLoss();
@@ -337,12 +343,14 @@ export const MiniDerby: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [winner, setWinner] = useState<number | null>(null);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
 
   const handleRace = async () => {
     if (pick === null || racing) return;
     try {
       const startRes = await window.electronAPI.startGame('mini-derby', bet);
       if (!startRes?.success) return;
+      sessionIdRef.current = startRes.sessionId ?? null;
       playBet();
       playHorseGallop();
       setRacing(true);
@@ -366,9 +374,10 @@ export const MiniDerby: React.FC<GameProps> = ({ onCoinsUpdate }) => {
           setRacing(false);
           const win = done === pick;
           const payout = win ? Math.floor(bet * HORSES[done].odds) : 0;
-          const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, horse: HORSES[done].name };
+          const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, horse: HORSES[done].name, sessionId: sessionIdRef.current };
           setResult(gameResult);
           await window.electronAPI.endGame('mini-derby', gameResult);
+          sessionIdRef.current = null;
           if (win) playBigWin(); else playLoss();
           onCoinsUpdate();
         }
@@ -486,12 +495,14 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [rollingDice, setRollingDice] = useState<[number, number]>([1, 1]);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
 
   const handleRoll = async () => {
     if (rolling) return;
     try {
       const startRes = await window.electronAPI.startGame('dice-roll', bet);
       if (!startRes?.success) return;
+      sessionIdRef.current = startRes.sessionId ?? null;
       playBet();
       playDiceRoll();
       setRolling(true);
@@ -499,7 +510,7 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
 
       // Animate dice
       let frames = 0;
-      const anim = setInterval(() => {
+      const anim = setInterval(async () => {
         setRollingDice([
           Math.floor(Math.random() * 6),
           Math.floor(Math.random() * 6),
@@ -522,10 +533,11 @@ export const DiceRoll: React.FC<GameProps> = ({ onCoinsUpdate }) => {
 
           const selectedBet = BET_TYPES.find((b) => b.id === betType)!;
           const payout = win ? bet * selectedBet.payout : 0;
-          const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, sum, dice: [d1 + 1, d2 + 1] };
+          const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, sum, dice: [d1 + 1, d2 + 1], sessionId: sessionIdRef.current };
           setResult(gameResult);
           setRolling(false);
-          window.electronAPI.endGame('dice-roll', gameResult);
+          await window.electronAPI.endGame('dice-roll', gameResult);
+          sessionIdRef.current = null;
           if (win) playWin(); else playLoss();
           onCoinsUpdate();
         }
@@ -627,11 +639,13 @@ export const MiniPoker: React.FC<GameProps> = ({ onCoinsUpdate }) => {
   const [stage, setStage] = useState<'idle' | 'hold' | 'result'>('idle');
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const deckRef = useRef(makeDeck());
+  const sessionIdRef = useRef<string | null>(null);
 
   const handleDeal = async () => {
     try {
       const startRes = await window.electronAPI.startGame('mini-poker', bet);
       if (!startRes?.success) return;
+      sessionIdRef.current = startRes.sessionId ?? null;
       playBet();
       deckRef.current = makeDeck();
       const newHand = deckRef.current.splice(0, 3);
@@ -665,10 +679,11 @@ export const MiniPoker: React.FC<GameProps> = ({ onCoinsUpdate }) => {
     const playerRank = handRank(newHand);
     const win = playerRank.multiplier > 0;
     const payout = win ? Math.floor(bet * playerRank.multiplier) : 0;
-    const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, hand: playerRank.name };
+    const gameResult = { bet, payout, result: win ? 'win' : 'loss', win, hand: playerRank.name, sessionId: sessionIdRef.current };
     setResult(gameResult);
     setStage('result');
     await window.electronAPI.endGame('mini-poker', gameResult);
+    sessionIdRef.current = null;
     if (payout >= bet * 10) playBigWin();
     else if (win) playWin();
     else playLoss();

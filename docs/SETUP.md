@@ -2,6 +2,37 @@
 
 Complete guide for setting up and running the miniGamba development environment.
 
+## Cursor Cloud Agent setup (recommended for autonomous runs)
+
+This repository includes a Cloud Agent environment configuration so agents can run
+`npm ci`, `npm run type-check`, and Playwright/Electron tooling out-of-the-box.
+
+### Files
+
+- `.cursor/environment.json` - Cloud Agent environment definition
+- `.cursor/Dockerfile` - image customization for native + browser deps
+
+### What it installs
+
+- Native build prerequisites for `better-sqlite3`:
+  - `build-essential`
+  - `python3`
+  - `pkg-config`
+- Electron/Playwright Linux runtime libraries (`libnss3`, GTK, X11, audio, etc.)
+- `xvfb` for headless display-backed Electron/Playwright execution
+- Playwright browser binaries (chromium) via `npx playwright install --with-deps chromium`
+
+### Usage
+
+1. Ensure your Cloud Agent environment picks up repo config (`.cursor/environment.json`).
+2. Launch an agent from this repository.
+3. The `install` hook runs:
+   - `npm ci`
+   - Playwright browser install
+4. Run:
+   - `npm run type-check`
+   - `npm run test:e2e:single` (recommended for reliability)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:

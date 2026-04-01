@@ -63,23 +63,35 @@ ipcMain.handle('game:end', async (_event: IpcMainInvokeEvent, gameType: GameType
   try {
     const user = userDataService.getUser();
     
-    // Extract bet from sessionId if available, otherwise fallback to resultData.bet
-    let bet = typeof resultData['bet'] === 'number' ? resultData['bet'] : 0;
+    // Reconcile this result against the session started via game:start.
+    // This ensures we always use the server-side deducted bet when available.
+    const payloadBet = typeof resultData['bet'] === 'number' ? resultData['bet'] : 0;
+    let bet = payloadBet;
     const sessionId = typeof resultData['sessionId'] === 'string' ? resultData['sessionId'] : null;
     
-    if (sessionId && activeBets.has(sessionId)) {
-      const activeBet = activeBets.get(sessionId)!;
+    if (sessionId) {
+      const activeBet = activeBets.get(sessionId);
+      if (!activeBet) {
+        return { success: false, error: 'Invalid or expired game session' };
+      }
+
+      if (activeBet.gameType !== gameType) {
+        activeBets.delete(sessionId);
+        return { success: false, error: 'Game type does not match active session' };
+      }
+
       bet = activeBet.bet;
-      // Clean up the session
       activeBets.delete(sessionId);
     }
     
-    // Fallback: if bet is still not found, use a safe minimum
     if (!bet || bet <= 0) {
-      bet = 10;
+      return { success: false, error: 'Missing valid bet amount for game result' };
     }
     
     const payout = typeof resultData['payout'] === 'number' ? resultData['payout'] : 0;
+    if (payout < 0) {
+      return { success: false, error: 'Invalid payout amount' };
+    }
     
     // Determine result: check resultData first, then infer from payout
     let result: GameResult = 'loss';

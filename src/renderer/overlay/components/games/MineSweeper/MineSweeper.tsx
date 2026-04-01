@@ -12,10 +12,13 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
   const [revealed, setRevealed] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const handleStart = async () => {
     try {
-      await window.electronAPI.startGame('mine-sweeper', bet);
+      const startResult = await window.electronAPI.startGame('mine-sweeper', bet);
+      if (!startResult?.success) return;
+      setSessionId(startResult.sessionId ?? null);
       setGrid(Array(25).fill('⬜'));
       setRevealed(0);
       setResult(null);
@@ -40,11 +43,13 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
         payout: 0, 
         result: 'loss',
         win: false,
-        hit: 'mine' 
+        hit: 'mine',
+        sessionId,
       };
       setResult(gameResult);
       playLoss();
       await window.electronAPI.endGame('mine-sweeper', gameResult);
+      setSessionId(null);
       onCoinsUpdate();
     } else {
       setRevealed(revealed + 1);
@@ -60,12 +65,14 @@ const MineSweeper: React.FC<MineSweeperProps> = ({ onCoinsUpdate }) => {
       payout: payout,
       result: 'win',
       win: true,
-      revealed 
+      revealed,
+      sessionId,
     };
     setResult(gameResult);
     setPlaying(false);
     playWin();
     await window.electronAPI.endGame('mine-sweeper', gameResult);
+    setSessionId(null);
     onCoinsUpdate();
   };
 

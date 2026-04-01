@@ -12,6 +12,7 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
   const [gameState, setGameState] = useState<any>(null);
   const [result, setResult] = useState<any>(null);
   const [playing, setPlaying] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const engineRef = useRef<BlackjackEngine | null>(null);
 
@@ -29,7 +30,12 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
     if (!engine) return;
 
     try {
-      await window.electronAPI.startGame('blackjack', bet);
+      const startResult = await window.electronAPI.startGame('blackjack', bet);
+      if (!startResult?.success) {
+        return;
+      }
+
+      setSessionId(startResult.sessionId ?? null);
       playBet();
       engine.start(bet);
       engine.deal();
@@ -82,6 +88,7 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
       result: endResult.result,
       win: endResult.result === 'win',
       blackjack: false,
+      sessionId,
     };
     setResult(gameResult);
     try {
@@ -90,6 +97,8 @@ const Blackjack: React.FC<BlackjackProps> = ({ onCoinsUpdate }) => {
       onCoinsUpdate();
     } catch (error) {
       console.error('Finish game failed:', error);
+    } finally {
+      setSessionId(null);
     }
   };
 

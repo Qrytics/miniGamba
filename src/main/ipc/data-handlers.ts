@@ -170,6 +170,17 @@ ipcMain.handle('data:collectInvestment', async (_event: IpcMainInvokeEvent, inve
   }
 });
 
+// Alias used by preload API
+ipcMain.handle('data:cashOutInvestment', async (_event: IpcMainInvokeEvent, investmentId: number) => {
+  try {
+    const user = userDataService.getUser();
+    const result = investmentService.collectInvestment(user.id, investmentId);
+    return { success: true, ...result };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+});
+
 // Data export/import
 ipcMain.handle('data:export', async () => {
   try {
