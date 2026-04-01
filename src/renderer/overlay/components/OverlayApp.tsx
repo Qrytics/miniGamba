@@ -129,7 +129,6 @@ const OverlayApp: React.FC = () => {
   };
 
   const handleOpenDashboard = () => {
-    playClick();
     if (window.electronAPI.openDashboard) {
       window.electronAPI.openDashboard();
     }
@@ -149,7 +148,7 @@ const OverlayApp: React.FC = () => {
             <span>{userData?.coins?.toLocaleString() || 0}</span>
           </div>
           {activeTab === 'games' && currentGame && (
-            <button className="control-btn" onClick={() => { playClick(); setCurrentGame(null); }} data-testid="overlay-back-btn">
+            <button className="control-btn" onClick={() => { setCurrentGame(null); }} data-testid="overlay-back-btn">
               ← Back
             </button>
           )}
@@ -157,7 +156,7 @@ const OverlayApp: React.FC = () => {
         <div className="header-controls">
           <button
             className={`control-btn${activeTab === 'games' ? ' active' : ''}`}
-            onClick={() => { playClick(); setActiveTab('games'); setCurrentGame(null); }}
+            onClick={() => { setActiveTab('games'); setCurrentGame(null); }}
             title="Mini-Games"
             data-testid="overlay-tab-games"
           >
@@ -165,7 +164,7 @@ const OverlayApp: React.FC = () => {
           </button>
           <button
             className={`control-btn${activeTab === 'livestats' ? ' active' : ''}`}
-            onClick={() => { playClick(); setActiveTab('livestats'); setCurrentGame(null); }}
+            onClick={() => { setActiveTab('livestats'); setCurrentGame(null); }}
             title="Live Game Stats"
             data-testid="overlay-tab-livestats"
           >
@@ -226,7 +225,6 @@ const OverlayApp: React.FC = () => {
                           key={game.id}
                           className="game-btn"
                           onClick={() => {
-                            playClick();
                             setCurrentGame(game.id);
                           }}
                           data-testid={`game-btn-${game.id}`}
