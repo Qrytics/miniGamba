@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>miniGamba - Gilded Fortune Slots</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-bright": "#37393e",
+            "inverse-on-surface": "#2f3035",
+            "primary-fixed-dim": "#e9c400",
+            "surface-variant": "#333539",
+            "tertiary-fixed": "#61ff97",
+            "surface-tint": "#e9c400",
+            "surface-container-low": "#1a1c20",
+            "outline-variant": "#4d4732",
+            "on-secondary-fixed-variant": "#004a77",
+            "on-error": "#690005",
+            "inverse-primary": "#705d00",
+            "error-container": "#93000a",
+            "secondary-fixed": "#cfe5ff",
+            "primary-fixed": "#ffe16d",
+            "primary": "#fff6df",
+            "on-primary-fixed": "#221b00",
+            "on-primary": "#3a3000",
+            "surface-container-lowest": "#0c0e12",
+            "secondary": "#98cbff",
+            "on-secondary-container": "#003558",
+            "tertiary-fixed-dim": "#00e476",
+            "on-tertiary-fixed": "#00210c",
+            "surface-dim": "#111317",
+            "on-tertiary-fixed-variant": "#005227",
+            "on-secondary": "#003354",
+            "surface-container": "#1e2024",
+            "on-surface-variant": "#d0c6ab",
+            "on-surface": "#e2e2e8",
+            "surface-container-high": "#282a2e",
+            "surface": "#111317",
+            "on-primary-fixed-variant": "#544600",
+            "tertiary-container": "#00fa82",
+            "on-primary-container": "#705e00",
+            "on-error-container": "#ffdad6",
+            "outline": "#999077",
+            "error": "#ffb4ab",
+            "secondary-fixed-dim": "#98cbff",
+            "background": "#111317",
+            "tertiary": "#deffe0",
+            "secondary-container": "#00a2fd",
+            "on-secondary-fixed": "#001d33",
+            "on-tertiary-container": "#006e36",
+            "on-background": "#e2e2e8",
+            "surface-container-highest": "#333539",
+            "primary-container": "#ffd700",
+            "on-tertiary": "#003919",
+            "inverse-surface": "#e2e2e8"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .reel-mask {
+      mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 w-full bg-gradient-to-b from-[#1a1d23] to-[#111317] border-b border-[#4D4732]/20 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-[#FFD700] tracking-tighter">miniGamba</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<div class="font-['Space_Grotesk'] uppercase tracking-widest text-sm text-[#FFD700]">
+        SLOTS
+      </div>
+<div class="font-['Space_Grotesk'] uppercase tracking-widest text-sm text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 transition-colors px-2 py-1 rounded">
+        LIVE DECK
+      </div>
+<div class="font-['Space_Grotesk'] uppercase tracking-widest text-sm text-[#E2E2E8]/60 hover:bg-[#FFD700]/10 transition-colors px-2 py-1 rounded">
+        LEADERBOARD
+      </div>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-lg flex items-center gap-2 border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-headline font-bold text-primary-container">1,250,000 COINS</span>
+</div>
+<button class="material-symbols-outlined text-on-surface/60 hover:text-on-surface transition-colors">close</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 h-full w-64 z-40 flex flex-col h-full py-8 bg-[#111317] border-r border-[#4D4732]/15 hidden md:flex pt-24">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-primary-container/20 flex items-center justify-center border border-primary-container/30">
+<img alt="Pro Player Avatar" data-alt="stylized vector avatar of a confident esports player wearing a golden headset and futuristic gaming jacket" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeKBShXg-UbXmjg2m6b_HpEJoL8q3y0jFWMzgr4Ti_HcYIXOKHRWEzuaSpvl8QPhZu7cIfh4V6jqz5cefutDShNgXBwNdTNVDrTm-hS5BYdMvzqYOsUHwjezZvYI_v8oub4yuHhdP2KH6nZFAEhzg6ZbipBwsVQLvozEeLKw6CL_pwns-PTwzKPCMa_ertrDK2HHFHudVReozyz49QpvtdT4PLDTf1XGDWHMUz10K3WuPp3HMAtiWewa0aNSXND_BFeqwWO8OedKGg"/>
+</div>
+<div>
+<div class="text-[#FFD700] font-black text-xs tracking-wider uppercase font-headline">COMMANDER</div>
+<div class="text-[#E2E2E8]/40 text-[10px] font-bold">Rank: Gold IV</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active: Slots -->
+<a class="flex items-center gap-4 px-6 py-4 text-[#FFD700] border-r-2 border-[#FFD700] bg-gradient-to-r from-[#FFD700]/5 to-transparent transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="slot_machine">casino</span>
+<span class="font-['Inter'] text-xs font-semibold uppercase tracking-widest">Slots</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-white/5 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-xs font-semibold uppercase tracking-widest">Live Deck</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-white/5 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-['Inter'] text-xs font-semibold uppercase tracking-widest">Leaderboard</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-white/5 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-['Inter'] text-xs font-semibold uppercase tracking-widest">Wallet</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-white/5 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-xs font-semibold uppercase tracking-widest">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-4 bg-primary-container text-on-primary font-black text-xs tracking-widest uppercase rounded-lg shadow-[0_0_20px_rgba(255,215,0,0.2)] active:scale-95 transition-transform">
+        DEPOSIT GOLD
+      </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:pl-64 pt-20 min-h-screen bg-surface-dim relative overflow-hidden">
+<!-- Ambient Background Accents -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-secondary-container/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="max-w-6xl mx-auto px-6 py-8 flex flex-col items-center">
+<!-- Winner Banner -->
+<div class="w-full max-w-4xl mb-8 relative">
+<div class="bg-gradient-to-r from-transparent via-primary-container/20 to-transparent p-[1px] rounded-full">
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl px-12 py-3 rounded-full flex items-center justify-center gap-4 border border-outline-variant/10 shadow-[0_0_40px_rgba(255,215,0,0.1)]">
+<span class="material-symbols-outlined text-primary-container animate-pulse" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="font-headline text-2xl font-black tracking-[0.3em] text-primary-container uppercase">Jackpot: 15,240,000</span>
+<span class="material-symbols-outlined text-primary-container animate-pulse" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+</div>
+<!-- Slot Machine Container -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<!-- Left: Bet Controls -->
+<div class="lg:col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/15">
+<h3 class="font-headline text-[10px] font-bold text-on-surface/40 uppercase tracking-widest mb-4">Wager Strategy</h3>
+<div class="flex items-center justify-between bg-surface-container-lowest p-2 rounded-lg mb-4 border border-outline-variant/10">
+<button class="w-10 h-10 flex items-center justify-center bg-surface-container-highest text-primary-container rounded border border-outline-variant/20 hover:bg-primary-container/10 active:scale-90 transition-all">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="text-center">
+<div class="text-[10px] text-on-surface/40 font-bold uppercase tracking-tighter">Amount</div>
+<div class="font-headline text-xl font-bold text-on-surface">5,000</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center bg-surface-container-highest text-primary-container rounded border border-outline-variant/20 hover:bg-primary-container/10 active:scale-90 transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-6">
+<button class="py-3 bg-surface-container-highest text-[10px] font-black tracking-widest uppercase border border-outline-variant/20 hover:border-primary-container/50 transition-colors">MAX BET</button>
+<button class="py-3 bg-surface-container-highest text-[10px] font-black tracking-widest uppercase border border-outline-variant/20 hover:border-primary-container/50 transition-colors">1/2 BET</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<span class="text-xs font-bold text-on-surface/60 uppercase">Auto Spin</span>
+<button class="w-12 h-6 bg-surface-variant rounded-full relative p-1 flex items-center transition-colors">
+<div class="w-4 h-4 bg-on-surface-variant rounded-full shadow-sm"></div>
+</button>
+</div>
+</div>
+</div>
+<!-- Center: The Reels -->
+<div class="lg:col-span-6">
+<div class="relative bg-surface-container-lowest p-4 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] border-4 border-[#1e2024]">
+<!-- Reel Frame Decoration -->
+<div class="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary-container/40"></div>
+<div class="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary-container/40"></div>
+<div class="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary-container/40"></div>
+<div class="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary-container/40"></div>
+<div class="reel-mask grid grid-cols-5 gap-2 h-[450px]">
+<!-- Reel 1 -->
+<div class="space-y-2">
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-primary-container drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<div class="text-[8px] font-black text-primary-container/60 mt-1">GOLD BAR</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-secondary-container" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<div class="text-[8px] font-black text-secondary-container/60 mt-1">DIAMOND</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-error" style="font-variation-settings: 'FILL' 1;">filter_7</span>
+<div class="text-[8px] font-black text-error/60 mt-1">LUCKY SEVEN</div>
+</div>
+</div>
+<!-- Reel 2 -->
+<div class="space-y-2">
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+<div class="text-[8px] font-black text-tertiary-fixed-dim/60 mt-1">GLOBAL ELITE</div>
+</div>
+<div class="h-36 bg-surface-container-highest border-2 border-primary-container rounded-lg flex flex-col items-center justify-center p-2 shadow-[0_0_20px_rgba(255,215,0,0.2)]">
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">star_half</span>
+<div class="text-[8px] font-black text-primary-container mt-1">WILD CARD</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<div class="text-[8px] font-black text-primary-container/60 mt-1">GOLD BAR</div>
+</div>
+</div>
+<!-- Reel 3 -->
+<div class="space-y-2">
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-error" style="font-variation-settings: 'FILL' 1;">filter_7</span>
+<div class="text-[8px] font-black text-error/60 mt-1">LUCKY SEVEN</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<div class="text-[8px] font-black text-primary-container/60 mt-1">GOLD BAR</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-secondary-container" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<div class="text-[8px] font-black text-secondary-container/60 mt-1">DIAMOND</div>
+</div>
+</div>
+<!-- Reel 4 -->
+<div class="space-y-2">
+<div class="h-36 bg-surface-container-highest border-2 border-primary-container rounded-lg flex flex-col items-center justify-center p-2 shadow-[0_0_20px_rgba(255,215,0,0.2)]">
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">star_half</span>
+<div class="text-[8px] font-black text-primary-container mt-1">WILD CARD</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+<div class="text-[8px] font-black text-tertiary-fixed-dim/60 mt-1">GLOBAL ELITE</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-error" style="font-variation-settings: 'FILL' 1;">filter_7</span>
+<div class="text-[8px] font-black text-error/60 mt-1">LUCKY SEVEN</div>
+</div>
+</div>
+<!-- Reel 5 -->
+<div class="space-y-2">
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-secondary-container" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<div class="text-[8px] font-black text-secondary-container/60 mt-1">DIAMOND</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<div class="text-[8px] font-black text-primary-container/60 mt-1">GOLD BAR</div>
+</div>
+<div class="h-36 bg-surface-container rounded-lg border border-outline-variant/5 flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+<div class="text-[8px] font-black text-tertiary-fixed-dim/60 mt-1">GLOBAL ELITE</div>
+</div>
+</div>
+</div>
+<!-- Winning Line Indicator -->
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-primary-container/40 z-10 -translate-y-1/2 flex items-center justify-between px-2">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+</div>
+</div>
+</div>
+<!-- Right: Payout Display -->
+<div class="lg:col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/15 h-full flex flex-col justify-between">
+<div>
+<h3 class="font-headline text-[10px] font-bold text-on-surface/40 uppercase tracking-widest mb-6">Financial Summary</h3>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant/10">
+<div class="text-[10px] font-bold text-tertiary-fixed-dim uppercase tracking-tighter mb-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary-fixed-dim rounded-sm"></span> Last Win
+                  </div>
+<div class="font-headline text-3xl font-black text-on-surface tracking-tight">+ 25,000</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-lg border border-outline-variant/10">
+<div class="text-[10px] font-bold text-on-surface/40 uppercase tracking-tighter mb-1">Total Bet</div>
+<div class="font-headline text-2xl font-bold text-on-surface/80">5,000</div>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="flex items-center gap-2 p-3 bg-primary-container/5 rounded-lg border border-primary-container/10">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-[10px] text-primary-container/80 leading-relaxed font-semibold">Match 3 high-tier symbols to trigger Tactical Bonus Rounds.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Action Area (Spin) -->
+<div class="mt-12 w-full flex flex-col items-center">
+<button class="group relative flex flex-col items-center justify-center">
+<!-- Glow effect -->
+<div class="absolute inset-0 bg-primary-container blur-[40px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+<div class="relative w-40 h-40 rounded-full border-8 border-surface-container-highest bg-gradient-to-tr from-primary-fixed-dim to-primary-container flex flex-col items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.4)] transition-transform active:scale-90 group-hover:scale-105">
+<span class="material-symbols-outlined text-6xl text-on-primary mb-1" style="font-variation-settings: 'FILL' 1;">cached</span>
+<span class="font-headline text-2xl font-black text-on-primary tracking-widest">SPIN</span>
+</div>
+<!-- Command HUD elements around button -->
+<div class="absolute -top-4 -right-12 bg-surface-variant/80 backdrop-blur px-3 py-1 rounded-full border border-outline-variant/20 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></div>
+<span class="text-[10px] font-black text-on-surface/80 uppercase">Ready</span>
+</div>
+</button>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#111317] border-t border-[#4D4732]/20 z-50 flex items-center justify-around py-3 px-4">
+<a class="flex flex-col items-center gap-1 text-[#FFD700]" href="#">
+<span class="material-symbols-outlined text-2xl">casino</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Slots</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#E2E2E8]/40" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Live</span>
+</a>
+<div class="relative -top-6">
+<div class="w-14 h-14 bg-primary-container text-on-primary rounded-full flex items-center justify-center shadow-lg border-4 border-background">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">cached</span>
+</div>
+</div>
+<a class="flex flex-col items-center gap-1 text-[#E2E2E8]/40" href="#">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Wallet</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#E2E2E8]/40" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Menu</span>
+</a>
+</nav>
+</body></html>
