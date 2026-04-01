@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Inter:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#3a3000",
+                        "on-tertiary-fixed-variant": "#005227",
+                        "tertiary-fixed": "#61ff97",
+                        "surface-bright": "#37393e",
+                        "inverse-on-surface": "#2f3035",
+                        "on-secondary-container": "#003558",
+                        "primary": "#fff6df",
+                        "tertiary": "#deffe0",
+                        "surface-container-high": "#282a2e",
+                        "inverse-primary": "#705d00",
+                        "secondary-container": "#00a2fd",
+                        "tertiary-container": "#00fa82",
+                        "on-secondary-fixed": "#001d33",
+                        "on-primary-fixed": "#221b00",
+                        "surface": "#111317",
+                        "on-tertiary": "#003919",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#999077",
+                        "surface-variant": "#333539",
+                        "secondary-fixed": "#cfe5ff",
+                        "surface-container-low": "#1a1c20",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#333539",
+                        "on-surface-variant": "#d0c6ab",
+                        "primary-container": "#ffd700",
+                        "outline-variant": "#4d4732",
+                        "on-secondary-fixed-variant": "#004a77",
+                        "primary-fixed": "#ffe16d",
+                        "surface-container": "#1e2024",
+                        "background": "#111317",
+                        "on-tertiary-fixed": "#00210c",
+                        "on-surface": "#e2e2e8",
+                        "on-background": "#e2e2e8",
+                        "secondary": "#98cbff",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#e9c400",
+                        "on-primary-container": "#705e00",
+                        "tertiary-fixed-dim": "#00e476",
+                        "surface-dim": "#111317",
+                        "primary-fixed-dim": "#e9c400",
+                        "on-tertiary-container": "#006e36",
+                        "inverse-surface": "#e2e2e8",
+                        "surface-container-lowest": "#0c0e12",
+                        "on-secondary": "#003354",
+                        "on-primary-fixed-variant": "#544600",
+                        "secondary-fixed-dim": "#98cbff"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 w-full bg-[#111317] shadow-[0_4px_24px_rgba(233,196,0,0.06)] border-b border-outline-variant/10">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#FFD700] tracking-tighter font-headline">miniGamba</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-headline font-bold text-base uppercase tracking-wider text-[#E2E2E8]/60 hover:bg-[#1c1f26] hover:text-[#FFD700] transition-colors duration-150 py-1" href="#">Dashboard</a>
+<a class="font-headline font-bold text-base uppercase tracking-wider text-[#E2E2E8]/60 hover:bg-[#1c1f26] hover:text-[#FFD700] transition-colors duration-150 py-1" href="#">Esports</a>
+<a class="font-headline font-bold text-base uppercase tracking-wider text-[#E2E2E8]/60 hover:bg-[#1c1f26] hover:text-[#FFD700] transition-colors duration-150 py-1" href="#">Casino</a>
+<a class="font-headline font-bold text-base uppercase tracking-wider text-[#FFD700] border-b-2 border-[#FFD700] pb-1" href="#">Profile</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/50 text-sm">search</span>
+<input class="bg-surface-container-highest border-none text-xs font-headline tracking-widest pl-10 pr-4 py-2 rounded focus:ring-1 focus:ring-primary-fixed w-48 transition-all" placeholder="SEARCH COMMAND..." type="text"/>
+</div>
+<button class="active:scale-95 transition-transform text-[#E2E2E8]/60 hover:text-[#FFD700] p-2">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="active:scale-95 transition-transform text-[#E2E2E8]/60 hover:text-[#FFD700] p-2">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center overflow-hidden border border-outline-variant/20">
+<img alt="User Rank Avatar" class="w-full h-full object-cover" data-alt="Cyberpunk style character avatar with glowing gold visor and tactical headset on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-xojJyQKb3lShjfjOJHqtCW2WtVdMTvjlArMH4jNWCsXwZqtSp6f0Cc1fFCMDn6gg95IqeewBKocp0RslAAInwdFLtjf1txBSHQJXHkgGQczSMucPywSWmSuvuQ7-pVy0UDhWrYsVXa6E9rXdIRAZtZ4LIvb1ORI42Mpm1IZ8zVWAUmtl28-qTGiGgGeGqUr9MrsA7L7yTNj0hNKtiRTuwkII21fCc2Lc8aTYqYMl-OeAdF6mhGf59cSunsIO8H8q-iPJN8yxy_a-"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#111317] hidden md:flex flex-col py-8 border-r border-outline-variant/10">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<div class="w-10 h-10 rounded bg-gradient-to-br from-primary-container to-on-primary-container flex items-center justify-center shadow-lg shadow-primary-container/10">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<div>
+<p class="text-on-surface font-headline font-bold text-sm tracking-tight">Tactical Command</p>
+<p class="text-[#E2E2E8]/40 text-[10px] font-medium uppercase tracking-widest">Elite Rank • LVL 42</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 px-8 py-3 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-[#1c1f26] font-body text-sm font-medium transition-all group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-primary-container" data-icon="grid_view">grid_view</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-8 py-3 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-[#1c1f26] font-body text-sm font-medium transition-all group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-primary-container" data-icon="sports_esports">sports_esports</span>
+<span>Esports</span>
+</a>
+<a class="flex items-center gap-4 px-8 py-3 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-[#1c1f26] font-body text-sm font-medium transition-all group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-primary-container" data-icon="casino">casino</span>
+<span>Casino</span>
+</a>
+<a class="flex items-center gap-4 px-8 py-3 text-[#FFD700] font-bold border-r-4 border-[#FFD700] bg-gradient-to-r from-[#FFD700]/10 to-transparent font-body text-sm transition-all" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-4 px-8 py-3 text-[#E2E2E8]/40 hover:text-[#E2E2E8] hover:bg-[#1c1f26] font-body text-sm font-medium transition-all group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-primary-container" data-icon="tune">tune</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary-container text-on-primary font-headline font-bold text-xs py-3 tracking-widest rounded active:scale-95 transition-transform mb-6">
+                UPGRADE TO PRO
+            </button>
+<div class="space-y-1">
+<a class="flex items-center gap-4 px-2 py-2 text-[#E2E2E8]/40 hover:text-[#E2E2E8] transition-colors text-xs font-medium" href="#">
+<span class="material-symbols-outlined text-base" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-4 px-2 py-2 text-error/60 hover:text-error transition-colors text-xs font-medium" href="#">
+<span class="material-symbols-outlined text-base" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:ml-64 pt-24 px-6 pb-12 min-h-screen">
+<div class="max-w-6xl mx-auto space-y-8">
+<!-- Header Section -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low border border-outline-variant/10">
+<div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+<div class="absolute top-0 right-0 p-8">
+<div class="text-right">
+<span class="block text-[10px] font-headline font-bold tracking-[0.3em] text-primary-fixed-dim/40 uppercase">Account Status</span>
+<span class="inline-flex items-center gap-2 mt-1 px-3 py-1 bg-primary-container/10 border border-primary-container/20 rounded-full text-primary-container text-[11px] font-bold">
+<span class="w-1.5 h-1.5 bg-primary-container rounded-full animate-pulse"></span>
+                            ACTIVE OPERATIVE
+                        </span>
+</div>
+</div>
+<div class="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
+<!-- Avatar Area -->
+<div class="relative group">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-tr from-primary-container via-primary-fixed-dim to-transparent shadow-[0_0_40px_rgba(233,196,0,0.15)]">
+<div class="w-full h-full rounded-full bg-surface-container-lowest overflow-hidden border-2 border-surface">
+<img alt="Profile Avatar" class="w-full h-full object-cover" data-alt="Detail of a digital tactical operator avatar with high-tech gear and glowing accents on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-MBXmyxdvlntSB9sgpsnz9ggTTmftW6_1-qIJd-Hxx8oohmhdVMBIwRG-u-Isz4FZshbqZWPNb3AsTKloX59iE0QNqFmDHXHDnkisFcyMtMoP8hW1LeiQzt8fB9jRxD6_UbTyT0gFYocI2iRzUTUwwgHIv5Jq0MVH_doLtodoBBakFx8T2jchp25McWp0uS6iHANhOUWwPMPK3shegx0xt5Lsx3smLBC4nXilOHSdUD5OlYG1zNzh56PfUUG83n8FBQG7QzTXacak"/>
+</div>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-surface-container-highest border border-outline-variant/20 p-2 rounded-lg shadow-xl">
+<span class="material-symbols-outlined text-primary-container text-xl" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+<!-- User Info -->
+<div class="text-center md:text-left space-y-2">
+<div class="flex flex-col md:flex-row md:items-baseline gap-4">
+<h1 class="text-4xl md:text-6xl font-headline font-black tracking-tighter text-on-surface">TacticalCommand</h1>
+<div class="inline-flex items-center px-4 py-1.5 bg-primary-container text-on-primary font-headline font-black text-sm rounded-sm tracking-widest skew-x-[-12deg]">
+<span class="skew-x-[12deg]">CHALLENGER</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-center md:justify-start gap-6 text-on-surface-variant/60 font-medium text-sm mt-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="verified">verified</span>
+<span>Elite Member since Oct 2021</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="location_on">location_on</span>
+<span>Sector 7G-Delta</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Progress Card -->
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-8 border border-outline-variant/10 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-primary-container font-headline font-bold text-xs tracking-[0.2em] uppercase mb-2">Tactical Evolution</h3>
+<div class="flex items-baseline gap-3">
+<span class="text-5xl font-headline font-black text-on-surface">LVL 42</span>
+<span class="text-on-surface-variant/40 font-headline font-bold text-xl uppercase">Commander</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-on-surface-variant/60">NEXT REWARD</span>
+<p class="text-tertiary-container font-headline font-bold text-sm tracking-tight mt-1">S7 EXCLUSIVE FRAME</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-xs font-headline font-bold tracking-widest text-on-surface-variant/80">
+<span>CURRENT XP: 14,250</span>
+<span>GOAL: 18,000</span>
+</div>
+<div class="h-4 bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/10 p-[2px]">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary-fixed-dim rounded-full relative shadow-[0_0_15px_rgba(255,215,0,0.3)]" style="width: 78%">
+<div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:20px_20px]"></div>
+</div>
+</div>
+<p class="text-[11px] text-center text-on-surface-variant/40 italic">78% THROUGH THE CURRENT SECTOR</p>
+</div>
+<div class="grid grid-cols-3 gap-4 mt-8">
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant/5">
+<span class="block text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mb-1">Weekly Rank</span>
+<span class="text-primary-container font-headline font-black text-lg">#114</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant/5">
+<span class="block text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mb-1">Win Streak</span>
+<span class="text-tertiary-container font-headline font-black text-lg">8-0</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant/5">
+<span class="block text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mb-1">Global Tier</span>
+<span class="text-secondary-container font-headline font-black text-lg">TOP 1%</span>
+</div>
+</div>
+</div>
+<!-- Customization Preview -->
+<div class="lg:col-span-4 bg-surface-container-low rounded-xl p-8 border border-outline-variant/10">
+<h3 class="text-primary-container font-headline font-bold text-xs tracking-[0.2em] uppercase mb-6">Operative Identity</h3>
+<div class="space-y-6">
+<!-- Avatar Frame Selection -->
+<div class="space-y-3">
+<label class="text-[11px] font-headline font-bold text-on-surface-variant/60 uppercase tracking-widest">Avatar Frame</label>
+<div class="grid grid-cols-4 gap-2">
+<div class="aspect-square bg-primary-container/20 rounded-lg border-2 border-primary-container flex items-center justify-center cursor-pointer">
+<div class="w-8 h-8 rounded-full border-2 border-primary-container"></div>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded-lg border border-outline-variant/10 flex items-center justify-center cursor-pointer hover:border-primary-container/50 transition-colors">
+<div class="w-8 h-8 rounded-full border-2 border-secondary-container"></div>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded-lg border border-outline-variant/10 flex items-center justify-center cursor-pointer hover:border-primary-container/50 transition-colors">
+<div class="w-8 h-8 rounded-full border-2 border-tertiary-container"></div>
+</div>
+<div class="aspect-square bg-surface-container-highest rounded-lg border border-outline-variant/10 flex items-center justify-center cursor-pointer hover:border-primary-container/50 transition-colors opacity-40">
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+</div>
+</div>
+<!-- Profile Title -->
+<div class="space-y-3">
+<label class="text-[11px] font-headline font-bold text-on-surface-variant/60 uppercase tracking-widest">Active Title</label>
+<div class="bg-surface-container-highest border border-outline-variant/10 rounded p-3 flex items-center justify-between group cursor-pointer hover:border-primary-container/40 transition-colors">
+<span class="font-headline font-bold text-sm text-on-surface">Gamba Legend</span>
+<span class="material-symbols-outlined text-on-surface-variant/40 group-hover:text-primary-container transition-colors">expand_more</span>
+</div>
+</div>
+<!-- Theme Accents -->
+<div class="space-y-3">
+<label class="text-[11px] font-headline font-bold text-on-surface-variant/60 uppercase tracking-widest">Theme Accent</label>
+<div class="flex gap-4">
+<button class="flex-1 py-3 px-2 bg-primary-container/10 border border-primary-container rounded flex flex-col items-center gap-1 group">
+<div class="w-4 h-4 rounded-full bg-primary-container mb-1"></div>
+<span class="text-[10px] font-bold text-primary-container">GOLD</span>
+</button>
+<button class="flex-1 py-3 px-2 bg-surface-container-highest border border-outline-variant/10 rounded flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity">
+<div class="w-4 h-4 rounded-full bg-tertiary-container mb-1"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">NEON</span>
+</button>
+</div>
+</div>
+<button class="w-full mt-4 py-4 bg-surface-container-highest text-on-surface font-headline font-bold text-xs tracking-widest rounded border border-outline-variant/20 active:scale-95 transition-all">
+                            SAVE LOADOUT
+                        </button>
+</div>
+</div>
+</div>
+<!-- Economy Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Total Coins -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="database">database</span>
+</div>
+<h4 class="text-on-surface-variant/50 text-[10px] font-bold tracking-[0.3em] uppercase mb-4">Tactical Balance</h4>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-primary-container flex items-center justify-center shadow-lg shadow-primary-container/20">
+<span class="material-symbols-outlined text-on-primary text-3xl" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+</div>
+<div>
+<span class="text-4xl font-headline font-black text-on-surface tracking-tighter">4,250</span>
+<span class="block text-primary-container text-[10px] font-bold tracking-widest mt-1">AVAILABLE COINS</span>
+</div>
+</div>
+</div>
+<!-- Lifetime Profits -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="trending_up">trending_up</span>
+</div>
+<h4 class="text-on-surface-variant/50 text-[10px] font-bold tracking-[0.3em] uppercase mb-4">Mission Revenue</h4>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-tertiary-container flex items-center justify-center shadow-lg shadow-tertiary-container/20">
+<span class="material-symbols-outlined text-on-tertiary text-3xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div>
+<span class="text-4xl font-headline font-black text-on-surface tracking-tighter">+88,412</span>
+<span class="block text-tertiary-container text-[10px] font-bold tracking-widest mt-1">LIFETIME PROFITS</span>
+</div>
+</div>
+</div>
+<!-- Average Wager -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="strategy">strategy</span>
+</div>
+<h4 class="text-on-surface-variant/50 text-[10px] font-bold tracking-[0.3em] uppercase mb-4">Risk Profile</h4>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-secondary-container flex items-center justify-center shadow-lg shadow-secondary-container/20">
+<span class="material-symbols-outlined text-on-secondary text-3xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<span class="text-4xl font-headline font-black text-on-surface tracking-tighter">450</span>
+<span class="block text-secondary-container text-[10px] font-bold tracking-widest mt-1">AVG. WAGER</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Section / Call to Action -->
+<div class="bg-gradient-to-r from-primary-container/10 to-transparent p-12 rounded-xl border border-primary-container/20 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="space-y-2 text-center md:text-left">
+<h2 class="text-2xl font-headline font-black text-primary-container tracking-tight">Ready for Deployment?</h2>
+<p class="text-on-surface-variant/80 max-w-md">Your tactical rank is currently top 1% this season. Enter the arena and claim your glory.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-8 py-4 bg-primary-container text-on-primary font-headline font-bold text-sm tracking-widest rounded shadow-xl shadow-primary-container/10 hover:shadow-primary-container/20 transition-all active:scale-95">
+                        ENTER THE CASINO
+                    </button>
+<button class="px-8 py-4 bg-surface-container-highest text-on-surface font-headline font-bold text-sm tracking-widest rounded border border-outline-variant/20 hover:bg-surface-container transition-all active:scale-95">
+                        VIEW TOURNAMENTS
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#111317] flex justify-around items-center h-16 border-t border-outline-variant/10 z-50">
+<button class="flex flex-col items-center gap-1 text-[#E2E2E8]/40">
+<span class="material-symbols-outlined text-2xl" data-icon="grid_view">grid_view</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#E2E2E8]/40">
+<span class="material-symbols-outlined text-2xl" data-icon="sports_esports">sports_esports</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#E2E2E8]/40">
+<span class="material-symbols-outlined text-2xl" data-icon="casino">casino</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary-container">
+<span class="material-symbols-outlined text-2xl" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+</button>
+</nav>
+</body></html>
