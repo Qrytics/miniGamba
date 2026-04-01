@@ -13,6 +13,13 @@ interface SettingsState {
     gameVolume?: number;
     musicVolume?: number;
   };
+  automation?: {
+    autoClaimBonus?: boolean;
+  };
+  display?: {
+    showMultiplier?: boolean;
+    compactMode?: boolean;
+  };
 }
 
 const SettingsPage: React.FC = () => {
@@ -91,9 +98,9 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="dashboard-page">
       <SectionHeader
-        eyebrow="Configuration"
-        title="Settings"
-        description="This page now reflects the actual nested settings model used by the app instead of a flat mock shape, which removes a handful of silent update failures."
+        eyebrow="System Configuration"
+        title="Tactical Settings"
+        description="Configure overlay visibility, audio feedback, and data controls. All controls remain bound to the app's existing settings IPC routes."
         action={<StatusPill tone="gold">Live Config</StatusPill>}
       />
 
@@ -161,12 +168,30 @@ const SettingsPage: React.FC = () => {
         </SurfaceCard>
       </div>
 
-      <SurfaceCard title="Gameplay Defaults" subtitle="Stubbed options kept visible until the app stores them centrally">
-        <EmptyState
-          icon="🎲"
-          title="Gameplay preferences are next"
-          description="The old controls here were disconnected from persistent storage. They’re intentionally parked until a real gameplay-settings contract is added."
-        />
+      <SurfaceCard title="Gameplay + UX" subtitle="Stitch-style toggles (visual shell)">
+        <div className="stitch-card-grid games-grid">
+          <label className="stitch-toggle-card">
+            <div>
+              <p className="stitch-list-item-title">Auto-claim Bonus</p>
+              <p className="stitch-list-item-meta">Collect daily rewards automatically</p>
+            </div>
+            <input type="checkbox" checked={Boolean(settings?.automation?.autoClaimBonus)} readOnly />
+          </label>
+          <label className="stitch-toggle-card">
+            <div>
+              <p className="stitch-list-item-title">Show Win Multiplier</p>
+              <p className="stitch-list-item-meta">Display live coefficient overlays</p>
+            </div>
+            <input type="checkbox" checked={Boolean(settings?.display?.showMultiplier)} readOnly />
+          </label>
+          <label className="stitch-toggle-card">
+            <div>
+              <p className="stitch-list-item-title">Compact Mode</p>
+              <p className="stitch-list-item-meta">Reduce visual density in HUD</p>
+            </div>
+            <input type="checkbox" checked={Boolean(settings?.display?.compactMode)} readOnly />
+          </label>
+        </div>
       </SurfaceCard>
 
       <SurfaceCard title="Data Management" subtitle="Backup and reset tools">
@@ -174,6 +199,14 @@ const SettingsPage: React.FC = () => {
           <button className="btn btn-primary" onClick={handleExportData}>Export Data</button>
           <button className="btn btn-secondary" onClick={handleReset}>Reset Settings</button>
         </div>
+      </SurfaceCard>
+
+      <SurfaceCard title="Danger Zone" subtitle="High-impact operations">
+        <EmptyState
+          icon="⚠"
+          title="Progress reset is destructive"
+          description="Export your data before using destructive actions. Reset operations cannot be reversed."
+        />
       </SurfaceCard>
     </div>
   );

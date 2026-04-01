@@ -78,6 +78,7 @@ const OverlayApp: React.FC = () => {
     <div className="overlay-app">
       <div className="overlay-header">
         <div className="header-left">
+          <div className="overlay-brand">miniGamba</div>
           <div className="coin-display" data-testid="overlay-coin-display">
             <PixelIcon name="money" size={20} aria-hidden={true} />
             <span>{userData?.coins?.toLocaleString() || 0}</span>
@@ -94,7 +95,6 @@ const OverlayApp: React.FC = () => {
             onClick={() => { setActiveTab('games'); setCurrentGame(null); }}
             title="Mini-Games"
             data-testid="overlay-tab-games"
-            style={{ fontSize: '0.8rem' }}
           >
             🎰
           </button>
@@ -103,7 +103,6 @@ const OverlayApp: React.FC = () => {
             onClick={() => { setActiveTab('livestats'); setCurrentGame(null); }}
             title="Live Game Stats"
             data-testid="overlay-tab-livestats"
-            style={{ fontSize: '0.8rem' }}
           >
             🎮
           </button>
@@ -133,10 +132,9 @@ const OverlayApp: React.FC = () => {
             <div className="game-selector">
               <div className="overlay-selector-hero">
                 <p className="overlay-selector-eyebrow">Mini-Casino Modules</p>
-                <h2>Select a Game</h2>
+                <h2>Game Picker</h2>
                 <p className="text-muted">
-                  The Stitch exports were strongest at turning game choice into a command-center catalog.
-                  Pick a module below to open it in the live overlay.
+                  Pick a module below to open it in the live overlay shell.
                 </p>
               </div>
               <div className="game-grid">
@@ -154,6 +152,10 @@ const OverlayApp: React.FC = () => {
                   </button>
                 ))}
               </div>
+              <footer className="overlay-footer-meta">
+                <span>Command Center / Games</span>
+                <span className="overlay-online-pill">Online</span>
+              </footer>
             </div>
           ) : CurrentGameComponent ? (
             <ErrorBoundary key={currentGame}>

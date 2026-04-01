@@ -1,12 +1,9 @@
 /**
  * Summoner Lookup Page
- *
- * Allows the user to search for any League of Legends summoner by name and
- * view their profile: rank, champion masteries, and recent match history.
- * Connects via the LCU API (requires the LoL client to be running).
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import { EmptyState, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface RankedEntry {
   queueType: string;
@@ -147,238 +144,145 @@ const SummonerPage: React.FC = () => {
   const flexQueue = rankedEntries.find((r) => r.queueType === 'RANKED_FLEX_SR');
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '1.5rem' }}>🔍 Summoner Lookup</h2>
-      <p className="text-muted" style={{ marginBottom: '1.5rem' }}>
-        Look up any summoner&apos;s profile, rank, and match history via the League Client.{' '}
-        <strong style={{ color: 'var(--secondary-color)' }}>
-          Enter the Riot ID including the hashtag — e.g. <em>YourName#NA1</em>
-        </strong>. Requires the LoL client to be open and logged in.
-      </p>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="League Intelligence"
+        title="Summoner Lookup"
+        description="Resolve Riot IDs into ranked status, champion mastery, and recent match telemetry through the live client APIs."
+        action={<StatusPill tone="cyan">LCU Lookup</StatusPill>}
+      />
 
-      {/* Search bar */}
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem' }}>
-        <input
-          type="text"
-          placeholder="GameName#TAG (e.g. Faker#KR1)"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          style={{
-            flex: 1,
-            padding: '0.75rem 1rem',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--balatro-radius)',
-            color: 'var(--text-primary)',
-            fontSize: '1rem',
-            fontFamily: 'inherit',
-          }}
-          maxLength={64}
-          aria-label="Riot ID (GameName#TAG)"
-        />
-        <button
-          className="btn btn-primary"
-          onClick={handleSearch}
-          disabled={loadingState === 'loading' || !searchInput.trim()}
-        >
-          {loadingState === 'loading' ? 'Searching...' : 'Search'}
-        </button>
-      </div>
+      <SurfaceCard className="stitch-search-shell">
+        <div className="stitch-search-row">
+          <span className="stitch-search-icon" aria-hidden={true}>🔍</span>
+          <input
+            type="text"
+            className="input stitch-search-input"
+            placeholder="GameName#TAG (e.g. Faker#KR1)"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            maxLength={64}
+            aria-label="Riot ID (GameName#TAG)"
+          />
+          <button
+            className="btn btn-primary"
+            onClick={handleSearch}
+            disabled={loadingState === 'loading' || !searchInput.trim()}
+          >
+            {loadingState === 'loading' ? 'Searching...' : 'Search'}
+          </button>
+        </div>
+      </SurfaceCard>
 
-      {/* Error state */}
       {loadingState === 'error' && (
-        <div className="card" style={{ borderColor: 'var(--danger)', marginBottom: '1.5rem' }}>
-          <p style={{ color: 'var(--danger)' }}>
-            ❌ {error}
-          </p>
+        <SurfaceCard className="stitch-error-card">
+          <p>❌ {error}</p>
           {error?.includes('not running') && (
-            <p className="text-muted" style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-              Make sure the League of Legends client is open and you are logged in.
+            <p className="text-muted">
+              Make sure the League of Legends client is open and logged in.
             </p>
           )}
-        </div>
+        </SurfaceCard>
       )}
 
-      {/* Summoner profile */}
       {summoner && (
-        <div>
-          {/* Header */}
-          <div className="card" style={{ marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <div
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: '50%',
-                  background: 'var(--surface-hover)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2rem',
-                  border: '2px solid var(--primary-color)',
-                  flexShrink: 0,
-                }}
-              >
-                🎮
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{summoner.displayName}</h3>
-                <p className="text-muted">Level {summoner.summonerLevel}</p>
-              </div>
+        <div className="stitch-stack">
+          <SurfaceCard className="stitch-summoner-hero">
+            <div className="stitch-summoner-avatar" aria-hidden={true}>🎮</div>
+            <div>
+              <h3>{summoner.displayName}</h3>
+              <p className="text-muted">Riot ID: {summoner.gameName}</p>
+              <p className="text-muted">Level {summoner.summonerLevel}</p>
             </div>
-          </div>
+          </SurfaceCard>
 
-          {/* Ranked stats */}
-          <div className="grid grid-2" style={{ marginBottom: '1.5rem' }}>
+          <div className="stitch-split-grid">
             {[soloQueue, flexQueue].map((queue, idx) => {
-              const label = idx === 0 ? 'Solo / Duo' : 'Flex 5v5';
+              const label = idx === 0 ? 'Ranked Solo / Duo' : 'Ranked Flex';
               if (!queue) {
                 return (
-                  <div className="card" key={idx}>
-                    <div className="card-header">
-                      <h3 className="card-title">Ranked {label}</h3>
-                    </div>
-                    <p className="text-muted">Unranked</p>
-                  </div>
+                  <SurfaceCard key={label} title={label} subtitle="No active placement">
+                    <StatusPill tone="neutral">Unranked</StatusPill>
+                  </SurfaceCard>
                 );
               }
+
               const color = TIER_COLORS[queue.tier] ?? '#aaa';
               const winRate = Math.round(queue.winRate * 100);
+
               return (
-                <div className="card" key={idx}>
-                  <div className="card-header">
-                    <h3 className="card-title">Ranked {label}</h3>
+                <SurfaceCard key={label} title={label} subtitle={`${queue.wins}W • ${queue.losses}L`}>
+                  <div className="stitch-rank-line">
+                    <span style={{ color }}>{queue.tier} {queue.division}</span>
+                    {queue.hotStreak && <StatusPill tone="gold">Hot Streak</StatusPill>}
                   </div>
-                  <p style={{ fontSize: '1.25rem', fontWeight: 700, color, marginBottom: '0.5rem' }}>
-                    {queue.tier} {queue.division}
-                    {queue.hotStreak && ' 🔥'}
-                  </p>
-                  <p style={{ color, marginBottom: '0.25rem' }}>{queue.leaguePoints} LP</p>
-                  <p className="text-muted">
-                    {queue.wins}W / {queue.losses}L &nbsp;·&nbsp;
-                    <span style={{ color: winRate >= 50 ? 'var(--success)' : 'var(--danger)' }}>
-                      {winRate}% WR
-                    </span>
-                  </p>
-                </div>
+                  <p className="text-muted">{queue.leaguePoints} LP • {winRate}% WR</p>
+                </SurfaceCard>
               );
             })}
           </div>
 
-          {/* Champion masteries */}
-          {masteries.length > 0 && (
-            <div className="card" style={{ marginBottom: '1.5rem' }}>
-              <div className="card-header">
-                <h3 className="card-title">🏆 Top Champions</h3>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <SurfaceCard title="Top Champions" subtitle="Highest mastery progressions">
+            {masteries.length > 0 ? (
+              <div className="stitch-list">
                 {masteries.slice(0, 5).map((m, i) => (
-                  <div
-                    key={i}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--gold)', minWidth: '1.25rem' }}>#{i + 1}</span>
-                      <span>{m.championName || `Champion ${m.championId}`}</span>
+                  <div key={`${m.championId}-${i}`} className="stitch-list-item">
+                    <div>
+                      <div className="stitch-list-item-title">#{i + 1} {m.championName || `Champion ${m.championId}`}</div>
+                      <div className="stitch-list-item-meta">Mastery {m.championLevel}</div>
                     </div>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                      <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-                        M{m.championLevel}
-                      </span>
-                      <span style={{ color: 'var(--secondary-color)', fontWeight: 600 }}>
-                        {m.championPoints.toLocaleString()} pts
-                      </span>
-                    </div>
+                    <StatusPill tone="cyan">{m.championPoints.toLocaleString()} pts</StatusPill>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <EmptyState icon="🏆" title="No mastery data" description="Champion mastery results are currently unavailable." />
+            )}
+          </SurfaceCard>
 
-          {/* Match history */}
-          {matches.length > 0 && (
-            <div className="card">
-              <div className="card-header">
-                <h3 className="card-title">📜 Recent Matches</h3>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <SurfaceCard title="Recent Matches" subtitle="Latest outcomes from match history">
+            {matches.length > 0 ? (
+              <div className="stitch-list">
                 {matches.map((match) => {
-                  // Find the searched summoner's participant by matching against gameName,
-                  // the full Riot ID (gameName#tagLine), or legacy summoner name.
                   const searchNameLower = summoner.displayName.toLowerCase();
                   const gameNameLower = summoner.gameName.toLowerCase();
-                  const self = match.participants.find(
-                    (p) => {
-                      const n = p.summonerName.toLowerCase();
-                      return n === searchNameLower || n === gameNameLower || searchNameLower.startsWith(n + '#');
-                    }
-                  ) ?? match.participants[0];
+                  const self = match.participants.find((p) => {
+                    const n = p.summonerName.toLowerCase();
+                    return n === searchNameLower || n === gameNameLower || searchNameLower.startsWith(`${n}#`);
+                  }) ?? match.participants[0];
 
                   if (!self) return null;
-
-                  const kda = self.deaths === 0
-                    ? 'Perfect'
-                    : ((self.kills + self.assists) / self.deaths).toFixed(2);
+                  const kda = self.deaths === 0 ? 'Perfect' : ((self.kills + self.assists) / self.deaths).toFixed(2);
 
                   return (
-                    <div
-                      key={match.gameId}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.75rem',
-                        background: self.win ? 'rgba(0, 200, 83, 0.08)' : 'rgba(255, 68, 68, 0.08)',
-                        borderRadius: 'var(--balatro-radius)',
-                        borderLeft: `3px solid ${self.win ? 'var(--success)' : 'var(--danger)'}`,
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <span style={{ fontWeight: 700, color: self.win ? 'var(--success)' : 'var(--danger)', minWidth: '2.5rem' }}>
-                          {self.win ? 'WIN' : 'LOSS'}
-                        </span>
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{self.championName || `Champion ${self.championId}`}</div>
-                          <div className="text-muted" style={{ fontSize: '0.8rem' }}>{match.gameMode}</div>
-                        </div>
+                    <div key={match.gameId} className={`stitch-match-row ${self.win ? 'is-win' : 'is-loss'}`}>
+                      <div>
+                        <div className="stitch-list-item-title">{self.championName || `Champion ${self.championId}`}</div>
+                        <div className="stitch-list-item-meta">{match.gameMode} • {formatDuration(match.gameDuration)} • {formatTimeAgo(match.gameCreation)}</div>
                       </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontWeight: 700 }}>
-                          {self.kills}/{self.deaths}/{self.assists}
-                        </div>
-                        <div className="text-muted" style={{ fontSize: '0.8rem' }}>{kda} KDA</div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div className="text-muted" style={{ fontSize: '0.8rem' }}>
-                          {formatDuration(match.gameDuration)}
-                        </div>
-                        <div className="text-muted" style={{ fontSize: '0.8rem' }}>
-                          {formatTimeAgo(match.gameCreation)}
-                        </div>
+                      <div className="stitch-inline-stats">
+                        <StatusPill tone={self.win ? 'green' : 'red'}>{self.win ? 'Win' : 'Loss'}</StatusPill>
+                        <StatusPill tone="neutral">{self.kills}/{self.deaths}/{self.assists}</StatusPill>
+                        <StatusPill tone="gold">{kda} KDA</StatusPill>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <EmptyState icon="📜" title="No matches found" description="No recent matches were returned for this summoner." />
+            )}
+          </SurfaceCard>
         </div>
       )}
 
-      {/* Idle state */}
       {loadingState === 'idle' && (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-          <p>Enter a Riot ID to look up a summoner&apos;s profile.</p>
-          <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-            Format: <strong style={{ color: 'var(--secondary-color)' }}>GameName#TAG</strong> — e.g.{' '}
-            <em>Faker#KR1</em>
-          </p>
-          <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
-            ⚠️ League of Legends client must be open and logged in.
-          </p>
-        </div>
+        <EmptyState
+          icon="🔍"
+          title="Enter a Riot ID"
+          description="Use the format GameName#TAG, and keep the League client open and logged in."
+        />
       )}
     </div>
   );

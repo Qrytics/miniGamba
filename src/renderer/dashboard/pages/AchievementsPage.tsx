@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { EmptyState, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface AchievementItem {
   id: string;
@@ -47,21 +48,23 @@ const AchievementsPage: React.FC = () => {
     .reduce((sum, a) => sum + (a.points || 0), 0);
 
   if (loading) {
-    return <div>Loading achievements...</div>;
+    return <div className="shell-loading-inline">Loading achievements...</div>;
   }
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '1rem' }}>🏆 Achievements</h2>
-      <p className="text-muted" style={{ marginBottom: '2rem' }}>
-        {unlockedCount} of {achievements.length} unlocked • {totalPoints} points earned
-      </p>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Milestones"
+        title="Achievements"
+        description="Progress across gambling, economy, activity, and secret tracks."
+        action={<StatusPill tone="gold">{unlockedCount}/{achievements.length || 0} Unlocked</StatusPill>}
+      />
 
-      <div style={{ marginBottom: '2rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <div className="stitch-filter-row">
         {categories.map((cat) => (
           <button
             key={cat}
-            className={`btn ${filter === cat ? 'btn-primary' : 'btn-secondary'}`}
+            className={`btn ${filter === cat ? 'btn-primary' : 'btn-secondary'} stitch-filter-pill`}
             onClick={() => setFilter(cat)}
           >
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -69,42 +72,46 @@ const AchievementsPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-4">
-        {filteredAchievements.map((achievement) => (
-          <div 
-            key={achievement.id} 
-            className={`achievement-badge ${achievement.unlocked ? 'unlocked' : ''}`}
-          >
-            <div className="achievement-icon">{achievement.icon || '🏆'}</div>
-            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>{achievement.name}</div>
-            <p className="text-muted" style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>
-              {achievement.description}
-            </p>
-            <div style={{ fontSize: '0.875rem', color: 'var(--gold)' }}>
-              {achievement.points || 0} points
-            </div>
-            {achievement.progress !== undefined && achievement.progress !== null && !achievement.unlocked && (
-              <div style={{ marginTop: '0.5rem', width: '100%' }}>
-                <div className="progress-bar">
-                  <div 
-                    className="progress-fill" 
-                    style={{ width: `${(achievement.progress / (achievement.maxProgress || 1)) * 100}%` }}
-                  ></div>
+      <SurfaceCard
+        title="Achievement Grid"
+        subtitle={`${unlockedCount} unlocked • ${totalPoints} points earned`}
+      >
+        {filteredAchievements.length > 0 ? (
+          <div className="stitch-achievement-grid">
+            {filteredAchievements.map((achievement) => (
+              <article
+                key={achievement.id}
+                className={`stitch-achievement-card ${achievement.unlocked ? 'is-unlocked' : 'is-locked'}`}
+              >
+                <div className="stitch-achievement-icon">{achievement.icon || '🏆'}</div>
+                <div className="stitch-achievement-copy">
+                  <h3>{achievement.name}</h3>
+                  <p>{achievement.description}</p>
+                  <div className="stitch-inline-stats">
+                    <StatusPill tone={achievement.unlocked ? 'green' : 'neutral'}>
+                      {achievement.unlocked ? 'Unlocked' : 'Locked'}
+                    </StatusPill>
+                    <StatusPill tone="gold">{achievement.points || 0} pts</StatusPill>
+                  </div>
+                  {achievement.progress !== undefined && achievement.progress !== null && !achievement.unlocked && (
+                    <div className="stitch-achievement-progress">
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${(achievement.progress / (achievement.maxProgress || 1)) * 100}%` }}
+                        />
+                      </div>
+                      <span>{achievement.progress} / {achievement.maxProgress}</span>
+                    </div>
+                  )}
                 </div>
-                <div className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                  {achievement.progress} / {achievement.maxProgress}
-                </div>
-              </div>
-            )}
+              </article>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {filteredAchievements.length === 0 && (
-        <div className="text-center text-muted" style={{ padding: '4rem' }}>
-          No achievements in this category
-        </div>
-      )}
+        ) : (
+          <EmptyState icon="🏆" title="No achievements" description="No entries exist in this category yet." />
+        )}
+      </SurfaceCard>
     </div>
   );
 };

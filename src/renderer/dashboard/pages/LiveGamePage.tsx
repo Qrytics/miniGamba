@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { EmptyState, SectionHeader, StatusPill, SurfaceCard } from '../components/StitchPrimitives';
 
 interface LivePlayer {
   summonerName: string;
@@ -72,13 +73,6 @@ function formatGameTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function hpColor(current: number, max: number): string {
-  const pct = max > 0 ? current / max : 0;
-  if (pct > 0.6) return 'var(--success)';
-  if (pct > 0.3) return 'var(--warning)';
-  return 'var(--danger)';
-}
-
 const POSITION_LABELS: Record<string, string> = {
   TOP: '⚔️ Top',
   JUNGLE: '🌿 Jungle',
@@ -138,55 +132,34 @@ const LiveGamePage: React.FC = () => {
     const timeLeft = Math.ceil(champSelect.timer.adjustedTimeLeftInPhase / 1000);
 
     const renderTeam = (players: ChampSelectPlayer[], label: string, color: string) => (
-      <div className="card" style={{ flex: 1, borderTop: `3px solid ${color}` }}>
-        <div className="card-header">
-          <h3 className="card-title" style={{ color }}>{label}</h3>
-        </div>
-        {players.map((p, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0.6rem 0',
-              borderBottom: i < players.length - 1 ? '1px solid var(--border)' : 'none',
-            }}
-          >
-            <div>
-              <span style={{ fontWeight: 600 }}>
-                {p.championName || (p.championId ? `Champ ${p.championId}` : '—')}
-              </span>
-              {p.summonerName && (
-                <span className="text-muted" style={{ marginLeft: '0.5rem', fontSize: '0.8rem' }}>
-                  ({p.summonerName})
-                </span>
-              )}
+      <SurfaceCard className="stitch-live-team-card" title={label}>
+        <div className="stitch-list">
+          {players.map((p, i) => (
+            <div key={i} className="stitch-list-item">
+              <div>
+                <div className="stitch-list-item-title" style={{ color }}>
+                  {p.championName || (p.championId ? `Champ ${p.championId}` : '—')}
+                </div>
+                <div className="stitch-list-item-meta">{p.summonerName || 'Unknown summoner'}</div>
+              </div>
+              <StatusPill tone="neutral">{POSITION_LABELS[p.assignedPosition] ?? p.assignedPosition}</StatusPill>
             </div>
-            <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-              {POSITION_LABELS[p.assignedPosition] ?? p.assignedPosition}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </SurfaceCard>
     );
 
     return (
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <h3>Champion Select</h3>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span className="text-muted" style={{ fontSize: '0.875rem' }}>{phase}</span>
-            {timeLeft > 0 && (
-              <span style={{ color: timeLeft < 15 ? 'var(--danger)' : 'var(--warning)', fontWeight: 700 }}>
-                ⏱ {timeLeft}s
-              </span>
-            )}
+      <div className="stitch-stack">
+        <SurfaceCard title="Champion Select" subtitle={`Phase: ${phase}`}>
+          <div className="stitch-inline-stats">
+            <StatusPill tone="gold">{phase}</StatusPill>
+            {timeLeft > 0 && <StatusPill tone={timeLeft < 15 ? 'red' : 'cyan'}>⏱ {timeLeft}s</StatusPill>}
           </div>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          {renderTeam(champSelect.myTeam, '🔵 Your Team', 'var(--secondary-color)')}
-          {renderTeam(champSelect.theirTeam, '🔴 Enemy Team', 'var(--danger)')}
+        </SurfaceCard>
+        <div className="stitch-split-grid">
+          {renderTeam(champSelect.myTeam, 'Your Team', 'var(--secondary-color)')}
+          {renderTeam(champSelect.theirTeam, 'Enemy Team', 'var(--danger)')}
         </div>
       </div>
     );
@@ -200,111 +173,52 @@ const LiveGamePage: React.FC = () => {
     const redTeam = liveData.players.filter((p) => p.team === 'CHAOS');
 
     const renderTeam = (players: LivePlayer[], label: string, color: string) => (
-      <div className="card" style={{ flex: 1, borderTop: `3px solid ${color}` }}>
-        <div className="card-header">
-          <h3 className="card-title" style={{ color }}>{label}</h3>
+      <SurfaceCard className="stitch-live-team-card" title={label}>
+        <div className="stitch-list">
+          {players.map((p, i) => {
+            const kda = p.deaths === 0 ? 'Perfect' : ((p.kills + p.assists) / p.deaths).toFixed(1);
+            return (
+              <div key={i} className="stitch-list-item">
+                <div>
+                  <div className="stitch-list-item-title" style={{ color }}>{p.championName} <span className="text-muted">Lv{p.level}</span></div>
+                  <div className="stitch-list-item-meta">{p.kills}/{p.deaths}/{p.assists} • {kda} KDA • {p.scores.creepScore} CS</div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        {players.map((p, i) => {
-          const kda = p.deaths === 0
-            ? '∞'
-            : ((p.kills + p.assists) / p.deaths).toFixed(1);
-          return (
-            <div
-              key={i}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.6rem 0',
-                borderBottom: i < players.length - 1 ? '1px solid var(--border)' : 'none',
-              }}
-            >
-              <div>
-                <span style={{ fontWeight: 600 }}>{p.championName}</span>
-                <span className="text-muted" style={{ marginLeft: '0.5rem', fontSize: '0.8rem' }}>
-                  Lv{p.level}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, minWidth: '5rem', textAlign: 'center' }}>
-                  {p.kills}/{p.deaths}/{p.assists}
-                </span>
-                <span className="text-muted" style={{ fontSize: '0.8rem', minWidth: '3.5rem', textAlign: 'right' }}>
-                  {kda} KDA
-                </span>
-                <span className="text-muted" style={{ fontSize: '0.8rem', minWidth: '3rem', textAlign: 'right' }}>
-                  {p.scores.creepScore} CS
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      </SurfaceCard>
     );
 
     return (
-      <div>
-        {/* Game info bar */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-          <div className="stat-card" style={{ flex: '0 0 auto' }}>
-            <div className="stat-label">Game Time</div>
-            <div className="stat-value">⏱ {formatGameTime(liveData.gameTime)}</div>
-          </div>
+      <div className="stitch-stack">
+        <div className="stitch-card-grid stats-grid">
+          <SurfaceCard title="Game Time"><p className="stitch-live-kpi">⏱ {formatGameTime(liveData.gameTime)}</p></SurfaceCard>
           {liveData.events && (
             <>
-              <div className="stat-card" style={{ flex: '0 0 auto' }}>
-                <div className="stat-label">Dragons</div>
-                <div className="stat-value">🐉 {liveData.events.dragonKills}</div>
-              </div>
-              <div className="stat-card" style={{ flex: '0 0 auto' }}>
-                <div className="stat-label">Barons</div>
-                <div className="stat-value">👁️ {liveData.events.baronKills}</div>
-              </div>
-              <div className="stat-card" style={{ flex: '0 0 auto' }}>
-                <div className="stat-label">Turrets</div>
-                <div className="stat-value">🗼 {liveData.events.turretKills}</div>
-              </div>
+              <SurfaceCard title="Dragons"><p className="stitch-live-kpi">🐉 {liveData.events.dragonKills}</p></SurfaceCard>
+              <SurfaceCard title="Barons"><p className="stitch-live-kpi">👁️ {liveData.events.baronKills}</p></SurfaceCard>
+              <SurfaceCard title="Turrets"><p className="stitch-live-kpi">🗼 {liveData.events.turretKills}</p></SurfaceCard>
             </>
           )}
         </div>
-
-        {/* Active player stats */}
         {liveData.activePlayer && (
-          <div className="card" style={{ marginBottom: '1rem' }}>
-            <div className="card-header">
-              <h3 className="card-title">⚡ Your Stats</h3>
+          <SurfaceCard title="Your Stats">
+            <div className="stitch-card-grid stats-grid">
+              <StatusPill tone="neutral">Level {liveData.activePlayer.level}</StatusPill>
+              <StatusPill tone="gold">{Math.round(liveData.activePlayer.currentGold).toLocaleString()} gold</StatusPill>
+              <StatusPill tone="green">
+                HP {Math.round(liveData.activePlayer.championStats.health)}/{Math.round(liveData.activePlayer.championStats.maxHealth)}
+              </StatusPill>
+              <StatusPill tone="cyan">
+                Mana {Math.round(liveData.activePlayer.championStats.mana)}/{Math.round(liveData.activePlayer.championStats.maxMana)}
+              </StatusPill>
             </div>
-            <div className="grid grid-4">
-              <div>
-                <div className="text-muted">Level</div>
-                <div style={{ fontWeight: 700, marginTop: '0.25rem' }}>{liveData.activePlayer.level}</div>
-              </div>
-              <div>
-                <div className="text-muted">Gold</div>
-                <div style={{ fontWeight: 700, color: 'var(--gold)', marginTop: '0.25rem' }}>
-                  {Math.round(liveData.activePlayer.currentGold).toLocaleString()}
-                </div>
-              </div>
-              <div>
-                <div className="text-muted">HP</div>
-                <div style={{ fontWeight: 700, color: hpColor(liveData.activePlayer.championStats.health, liveData.activePlayer.championStats.maxHealth), marginTop: '0.25rem' }}>
-                  {Math.round(liveData.activePlayer.championStats.health)}/{Math.round(liveData.activePlayer.championStats.maxHealth)}
-                </div>
-              </div>
-              <div>
-                <div className="text-muted">Mana</div>
-                <div style={{ fontWeight: 700, color: 'var(--secondary-color)', marginTop: '0.25rem' }}>
-                  {Math.round(liveData.activePlayer.championStats.mana)}/{Math.round(liveData.activePlayer.championStats.maxMana)}
-                </div>
-              </div>
-            </div>
-          </div>
+          </SurfaceCard>
         )}
-
-        {/* Scoreboards */}
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          {renderTeam(blueTeam, '🔵 Blue Team', 'var(--secondary-color)')}
-          {renderTeam(redTeam, '🔴 Red Team', 'var(--danger)')}
+        <div className="stitch-split-grid">
+          {renderTeam(blueTeam, 'Blue Team', 'var(--secondary-color)')}
+          {renderTeam(redTeam, 'Red Team', 'var(--danger)')}
         </div>
       </div>
     );
@@ -312,42 +226,41 @@ const LiveGamePage: React.FC = () => {
 
   // ── Not connected ─────────────────────────────────────────────────────────
   const renderNotConnected = () => (
-    <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎮</div>
-      <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>League Client Not Detected</p>
-      <p style={{ fontSize: '0.875rem' }}>
-        Open the League of Legends client and log in, then this page will automatically show your champion select and in-game stats.
-      </p>
-    </div>
+    <EmptyState
+      icon="🎮"
+      title="League client not detected"
+      description="Open the client and log in; this page will auto-populate champion select and in-game stats."
+    />
   );
 
   // ── Waiting for game ──────────────────────────────────────────────────────
   const renderWaiting = () => (
-    <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
-      <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>League Client Connected</p>
-      <p style={{ fontSize: '0.875rem' }}>
-        Waiting for champion select or a game to start...
-      </p>
-    </div>
+    <EmptyState
+      icon="✅"
+      title="League client connected"
+      description="Waiting for champion select or a live match to begin."
+    />
   );
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-        <h2>🎮 Live Game</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <div className="dashboard-page">
+      <SectionHeader
+        eyebrow="Live Companion"
+        title="Match telemetry"
+        description="Track champion select, in-game scoreboards, and live objective pacing from the same tactical surface."
+        action={
+          <StatusPill tone={inGame ? 'green' : lcuConnected ? 'gold' : 'red'}>
+            {inGame ? 'In Match' : lcuConnected ? 'Client Ready' : 'Client Offline'}
+          </StatusPill>
+        }
+      />
+
+      <SurfaceCard title="Status Feed" subtitle="Connection and refresh controls">
+        <div className="stitch-inline-stats">
           <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             {lastRefresh ? `Updated ${lastRefresh.toLocaleTimeString()}` : ''}
           </span>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              fontSize: '0.875rem',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}>
             <span
               style={{
                 width: 10,
@@ -361,11 +274,11 @@ const LiveGamePage: React.FC = () => {
               {inGame ? 'In Game' : lcuConnected ? 'Client Connected' : 'Client Offline'}
             </span>
           </div>
-          <button className="btn" onClick={refresh} style={{ padding: '0.35rem 0.75rem', fontSize: '0.875rem' }}>
+          <button className="btn btn-secondary" onClick={refresh} style={{ padding: '0.35rem 0.75rem', fontSize: '0.875rem' }}>
             ↺ Refresh
           </button>
         </div>
-      </div>
+      </SurfaceCard>
 
       {!lcuConnected && !inGame && renderNotConnected()}
       {lcuConnected && !inGame && !champSelect && renderWaiting()}

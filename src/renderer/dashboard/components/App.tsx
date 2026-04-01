@@ -16,6 +16,23 @@ import { PixelIcon } from '../../components/PixelIcon';
 import '../styles/dashboard.css';
 
 type PageType = 'home' | 'summoner' | 'livegame' | 'games' | 'achievements' | 'stats' | 'profile' | 'settings';
+type NavItem = {
+  id: PageType;
+  label: string;
+  icon: React.ReactNode;
+  section: 'core' | 'league' | 'casino' | 'account';
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { id: 'home', label: 'Home', icon: <PixelIcon name="home" size={18} aria-hidden={true} />, section: 'core' },
+  { id: 'summoner', label: 'Summoner', icon: <span aria-hidden={true}>🔎</span>, section: 'league' },
+  { id: 'livegame', label: 'Live Game', icon: <span aria-hidden={true}>🎮</span>, section: 'league' },
+  { id: 'games', label: 'Casino', icon: <PixelIcon name="game" size={18} aria-hidden={true} />, section: 'casino' },
+  { id: 'achievements', label: 'Achievements', icon: <PixelIcon name="trophy" size={18} aria-hidden={true} />, section: 'casino' },
+  { id: 'stats', label: 'Stats', icon: <PixelIcon name="chart" size={18} aria-hidden={true} />, section: 'casino' },
+  { id: 'profile', label: 'Profile', icon: <PixelIcon name="user" size={18} aria-hidden={true} />, section: 'account' },
+  { id: 'settings', label: 'Settings', icon: <PixelIcon name="settings" size={18} aria-hidden={true} />, section: 'account' },
+];
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -44,10 +61,29 @@ const App: React.FC = () => {
     }
   };
 
+  const renderNavSection = (title: string, section: NavItem['section']) => (
+    <li key={section}>
+      <p className="shell-nav-section">{title}</p>
+      <div className="shell-nav-group">
+        {NAV_ITEMS.filter((item) => item.section === section).map((item) => (
+          <button
+            key={item.id}
+            className={`shell-nav-btn ${currentPage === item.id ? 'active' : ''}`}
+            onClick={() => setCurrentPage(item.id)}
+            data-testid={`${item.id}-btn`}
+          >
+            <span className="shell-nav-icon">{item.icon}</span>
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </li>
+  );
+
   if (loading) {
     return (
-      <div className="app">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className="app app-shell">
+        <div className="shell-loading">
           <h2>Loading miniGamba...</h2>
         </div>
       </div>
@@ -55,126 +91,57 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="app">
-      <div className="app-header">
-        <h1><PixelIcon name="slots" size={28} aria-hidden={true} /> miniGamba</h1>
-        {userData && (
-          <div className="header-user">
-            <div className="coin-display">
-              <PixelIcon name="money" size={22} aria-hidden={true} />
-              <span>{userData.coins?.toLocaleString() || 0}</span>
+    <div className="app app-shell">
+      <header className="app-header shell-topbar">
+        <div className="shell-brand-wrap">
+          <h1 className="shell-brand">
+            <PixelIcon name="slots" size={26} aria-hidden={true} /> miniGamba
+          </h1>
+          <div className="shell-search">
+            <span aria-hidden={true}>🔍</span>
+            <input type="text" placeholder="Search summoners or modules..." aria-label="Search" />
+          </div>
+        </div>
+        <div className="header-user">
+          <div className="coin-display">
+            <PixelIcon name="money" size={20} aria-hidden={true} />
+            <span>{userData?.coins?.toLocaleString() || 0}</span>
+          </div>
+          <div className="level-display">
+            <PixelIcon name="star" size={18} aria-hidden={true} />
+            <span>Lv. {userData?.level || 1}</span>
+          </div>
+          <button onClick={handleLaunchOverlay} className="btn btn-primary shell-launch-btn">
+            <PixelIcon name="rocket" size={16} aria-hidden={true} /> Launch Overlay
+          </button>
+          <div className="shell-avatar" title={userData?.username || 'Player'}>
+            {(userData?.username || 'P').slice(0, 1).toUpperCase()}
+          </div>
+        </div>
+      </header>
+
+      <div className="app-layout shell-layout">
+        <aside className="app-sidebar shell-sidebar">
+          <div className="shell-user-card">
+            <div className="shell-user-icon">
+              <PixelIcon name="crown" size={20} aria-hidden={true} />
             </div>
-            <div className="level-display">
-              <PixelIcon name="star" size={22} aria-hidden={true} />
-              <span>Level {userData.level || 1}</span>
+            <div>
+              <p className="shell-user-name">{userData?.username || 'Summoner'}</p>
+              <p className="shell-user-rank">Level {userData?.level || 1} Command Center</p>
             </div>
           </div>
-        )}
-      </div>
-      
-      <div className="app-layout">
-        <aside className="app-sidebar">
           <nav>
             <ul>
-              <li>
-                <button 
-                  className={currentPage === 'home' ? 'active' : ''}
-                  onClick={() => setCurrentPage('home')}
-                >
-                  <PixelIcon name="home" size={20} aria-hidden={true} /> Home
-                </button>
-              </li>
-
-              {/* ── League of Legends section ── */}
-              <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
-                  League of Legends
-                </div>
-              </li>
-              <li>
-                <button
-                  className={currentPage === 'summoner' ? 'active' : ''}
-                  onClick={() => setCurrentPage('summoner')}
-                  data-testid="summoner-btn"
-                >
-                  🔍 Summoner
-                </button>
-              </li>
-              <li>
-                <button
-                  className={currentPage === 'livegame' ? 'active' : ''}
-                  onClick={() => setCurrentPage('livegame')}
-                  data-testid="livegame-btn"
-                >
-                  🎮 Live Game
-                </button>
-              </li>
-
-              {/* ── Mini-Casino section ── */}
-              <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
-                  Mini-Casino
-                </div>
-              </li>
-              <li>
-                <button 
-                  className={currentPage === 'games' ? 'active' : ''}
-                  onClick={() => setCurrentPage('games')}
-                  data-testid="games-btn"
-                >
-                  <PixelIcon name="game" size={20} aria-hidden={true} /> Games
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={currentPage === 'achievements' ? 'active' : ''}
-                  onClick={() => setCurrentPage('achievements')}
-                >
-                  <PixelIcon name="trophy" size={20} aria-hidden={true} /> Achievements
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={currentPage === 'stats' ? 'active' : ''}
-                  onClick={() => setCurrentPage('stats')}
-                  data-testid="stats-btn"
-                >
-                  <PixelIcon name="chart" size={20} aria-hidden={true} /> Stats
-                </button>
-              </li>
-
-              {/* ── Account section ── */}
-              <li style={{ marginTop: '1rem' }}>
-                <div style={{ padding: '0.25rem 1rem', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'default', pointerEvents: 'none', userSelect: 'none' }}>
-                  Account
-                </div>
-              </li>
-              <li>
-                <button 
-                  className={currentPage === 'profile' ? 'active' : ''}
-                  onClick={() => setCurrentPage('profile')}
-                >
-                  <PixelIcon name="user" size={20} aria-hidden={true} /> Profile
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={currentPage === 'settings' ? 'active' : ''}
-                  onClick={() => setCurrentPage('settings')}
-                >
-                  <PixelIcon name="settings" size={20} aria-hidden={true} /> Settings
-                </button>
-              </li>
-              <li style={{ marginTop: '2rem' }}>
-                <button onClick={handleLaunchOverlay} className="btn btn-primary" style={{ width: '100%' }}>
-                  <PixelIcon name="rocket" size={20} aria-hidden={true} /> Launch Overlay
-                </button>
-              </li>
+              {renderNavSection('Overview', 'core')}
+              {renderNavSection('League of Legends', 'league')}
+              {renderNavSection('Mini-Casino', 'casino')}
+              {renderNavSection('Account', 'account')}
             </ul>
           </nav>
         </aside>
-        
-        <main className="app-content">
+
+        <main className="app-content shell-content">
           <ErrorBoundary>
             {currentPage === 'home' && <HomePage userData={userData} onRefresh={loadUserData} />}
             {currentPage === 'summoner' && <SummonerPage />}
