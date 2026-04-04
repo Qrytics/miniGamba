@@ -18,89 +18,79 @@ miniGamba is a desktop overlay app and League of Legends companion — think Por
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Do This First)
 
-### Prerequisites
+### 1) Prerequisites
 
-Before you begin, ensure you have the following installed:
+- **Node.js:** use **20.x LTS** (supported: 20/22/23/24/25; Node 18 is not supported).
+- **Git:** latest stable.
+- **Native build tools** for `better-sqlite3`:
+  - Windows: Visual Studio Build Tools 2022 with **Desktop development with C++**
+  - macOS: `xcode-select --install`
+  - Ubuntu/Debian: `sudo apt-get update && sudo apt-get install -y build-essential python3`
 
-1. **Node.js** - Version **20.x LTS** recommended
-   - Download from [nodejs.org](https://nodejs.org/)
-   - **Recommended:** Node.js v20.x LTS for best compatibility  
-   - **Supported:** Node.js v20.x, v22.x, v23.x, v24.x, v25.x (better-sqlite3 v12 requirement)
-   - **Note:** Node.js v18 is NOT supported by better-sqlite3 v12. Please use v20 or higher.
-   - To check your version: `node --version`
-   
-2. **Build Tools** (Required on Windows, recommended on all platforms)
-   - **Windows:** Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
-     - During installation, select "Desktop development with C++"
-     - This is required for compiling native Node.js modules (like better-sqlite3)
-   - **macOS:** Install Xcode Command Line Tools: `xcode-select --install`
-   - **Linux:** Install build-essential: `sudo apt-get install build-essential` (Ubuntu/Debian)
-
-3. **Git** - [Download](https://git-scm.com/)
-
-### Installation
+Validate your environment:
 
 ```bash
-# 1. Clone the repository
+node --version
+npm --version
+git --version
+```
+
+### 2) Install and run locally (development)
+
+```bash
 git clone https://github.com/Qrytics/miniGamba.git
 cd miniGamba
-
-# 2. Install dependencies
 npm install
-
-# 3. If you get errors about better-sqlite3, rebuild it:
-npm rebuild better-sqlite3
-
-# 4. Run the app in development mode
 npm run dev
 ```
 
-**Note:** The project has been updated to use `better-sqlite3@12.0.0` which supports Node.js v20-v25. If you previously had issues with Node.js v24, they should now be resolved. Note that Node.js v18 is NOT supported - please use v20 or higher.
-
-### Building for Production
+If native dependency install fails:
 
 ```bash
-# Create a production build
+npm rebuild better-sqlite3
+```
+
+### 3) Build distributables
+
+```bash
 npm run build
 ```
 
-The built application will be in the `out/` directory.
+Build output is generated under `out/`.
 
-### Common Issues
+### 4) Team setup (everyone on the same workflow)
 
-#### Issue: `npm install` fails with build errors
+Use this checklist so every teammate can run/build with the same baseline:
 
-**Cause:** Missing build tools or incompatible Node.js version
+1. Everyone uses Node 20.x (`nvm use 20` recommended).
+2. Everyone runs `npm install` from repo root.
+3. Everyone validates before pushing:
+   - `npm run type-check`
+   - `npm run lint`
+   - `npm test`
+4. For UI/E2E verification, run:
+   - `npm run test:e2e:single`
+5. Keep `package-lock.json` committed when dependencies change.
 
-**Solutions:**
-1. **Check Node.js version:** Run `node --version`
-   - **Required:** Node.js v20 or higher (v18 is NOT supported)
-   - If you have v18, upgrade to v20 LTS from [nodejs.org](https://nodejs.org/)
-   - Or use [nvm](https://github.com/nvm-sh/nvm): `nvm install 20 && nvm use 20`
-2. **Windows users:** Make sure you have Visual Studio Build Tools installed (see Prerequisites above)
-3. **Clean install:** Delete `node_modules` and `package-lock.json`, then run `npm install` again
+### 5) League client connection requirements
 
-#### Issue: "better-sqlite3" compilation errors
+miniGamba reads local League endpoints only, so the app connects when these are true:
 
-**Solution:**
-- Ensure you have build tools installed (see Prerequisites)
-- Try rebuilding: `npm rebuild better-sqlite3`
-- On Windows, run PowerShell or Command Prompt as Administrator
-- Make sure Python is installed (Node-gyp requires Python 3.x)
+1. League Client is open and logged in.
+2. You are in champion select or an active match for live data panels.
+3. Local Riot APIs are reachable on your machine (LCU lockfile + Live Client Data API).
 
-#### Issue: App won't start
+If data looks disconnected:
 
-**Solution:**
-- Check that all dependencies installed successfully: look for errors in `npm install` output
-- Try running `npm run type-check` to see if there are any TypeScript errors
-- Check the console for error messages
-- Try deleting `node_modules` and running `npm install` again
+- Restart miniGamba after League Client is fully open.
+- Confirm League is running before opening overlay/live pages.
+- Check app logs and retry once (LCU can be briefly unavailable during client startup).
 
-### Development
+### 6) Additional setup docs
 
-See [docs/SETUP.md](docs/SETUP.md) for detailed development setup and workflow.
+For full platform troubleshooting and cloud-agent specifics, see `docs/SETUP.md`.
 
 ---
 

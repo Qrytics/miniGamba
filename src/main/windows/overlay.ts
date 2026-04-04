@@ -5,6 +5,16 @@ declare const OVERLAY_WEBPACK_ENTRY: string;
 declare const OVERLAY_PRELOAD_WEBPACK_ENTRY: string;
 
 let overlayWindow: BrowserWindow | null = null;
+const OVERLAY_MIN_WIDTH = 360;
+const OVERLAY_MIN_HEIGHT = 460;
+const OVERLAY_MAX_WIDTH = 1200;
+const OVERLAY_MAX_HEIGHT = 1200;
+
+function clampOverlaySize(width: number, height: number): [number, number] {
+  const clampedWidth = Math.max(OVERLAY_MIN_WIDTH, Math.min(OVERLAY_MAX_WIDTH, Math.floor(width)));
+  const clampedHeight = Math.max(OVERLAY_MIN_HEIGHT, Math.min(OVERLAY_MAX_HEIGHT, Math.floor(height)));
+  return [clampedWidth, clampedHeight];
+}
 
 /**
  * Create and configure the overlay window
@@ -16,9 +26,11 @@ export function createOverlayWindow(): BrowserWindow {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
+  const [initialWidth, initialHeight] = clampOverlaySize(400, 500);
+
   overlayWindow = new BrowserWindow({
-    width: 400,
-    height: 500,
+    width: initialWidth,
+    height: initialHeight,
     x: width - 420, // Position in bottom-right by default
     y: height - 520,
     frame: false, // No window frame
@@ -26,6 +38,8 @@ export function createOverlayWindow(): BrowserWindow {
     alwaysOnTop: true, // Always stay on top
     skipTaskbar: true, // Don't show in taskbar
     resizable: true,
+    minWidth: OVERLAY_MIN_WIDTH,
+    minHeight: OVERLAY_MIN_HEIGHT,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -112,7 +126,8 @@ export function setOverlayOpacity(opacity: number): void {
  */
 export function setOverlaySize(width: number, height: number): void {
   if (overlayWindow) {
-    overlayWindow.setSize(width, height);
+    const [nextWidth, nextHeight] = clampOverlaySize(width, height);
+    overlayWindow.setSize(nextWidth, nextHeight);
   }
 }
 
