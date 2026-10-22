@@ -1,1 +1,1 @@
-export { ScratchCards as default } from '../OtherGames';
+export { ScratchCards as default } from './ScratchCards';

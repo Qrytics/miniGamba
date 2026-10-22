@@ -8,6 +8,7 @@ node_modules/
 tests/screenshots/
 tests/reports/
 tests/test-results/
+test-results/
 tests/bug-reports/
 test-data/
 test-data-worker-*/

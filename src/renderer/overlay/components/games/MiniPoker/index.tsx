@@ -1,1 +1,1 @@
-export { MiniPoker as default } from '../OtherGames';
+export { MiniPoker as default } from './MiniPoker';

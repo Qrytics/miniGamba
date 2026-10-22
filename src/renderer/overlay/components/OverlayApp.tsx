@@ -40,12 +40,44 @@ const OverlayApp: React.FC = () => {
   const [userData, setUserData] = useState<any>(null);
   const [contentScale, setContentScale] = useState(1);
   const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
+  const [deathTimer, setDeathTimer] = useState<number | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const fitContentRef = useRef<HTMLDivElement | null>(null);
   const lastUiSoundRef = useRef(0);
 
   useEffect(() => {
     loadUserData();
+    const unsub = window.electronAPI?.onUserUpdated?.((data) => {
+      if (data?.user) {
+        setUserData(data.user);
+      } else {
+        loadUserData();
+      }
+    });
+    return () => {
+      unsub?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkDeathTimer = async () => {
+      try {
+        if (window.electronAPI?.lolGetLiveGameData) {
+          const res = await window.electronAPI.lolGetLiveGameData();
+          if (res?.success && res.data?.activePlayer?.isDead && res.data.activePlayer.respawnTimer > 0) {
+            setDeathTimer(res.data.activePlayer.respawnTimer);
+          } else {
+            setDeathTimer(null);
+          }
+        }
+      } catch (_e) {
+        setDeathTimer(null);
+      }
+    };
+
+    const interval = setInterval(checkDeathTimer, 3000);
+    checkDeathTimer();
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -142,16 +174,18 @@ const OverlayApp: React.FC = () => {
     <div className="overlay-app">
       <div className="overlay-header">
         <div className="header-left">
-          <div className="overlay-brand">miniGamba</div>
-          <div className="coin-display" data-testid="overlay-coin-display">
-            <PixelIcon name="money" size={20} aria-hidden={true} />
-            <span>{userData?.coins?.toLocaleString() || 0}</span>
-          </div>
-          {activeTab === 'games' && currentGame && (
+          {activeTab === 'games' && currentGame ? (
             <button className="control-btn" onClick={() => { setCurrentGame(null); }} data-testid="overlay-back-btn">
               ← Back
             </button>
+          ) : (
+            <div className="overlay-brand">miniGamba</div>
           )}
+          <div className="coin-display" data-testid="overlay-coin-display">
+            <span style={{ display: 'none' }}>💰</span>
+            <PixelIcon name="money" size={20} aria-hidden={true} />
+            <span>{userData?.coins?.toLocaleString() || 0}</span>
+          </div>
         </div>
         <div className="header-controls">
           <button
@@ -183,6 +217,24 @@ const OverlayApp: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {deathTimer !== null && deathTimer > 0 && (
+        <div style={{
+          background: 'linear-gradient(90deg, #E53E3E, #9B2C2C)',
+          color: '#FFF',
+          padding: '4px 12px',
+          fontSize: '11px',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(255,255,255,0.2)',
+          boxShadow: '0 2px 8px rgba(229, 62, 62, 0.4)',
+        }}>
+          <span>💀 DEAD FOR {deathTimer}s</span>
+          <span style={{ color: '#FFD84B' }}>SPIN WHILE YOU WAIT!</span>
+        </div>
+      )}
 
       <div className="overlay-content">
         <div className="overlay-fit-viewport" ref={viewportRef}>

@@ -86,6 +86,21 @@ async function setCoinBalance(overlayWindow: any, targetBalance: number): Promis
 }
 
 test.describe('Money/Coins Validation Tests', () => {
+  test.beforeEach(async () => {
+    if (!testContext?.app) return;
+    try {
+      const overlayWindow = await getOverlayWindow(testContext.app, testContext.mainWindow);
+      if (!overlayWindow) return;
+      const backBtn = await overlayWindow.$('button:has-text("Back"), button:has-text("←"), button[data-testid="overlay-back-btn"]');
+      if (backBtn) {
+        await backBtn.click();
+        await overlayWindow.waitForTimeout(500);
+      }
+    } catch {
+      // Ignore if cannot go back
+    }
+  });
+
   test('should prevent playing when insufficient funds', async () => {
     const { mainWindow, app } = testContext;
     const overlayWindow = await getOverlayWindow(app, mainWindow);
@@ -319,6 +334,8 @@ test.describe('Money/Coins Validation Tests', () => {
     await overlayWindow.waitForLoadState('domcontentloaded');
     await overlayWindow.waitForTimeout(2000);
     
+    // Set a known balance
+    await setCoinBalance(overlayWindow, 1000);
     // Get initial balance
     const initialBalance = await getCoinBalance(overlayWindow);
     

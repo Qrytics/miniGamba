@@ -1,1 +1,1 @@
-export { MiniDerby as default } from '../OtherGames';
+export { MiniDerby as default } from './MiniDerby';

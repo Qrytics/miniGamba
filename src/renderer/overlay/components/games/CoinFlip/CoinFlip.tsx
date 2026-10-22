@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CoinFlip as CoinFlipEngine } from '../../../game-logic/coin-flip';
 import { PixelIcon } from '../../../../components/PixelIcon';
-import { playCoinFlip, playWin, playLoss, playBet } from '../../../utils/sounds';
+import ChipSelector from '../../ui/ChipSelector';
+import { playCoinFlip, playCoinLand, playWin, playLoss, playBet } from '../../../utils/sounds';
+import { particles } from '../../../utils/particles';
 
 interface CoinFlipProps {
   onCoinsUpdate: () => void;
@@ -12,7 +14,8 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
   const [choice, setChoice] = useState<'heads' | 'tails'>('heads');
   const [result, setResult] = useState<any>(null);
   const [flipping, setFlipping] = useState(false);
-  const [coinFace, setCoinFace] = useState('heads');
+  const [coinFace, setCoinFace] = useState<'heads' | 'tails'>('heads');
+  const [streak, setStreak] = useState(0);
 
   const engineRef = useRef<CoinFlipEngine | null>(null);
 
@@ -27,63 +30,64 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
 
   const handleFlip = async () => {
     const engine = engineRef.current;
-    if (!engine) return;
+    if (!engine || flipping) return;
 
-    if (flipping) return;
-    
     setFlipping(true);
     setResult(null);
 
     try {
       const startResult = await window.electronAPI.startGame('coin-flip', bet);
       if (!startResult?.success) {
-        console.error('Start game failed:', startResult?.error || 'Unknown error');
+        const errorMsg = startResult?.error || 'Insufficient coins to place bet';
+        setResult({ error: errorMsg, win: false, bet, payout: 0 });
+        setFlipping(false);
         return;
       }
+      onCoinsUpdate();
       const sessionId = startResult?.sessionId;
       playBet();
       playCoinFlip();
       engine.start(bet);
-      
-      // Flip animation
-      const animationFrames = 10;
-      for (let i = 0; i < animationFrames; i++) {
-        setCoinFace(i % 2 === 0 ? 'heads' : 'tails');
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      
-      // Get actual result
+
+      // Determine outcome via engine
       await engine.flip(choice);
       const state = engine.getState();
       const endResult = engine.end();
-      
-      // Guard against undefined result from engine.end()
-      if (!endResult) {
-        console.error('engine.end() returned undefined');
-        setResult({ bet, payout: 0, win: false, result: 'loss' });
-        await window.electronAPI.endGame('coin-flip', { bet, payout: 0, win: false, result: 'loss', sessionId });
+      const finalFace: 'heads' | 'tails' = state.coinResult === 'tails' ? 'tails' : 'heads';
+
+      // Realistic 1.2s flight time
+      setTimeout(() => {
+        playCoinLand();
+        setCoinFace(finalFace);
+      }, 1050);
+
+      setTimeout(async () => {
+        const isWin = endResult?.result === 'win';
+        const gameResult = {
+          ...state,
+          bet,
+          payout: endResult?.payout ?? 0,
+          win: isWin,
+          result: endResult?.result ?? 'loss',
+          sessionId,
+        };
+
+        setResult(gameResult);
+        if (isWin) {
+          playWin();
+          particles.burstCoins(undefined, undefined, 24);
+          setStreak((prev) => prev + 1);
+        } else {
+          playLoss();
+          setStreak(0);
+        }
+
+        await window.electronAPI.endGame('coin-flip', gameResult);
         onCoinsUpdate();
-        return;
-      }
-
-      const gameResult = {
-        ...state,
-        ...endResult,
-        bet: bet, // Include bet in result
-        payout: endResult.payout,
-        win: endResult.result === 'win',
-        result: endResult.result,
-        sessionId,
-      };
-
-      setCoinFace(state.coinResult || 'heads');
-      setResult(gameResult);
-      if (endResult.result === 'win') playWin(); else playLoss();
-      await window.electronAPI.endGame('coin-flip', gameResult);
-      onCoinsUpdate();
+        setFlipping(false);
+      }, 1250);
     } catch (error) {
       console.error('Flip failed:', error);
-    } finally {
       setFlipping(false);
     }
   };
@@ -92,66 +96,95 @@ const CoinFlip: React.FC<CoinFlipProps> = ({ onCoinsUpdate }) => {
     <div className="game-container">
       <div className="game-header">
         <h2 className="game-title"><PixelIcon name="coin" size={28} aria-hidden={true} /> Coin Flip</h2>
+        {streak > 1 && (
+          <span style={{ fontSize: '11px', color: 'var(--balatro-yellow)', fontWeight: 800 }}>
+            🔥 {streak} STREAK
+          </span>
+        )}
       </div>
 
       <div className="game-interface">
-        {result && (
+        {result?.error ? (
+          <div className="result-display error error-message">
+            ⚠️ {result.error}
+          </div>
+        ) : result && (
           <div className={`result-display ${result.win ? 'win' : 'loss'}`}>
-            {result.win ? `You won ${result.payout} coins!` : `You lost ${bet} coins`}
+            {result.win ? `Landed on ${result.coinResult?.toUpperCase()}! Won ${result.payout} coins!` : `Landed on ${result.coinResult?.toUpperCase()} — Lost ${bet} coins`}
           </div>
         )}
 
-        <div className="game-display">
-          <div className={`coin ${flipping ? 'flipping' : ''}`}>
-            {coinFace === 'heads' ? <PixelIcon name="crown" size={64} aria-hidden={true} /> : <PixelIcon name="coin" size={64} aria-hidden={true} />}
+        <div className="game-display" style={{ flexDirection: 'column', gap: '8px' }}>
+          {/* 3D Coin Scene */}
+          <div className="coin-3d-scene">
+            <div
+              className={`coin-3d-disc ${flipping ? 'flipping' : ''}`}
+              style={{
+                transform: !flipping
+                  ? coinFace === 'heads'
+                    ? 'rotateX(0deg)'
+                    : 'rotateX(180deg)'
+                  : undefined,
+              }}
+            >
+              <div className="coin-side coin-side-heads">
+                <span className="coin-emblem">G</span>
+                <span className="coin-text">HEADS</span>
+              </div>
+              <div className="coin-side coin-side-tails">
+                <span className="coin-emblem">1</span>
+                <span className="coin-text">TAILS</span>
+              </div>
+            </div>
           </div>
-          <p className="text-muted text-center">
-            {flipping ? 'Flipping...' : `Landed on ${coinFace}`}
-          </p>
+
+          {/* Choice Selector */}
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <button
+              type="button"
+              className={`action-btn ${choice === 'heads' ? '' : 'bet-btn'}`}
+              onClick={() => !flipping && setChoice('heads')}
+              disabled={flipping}
+              style={{
+                flex: 1,
+                padding: '8px 16px',
+                borderColor: choice === 'heads' ? 'var(--balatro-yellow)' : undefined,
+                boxShadow: choice === 'heads' ? '0 0 10px rgba(255, 216, 75, 0.4)' : undefined,
+              }}
+            >
+              HEADS (2×)
+            </button>
+            <button
+              type="button"
+              className={`action-btn ${choice === 'tails' ? '' : 'bet-btn'}`}
+              onClick={() => !flipping && setChoice('tails')}
+              disabled={flipping}
+              style={{
+                flex: 1,
+                padding: '8px 16px',
+                borderColor: choice === 'tails' ? 'var(--balatro-yellow)' : undefined,
+                boxShadow: choice === 'tails' ? '0 0 10px rgba(255, 216, 75, 0.4)' : undefined,
+              }}
+            >
+              TAILS (2×)
+            </button>
+          </div>
         </div>
 
         <div className="game-controls">
-          <div className="bet-controls">
-            <button 
-              className={`action-btn ${choice === 'heads' ? '' : 'btn-secondary'}`}
-              onClick={() => setChoice('heads')}
-              disabled={flipping}
-              style={{ width: '120px' }}
-            >
-              <PixelIcon name="crown" size={20} aria-hidden={true} /> Heads
-            </button>
-            <button 
-              className={`action-btn ${choice === 'tails' ? '' : 'btn-secondary'}`}
-              onClick={() => setChoice('tails')}
-              disabled={flipping}
-              style={{ width: '120px' }}
-            >
-              <PixelIcon name="coin" size={20} aria-hidden={true} /> Tails
-            </button>
-          </div>
+          <ChipSelector
+            currentBet={bet}
+            onBetChange={setBet}
+            disabled={flipping}
+          />
 
-          <div className="bet-controls">
-            <button className="bet-btn" onClick={() => setBet(Math.max(1, bet - 10))}>
-              -10
-            </button>
-            <input
-              type="number"
-              className="bet-input"
-              value={bet}
-              onChange={(e) => setBet(Math.max(1, parseInt(e.target.value) || 1))}
-              min="1"
-            />
-            <button className="bet-btn" onClick={() => setBet(bet + 10)}>
-              +10
-            </button>
-          </div>
-
-          <button 
-            className="play-btn" 
+          <button
+            className="play-btn"
             onClick={handleFlip}
             disabled={flipping}
+            style={{ marginTop: '8px' }}
           >
-            {flipping ? 'FLIPPING...' : `FLIP (${bet} coins)`}
+            {flipping ? 'FLIPPING...' : `FLIP COIN (${bet} coins)`}
           </button>
         </div>
       </div>

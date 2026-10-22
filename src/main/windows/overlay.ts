@@ -1,4 +1,6 @@
 import { BrowserWindow, screen } from 'electron';
+import path from 'path';
+import fs from 'fs';
 
 // Provided by @electron-forge/plugin-webpack for the "overlay" entry point
 declare const OVERLAY_WEBPACK_ENTRY: string;
@@ -50,14 +52,21 @@ export function createOverlayWindow(): BrowserWindow {
   });
 
   // Load the overlay renderer (dev server or production bundle, handled by webpack plugin)
+  const localFilePath = path.join(__dirname, '../renderer/overlay/index.html');
   overlayWindow.loadURL(OVERLAY_WEBPACK_ENTRY).catch((error) => {
-    console.error('Failed to load overlay:', error);
-    // Retry after a short delay in case dev server is still starting
-    setTimeout(() => {
-      overlayWindow?.loadURL(OVERLAY_WEBPACK_ENTRY).catch((retryError) => {
-        console.error('Retry failed:', retryError);
+    console.warn('Failed to load overlay from entry URL:', OVERLAY_WEBPACK_ENTRY, error?.message || error);
+    if (fs.existsSync(localFilePath)) {
+      console.log('Falling back to local overlay bundle:', localFilePath);
+      overlayWindow?.loadFile(localFilePath).catch((err) => {
+        console.error('Failed to load fallback overlay bundle:', err);
       });
-    }, 2000);
+    } else {
+      setTimeout(() => {
+        overlayWindow?.loadURL(OVERLAY_WEBPACK_ENTRY).catch((retryError) => {
+          console.error('Retry failed:', retryError);
+        });
+      }, 2000);
+    }
   });
 
   // Show window when ready

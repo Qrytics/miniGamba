@@ -1,81 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { HigherOrLower as HigherOrLowerEngine } from '../../../game-logic/higher-or-lower';
 import { PixelIcon } from '../../../../components/PixelIcon';
-import { playWin, playLoss, playBet, playCardDeal, playReveal } from '../../../utils/sounds';
+import PlayingCard from '../../ui/PlayingCard';
+import ChipSelector from '../../ui/ChipSelector';
+import { playCardDeal, playCardFlip, playWin, playLoss, playBet, playCashOut, playStreakUp } from '../../../utils/sounds';
+import { particles } from '../../../utils/particles';
 
 interface HigherOrLowerProps {
   onCoinsUpdate: () => void;
 }
 
-// Simple card deck for comparison
-const CARD_VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const CARD_SUITS = ['♠', '♥', '♦', '♣'];
-
-function randomCard(): { label: string; value: number } {
-  const val = Math.floor(Math.random() * 13);
-  const suit = CARD_SUITS[Math.floor(Math.random() * 4)];
-  return { label: `${CARD_VALUES[val]}${suit}`, value: val };
-}
+const MULTIPLIERS = [1.2, 1.5, 2.0, 3.0, 5.0, 8.0, 12.0, 20.0, 35.0, 50.0];
 
 const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
   const [bet, setBet] = useState(10);
-  const [currentCard, setCurrentCard] = useState<{ label: string; value: number }>({ label: 'K♠', value: 11 });
-  const [nextCard, setNextCard] = useState<{ label: string; value: number } | null>(null);
+  const [currentCard, setCurrentCard] = useState<string>('K♠');
+  const [nextCard, setNextCard] = useState<string | null>(null);
   const [streak, setStreak] = useState(0);
-  const [result, setResult] = useState<{ win: boolean; payout: number; streak: number } | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [result, setResult] = useState<{ win?: boolean; payout?: number; streak?: number; bet?: number; error?: string } | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
+  const engineRef = useRef<HigherOrLowerEngine | null>(null);
+
+  useEffect(() => {
+    const engine = new HigherOrLowerEngine();
+    engine.init();
+    engineRef.current = engine;
+    const state = engine.getState();
+    if (state.currentCard) {
+      setCurrentCard(state.currentCard.display);
+    }
+    return () => {
+      engineRef.current = null;
+    };
+  }, []);
+
   const handleStart = async () => {
+    const engine = engineRef.current;
+    if (!engine || playing || isRevealing) return;
+
     try {
       const startResult = await window.electronAPI.startGame('higher-or-lower', bet);
       if (!startResult?.success) {
+        setResult({ error: startResult?.error || 'Insufficient coins to place bet', win: false, bet, payout: 0 });
         return;
       }
-      setSessionId(startResult?.sessionId || null);
-      setCurrentCard(randomCard());
+      onCoinsUpdate();
+
+      setSessionId(startResult.sessionId ?? null);
+      playBet();
+      engine.start(bet);
+      engine.init();
+      playCardDeal();
+
+      const state = engine.getState();
+      setCurrentCard(state.currentCard?.display ?? 'K♠');
       setNextCard(null);
       setStreak(0);
       setResult(null);
       setPlaying(true);
-      playBet();
-      playCardDeal();
     } catch (error) {
       console.error('Start failed:', error);
     }
   };
 
-  const handleGuess = async (higher: boolean) => {
-    const next = randomCard();
-    setNextCard(next);
-    // Win if the player's guess matches the actual comparison
-    const win = higher ? next.value > currentCard.value : next.value < currentCard.value;
-    // Ties count as a loss to keep it simple
-    playReveal();
-    if (win) {
-      setStreak(streak + 1);
-      setTimeout(() => {
-        setCurrentCard(next);
+  const handleGuess = async (choice: 'higher' | 'lower') => {
+    const engine = engineRef.current;
+    if (!engine || !playing || isRevealing) return;
+
+    setIsRevealing(true);
+    playCardFlip();
+
+    const isCorrect = await engine.guess(choice);
+    const state = engine.getState();
+    const drawn = state.nextCard?.display ?? '2♥';
+    setNextCard(drawn);
+
+    setTimeout(async () => {
+      if (isCorrect) {
+        const newStreak = state.streak;
+        setStreak(newStreak);
+        playStreakUp(newStreak);
+        setCurrentCard(drawn);
         setNextCard(null);
-      }, 800);
-    } else {
-      const gameResult = {
-        bet,
-        payout: 0,
-        result: 'loss',
-        win: false,
-        streak,
-        sessionId,
-      };
-      setResult({ win: false, payout: 0, streak });
-      setPlaying(false);
-      playLoss();
-      await window.electronAPI.endGame('higher-or-lower', gameResult);
-      onCoinsUpdate();
-    }
+        setIsRevealing(false);
+
+        if (newStreak >= 10) {
+          // Auto cash-out at max streak
+          handleCashOut();
+        }
+      } else {
+        // Loss
+        const gameResult = {
+          bet,
+          payout: 0,
+          result: 'loss',
+          win: false,
+          streak: state.streak,
+          sessionId,
+        };
+        setResult({ win: false, payout: 0, streak: state.streak });
+        setPlaying(false);
+        setIsRevealing(false);
+        playLoss();
+        await window.electronAPI.endGame('higher-or-lower', gameResult);
+        setSessionId(null);
+        onCoinsUpdate();
+      }
+    }, 120);
   };
 
   const handleCashOut = async () => {
-    const payout = Math.floor(bet * (1 + streak * 0.5));
+    const engine = engineRef.current;
+    if (!engine || !playing || isRevealing) return;
+
+    const payout = engine.cashOut();
     const gameResult = {
       bet,
       payout,
@@ -84,71 +125,150 @@ const HigherOrLower: React.FC<HigherOrLowerProps> = ({ onCoinsUpdate }) => {
       streak,
       sessionId,
     };
+
     setResult({ win: true, payout, streak });
     setPlaying(false);
-    playWin();
+    playCashOut();
+
+    if (streak >= 5) {
+      particles.burstConfetti(undefined, undefined, 40);
+    } else {
+      particles.burstCoins(undefined, undefined, 25);
+    }
+
     await window.electronAPI.endGame('higher-or-lower', gameResult);
+    setSessionId(null);
     onCoinsUpdate();
   };
+
+  const currentMultiplier = streak > 0 ? (MULTIPLIERS[streak - 1] ?? 50) : 1;
+  const potentialWinnings = Math.floor(bet * currentMultiplier);
 
   return (
     <div className="game-container">
       <div className="game-header">
         <h2 className="game-title"><PixelIcon name="target" size={28} aria-hidden={true} /> Higher or Lower</h2>
+        {playing && streak > 0 && (
+          <span style={{ fontSize: '11px', color: 'var(--balatro-yellow)', fontWeight: 800 }}>
+            🔥 {streak} STREAK ({currentMultiplier}×)
+          </span>
+        )}
       </div>
+
       <div className="game-interface">
-        {result && (
+        {result?.error ? (
+          <div className="result-display error error-message">
+            ⚠️ {result.error}
+          </div>
+        ) : result && (
           <div className={`result-display ${result.win ? 'win' : 'loss'}`}>
-            {result.win
-              ? `🎉 Cashed out ${result.payout} coins! Streak: ${result.streak}`
-              : `💸 Wrong guess! Streak was ${result.streak}`}
+            {result.win ? `Cashed out at ${result.streak} streak! Won ${result.payout} coins!` : `Wrong guess! Streak lost.`}
           </div>
         )}
-        <div className="game-display" style={{ flexDirection: 'row', gap: '1.5rem', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="playing-card" style={{ width: '80px', height: '112px', fontSize: '1.4rem' }}>
-            {currentCard.label}
+
+        <div className="game-display" style={{ flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+          {/* Card comparison display */}
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <p className="text-muted mb-1" style={{ fontSize: '10px' }}>CURRENT</p>
+              <PlayingCard card={currentCard} size="lg" />
+            </div>
+
+            <div style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>➔</div>
+
+            <div style={{ textAlign: 'center' }}>
+              <p className="text-muted mb-1" style={{ fontSize: '10px' }}>NEXT</p>
+              {nextCard ? (
+                <PlayingCard card={nextCard} size="lg" highlighted />
+              ) : (
+                <PlayingCard faceDown size="lg" />
+              )}
+            </div>
           </div>
-          {nextCard && (
-            <>
-              <span style={{ fontSize: '1.5rem' }}>→</span>
-              <div className="playing-card" style={{ width: '80px', height: '112px', fontSize: '1.4rem',
-                background: nextCard.value > currentCard.value
-                  ? 'rgba(72,255,154,0.15)' : 'rgba(255,75,75,0.15)' }}>
-                {nextCard.label}
-              </div>
-            </>
+
+          {/* Multiplier Track */}
+          {playing && (
+            <div style={{ display: 'flex', gap: '4px', maxWidth: '320px', width: '100%', overflowX: 'auto', padding: '4px 0' }}>
+              {MULTIPLIERS.map((mult, idx) => {
+                const isCurrent = streak === idx + 1;
+                const isPassed = streak > idx + 1;
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      fontSize: '9px',
+                      padding: '3px 2px',
+                      borderRadius: '3px',
+                      background: isCurrent
+                        ? 'var(--balatro-yellow)'
+                        : isPassed
+                        ? 'var(--balatro-green)'
+                        : 'var(--balatro-panel-shadow)',
+                      color: isCurrent ? '#000' : isPassed ? '#000' : 'var(--text-secondary)',
+                      fontWeight: isCurrent || isPassed ? 800 : 500,
+                    }}
+                  >
+                    {mult}×
+                  </div>
+                );
+              })}
+            </div>
           )}
-          {playing && !nextCard && <p className="text-muted">?</p>}
         </div>
-        {playing && (
-          <p className="text-muted" style={{ textAlign: 'center', fontSize: '0.8rem', marginTop: '0.5rem' }}>
-            Streak: {streak} | Cash out multiplier: {(1 + streak * 0.5).toFixed(1)}×
-          </p>
-        )}
+
         <div className="game-controls">
           {!playing ? (
             <>
-              <div className="bet-controls">
-                <button className="bet-btn" onClick={() => setBet(Math.max(1, bet - 10))}>-10</button>
-                <input type="number" className="bet-input" value={bet} onChange={(e) => setBet(Math.max(1, parseInt(e.target.value) || 1))} min="1" />
-                <button className="bet-btn" onClick={() => setBet(bet + 10)}>+10</button>
-              </div>
-              <button className="play-btn" onClick={handleStart}>START ({bet} coins)</button>
-            </>
-          ) : (
-            <>
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-                <button className="action-btn" onClick={() => handleGuess(true)} style={{ flex: 1 }}>
-                  <PixelIcon name="higher" size={18} aria-hidden={true} /> HIGHER
-                </button>
-                <button className="action-btn" onClick={() => handleGuess(false)} style={{ flex: 1 }}>
-                  <PixelIcon name="lower" size={18} aria-hidden={true} /> LOWER
-                </button>
-              </div>
-              <button className="play-btn" onClick={handleCashOut} disabled={streak === 0}>
-                <PixelIcon name="cashout" size={20} aria-hidden={true} /> CASH OUT
+              <ChipSelector
+                currentBet={bet}
+                onBetChange={setBet}
+              />
+              <button
+                className="play-btn"
+                onClick={handleStart}
+                style={{ marginTop: '8px' }}
+              >
+                START GAME ({bet} coins)
               </button>
             </>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className="action-btn"
+                  onClick={() => handleGuess('higher')}
+                  disabled={isRevealing}
+                  style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
+                >
+                  ▲ HIGHER
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => handleGuess('lower')}
+                  disabled={isRevealing}
+                  style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
+                >
+                  ▼ LOWER
+                </button>
+              </div>
+
+              {streak > 0 && (
+                <button
+                  className="play-btn"
+                  onClick={handleCashOut}
+                  disabled={isRevealing}
+                  style={{
+                    background: 'linear-gradient(90deg, #10B981, #059669)',
+                    borderColor: '#34D399',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  💰 CASH OUT ({potentialWinnings} coins)
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

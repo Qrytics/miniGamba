@@ -1,1 +1,1 @@
-export { DiceRoll as default } from '../OtherGames';
+export { DiceRoll as default } from './DiceRoll';

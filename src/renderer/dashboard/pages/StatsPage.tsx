@@ -32,7 +32,7 @@ const StatsPage: React.FC = () => {
 
   return (
     <div className="dashboard-page">
-      <header className="stitch-page-header">
+      <header className="stitch-page-header" data-testid="stats-page-header">
         <p className="stitch-eyebrow">Performance</p>
         <h2 className="stitch-page-title">Personal Performance</h2>
         <p className="stitch-section-description">

@@ -117,6 +117,8 @@ class LiveClientService {
       assists: p.scores?.assists ?? 0,
       goldEarned: p.scores?.goldEarned ?? 0,
       items: (p.items ?? []).map((i: any) => i.itemID ?? 0),
+      isDead: Boolean(p.isDead),
+      respawnTimer: Number(p.respawnTimer ?? 0),
       scores: {
         assists: p.scores?.assists ?? 0,
         creepScore: p.scores?.creepScore ?? 0,
@@ -130,6 +132,8 @@ class LiveClientService {
     const dragonKills = events.filter((e) => e.EventName === 'DragonKill').length;
     const baronKills = events.filter((e) => e.EventName === 'BaronKill').length;
     const turretKills = events.filter((e) => e.EventName === 'TurretKilled').length;
+
+    const activeInAll = players.find((p) => p.summonerName === activePlayer?.summonerName);
 
     const normalizedActivePlayer = activePlayer
       ? {
@@ -145,6 +149,8 @@ class LiveClientService {
           },
           currentGold: activePlayer.currentGold ?? 0,
           level: activePlayer.level ?? 1,
+          isDead: Boolean(activeInAll?.isDead),
+          respawnTimer: Math.ceil(Number(activeInAll?.respawnTimer ?? 0)),
         }
       : undefined;
 

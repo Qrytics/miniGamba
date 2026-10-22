@@ -14,6 +14,7 @@ interface ElectronAPI {
   // User data
   getUserData: () => Promise<any>;
   addCoins?: (amount: number) => Promise<any>; // Test-only - conditionally exposed
+  onUserUpdated?: (callback: (data: any) => void) => () => void;
   
   // Settings
   getOverlaySettings: () => Promise<any>;
@@ -48,6 +49,13 @@ const api: ElectronAPI = {
   
   // User data
   getUserData: () => ipcRenderer.invoke('data:getUser'),
+  onUserUpdated: (callback: (data: any) => void) => {
+    const handler = (_event: any, data: any) => callback(data);
+    ipcRenderer.on('data:userUpdated', handler);
+    return () => {
+      ipcRenderer.removeListener('data:userUpdated', handler);
+    };
+  },
   
   // Settings
   getOverlaySettings: () => ipcRenderer.invoke('settings:overlay'),
@@ -75,7 +83,7 @@ const api: ElectronAPI = {
 };
 
 // Conditionally expose addCoins for test environments only
-if (process.env.PLAYWRIGHT_TEST) {
+if (process.env.PLAYWRIGHT_TEST || process.env.NODE_ENV === 'test') {
   api.addCoins = (amount) => ipcRenderer.invoke('data:addCoins', amount);
 }
 

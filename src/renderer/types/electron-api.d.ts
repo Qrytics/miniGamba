@@ -12,6 +12,8 @@ export interface ElectronAPI {
   // User data
   getUserData: () => Promise<any>;
   updateProfile?: (profile: any) => Promise<any>;
+  addCoins?: (amount: number) => Promise<any>;
+  onUserUpdated?: (callback: (data: any) => void) => () => void;
   
   // Settings
   getSettings?: (key?: string) => Promise<any>;

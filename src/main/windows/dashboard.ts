@@ -1,5 +1,6 @@
 import { app, BrowserWindow, nativeImage } from 'electron';
 import path from 'path';
+import fs from 'fs';
 
 // Provided by @electron-forge/plugin-webpack for the "dashboard" entry point
 declare const DASHBOARD_WEBPACK_ENTRY: string;
@@ -39,16 +40,23 @@ export function createDashboardWindow(): BrowserWindow {
 
   // Load the dashboard renderer (dev server or production bundle, handled by webpack plugin)
   console.log('Loading dashboard from:', DASHBOARD_WEBPACK_ENTRY);
+  const localFilePath = path.join(__dirname, '../renderer/dashboard/index.html');
+
   dashboardWindow.loadURL(DASHBOARD_WEBPACK_ENTRY).catch((error) => {
-    console.error('Failed to load dashboard:', error);
-    console.error('Attempted URL:', DASHBOARD_WEBPACK_ENTRY);
-    // Retry after a short delay in case dev server is still starting
-    setTimeout(() => {
-      console.log('Retrying dashboard load...');
-      dashboardWindow?.loadURL(DASHBOARD_WEBPACK_ENTRY).catch((retryError) => {
-        console.error('Retry failed:', retryError);
+    console.warn('Failed to load dashboard from entry URL:', DASHBOARD_WEBPACK_ENTRY, error?.message || error);
+    if (fs.existsSync(localFilePath)) {
+      console.log('Falling back to local dashboard bundle:', localFilePath);
+      dashboardWindow?.loadFile(localFilePath).catch((err) => {
+        console.error('Failed to load fallback dashboard bundle:', err);
       });
-    }, 2000);
+    } else {
+      setTimeout(() => {
+        console.log('Retrying dashboard load...');
+        dashboardWindow?.loadURL(DASHBOARD_WEBPACK_ENTRY).catch((retryError) => {
+          console.error('Retry failed:', retryError);
+        });
+      }, 2000);
+    }
   });
 
   // Show window when ready

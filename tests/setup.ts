@@ -21,7 +21,14 @@ export async function launchApp(workerIndex?: number): Promise<TestContext> {
   process.env.PLAYWRIGHT_TEST = 'true';
   
   const electronPath = require('electron');
-  const appPath = path.join(__dirname, '../.webpack/main/index.js');
+  const fs = require('fs');
+  const candidateAppPaths = [
+    path.join(__dirname, '../.webpack/main/index.js'),
+    path.join(__dirname, `../.webpack/${process.arch}/main/index.js`),
+    path.join(__dirname, '../.webpack/arm64/main/index.js'),
+    path.join(__dirname, '../.webpack/x64/main/index.js'),
+  ];
+  const appPath = candidateAppPaths.find(p => fs.existsSync(p)) || candidateAppPaths[0];
 
   // Use worker index or process ID for isolation
   const workerId = workerIndex !== undefined ? workerIndex.toString() : process.pid.toString();
@@ -32,7 +39,6 @@ export async function launchApp(workerIndex?: number): Promise<TestContext> {
   const userDataDir = path.join(testDataBaseDir, `worker-${workerId}`);
   
   // Ensure base directory and worker directory exist
-  const fs = require('fs');
   if (!fs.existsSync(testDataBaseDir)) {
     fs.mkdirSync(testDataBaseDir, { recursive: true });
   }

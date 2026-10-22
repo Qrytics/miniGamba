@@ -30,8 +30,11 @@ test.describe('Games Functionality', () => {
     // Take screenshot before clicking
     await takeScreenshot(mainWindow, 'before-games-click');
     
-    // Try multiple selector strategies for the Games button
+    // Try multiple selector strategies for the Games / Casino button
     let gamesButton = await mainWindow.$('button:has-text("Games")');
+    if (!gamesButton) {
+      gamesButton = await mainWindow.$('button:has-text("Casino")');
+    }
     if (!gamesButton) {
       gamesButton = await mainWindow.$('button:has-text("🎮")');
     }

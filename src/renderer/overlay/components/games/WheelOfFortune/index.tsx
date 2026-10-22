@@ -1,1 +1,1 @@
-export { WheelOfFortune as default } from '../OtherGames';
+export { WheelOfFortune as default } from './WheelOfFortune';

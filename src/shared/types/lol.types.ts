@@ -100,6 +100,8 @@ export interface LiveGamePlayer {
   assists: number;
   goldEarned: number;
   items: number[];
+  isDead?: boolean;
+  respawnTimer?: number;
   scores: {
     assists: number;
     creepScore: number;
@@ -127,6 +129,8 @@ export interface LiveGameData {
     };
     currentGold: number;
     level: number;
+    isDead?: boolean;
+    respawnTimer?: number;
   };
   events?: {
     dragonKills: number;

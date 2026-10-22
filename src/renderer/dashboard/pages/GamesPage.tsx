@@ -44,7 +44,7 @@ const GamesPage: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page" data-testid="games-page-header">
       <SectionHeader
         eyebrow="Games Directory"
         title="Choose your module"

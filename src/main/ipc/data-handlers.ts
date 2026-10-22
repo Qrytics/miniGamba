@@ -10,6 +10,7 @@ import { dailyTasksService } from '../services/games/daily-tasks';
 import { hourlyBonusService } from '../services/games/hourly-bonus';
 import { investmentService } from '../services/games/investment';
 import { RiskLevel } from '../services/games/investment';
+import { getOverlayWindow } from '../windows/overlay';
 
 // User data handlers
 ipcMain.handle('data:getUser', async () => {
@@ -213,6 +214,14 @@ ipcMain.handle('data:addCoins', async (_event: IpcMainInvokeEvent, amount: numbe
     const user = userDataService.getUser();
     userDataService.addCoins(user.id, amount, false); // Don't count as earned
     const updatedUser = userDataService.getUser();
+    try {
+      const overlayWin = getOverlayWindow();
+      if (overlayWin && !overlayWin.isDestroyed()) {
+        overlayWin.webContents.send('data:userUpdated', { user: updatedUser });
+      }
+    } catch {
+      // Ignore if window is not ready
+    }
     return { success: true, coins: updatedUser.coins };
   } catch (error: unknown) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
